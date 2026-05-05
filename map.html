@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth scroll-pt-24">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah Map</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;700&display=swap" rel="stylesheet"/>
+<link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Manrope', sans-serif; margin:0; background-color: #fcf9ee; }
+#map { height: 100vh; width: 100%; flex-grow: 1; z-index: 1; }
+.map-layout { display: flex; height: calc(100vh - 64px); }
+.sidebar { width: 320px; border-right: 1px solid #d7c3b3; overflow-y: auto; background: #fdfbf3; padding: 24px; }
+.sidebar h2 { font-family: 'Noto Serif', serif; color: #884e08; font-size: 11px; letter-spacing: 0.15em; border-bottom: 1px solid #e5e2d8; padding-bottom: 12px; }
+.map-control-btn { background: white; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.3); width: 40px; height: 40px; border-radius: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; transition: color 0.2s; }
+.map-control-btn:hover { color: #884e08; }
+
+.maplibregl-popup-content {
+    background: #fdfbf3 !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+</style>
+</head>
+<body class="flex flex-col h-screen">
+<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 sticky top-0 z-50 h-16 flex items-center">
+    <nav class="flex justify-between items-center w-full px-8 max-w-screen-2xl mx-auto">
+        <div class="flex items-center gap-8">
+            <a href="homepage.html" class="text-2xl font-serif italic text-secondary hover:opacity-80 transition-opacity">Sawah</a>
+            <div class="hidden md:flex items-center gap-6">
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="homepage.html">Discover</a>
+                <a class="text-primary border-b-2 border-primary pb-1 font-bold transition-colors duration-300" href="map.html">Map</a>
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="research.html">Timeline</a>
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="discoveries.html">Archives</a>
+            </div>
+        </div>
+        <div class="relative group">
+            <input id="search" placeholder="Search Atlas..." class="bg-gray-100 px-4 py-1.5 rounded-full text-sm w-48 md:w-64 border-none focus:ring-2 focus:ring-amber-900/20 italic">
+            <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
+        </div>
+    </nav>
+</header>
+<div class="map-layout">
+    <aside class="sidebar">
+        <h2 style="font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;color:#a8a29e;margin-bottom:15px;">Encyclopedic Index</h2>
+        <ul id="site-list" style="list-style:none;padding:0;margin:0;">
+            <!-- Populated by JS -->
+        </ul>
+    </aside>
+    <div class="flex-grow relative overflow-hidden">
+        <div id="map" class="h-full w-full"></div>
+
+        <!-- Archive Detail Drawer -->
+        <div id="archive-drawer" class="absolute top-0 right-0 h-full w-0 bg-[#fdfbf3] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[100] overflow-y-auto border-l border-outline-variant/20">
+            <div class="p-10 min-w-[700px]">
+                <button onclick="closeArchive()" class="mb-10 flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest transition-colors group">
+                    <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                    Back to Atlas
+                </button>
+                <div id="archive-content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+const manualSites = [
+    { name: "Great Pyramid of Giza", lat: 29.9792, lng: 31.1342, desc: "The only surviving Wonder of the Ancient World, a masterpiece of Old Kingdom engineering.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDMw1ZjXIfPFO6bpo_-Gj42tT83hhcE_z9EX3yDq5cgrGJRpLx9CNnlUrGlC3JNLeI7NMC-xZOm0TBy_xPfSwgh_zpPxlYF_gbQg4x9FpwDkYkwzsyrTdBYZl2T6iP6SlQvuQdJUyHxw1zFMLCGUUwwqWtniwzKBznDGJUzkRvPAV2PCoT0sJTTbCRIjXmBg3C8GtU8m-q-aRFfllo3ls9LTtkqtXyVUUSabu5o4cDgaEauhLKMz62DLQzhTQ-bx3p0CmIhnDLJfhc" },
+    { name: "Colosseum", lat: 41.8902, lng: 12.4922, desc: "The grandest amphitheatre of the Roman Empire, used for gladiatorial contests.", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=800" },
+    { name: "Machu Picchu", lat: -13.1631, lng: -72.5450, desc: "A 15th-century Inca citadel nestled high in the Andes Mountains.", img: "https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&q=80&w=800" },
+    { name: "Stonehenge", lat: 51.1789, lng: -1.8262, desc: "A prehistoric stone circle aligned with the midsummer sunrise.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBDfy2HjLFlPzdJSEjshEbtHPp82RP5rsWR-MId3kDs2rNvyUmcr8oTUHvRP0ElvgJt8Pd8xZqEtG2SETkWikmiAsME-EuEyiVAbJgmlweIr5xodeM-3X9XszZJzPSBsDLiRG2Qq1aLtcSHdOVTYBTgEmh8tGOPTq6Ij-krK94NkO3vv-CeB6TzP7SqJNzwGXI4gTB5NMmpUh4F_Eh_rKSYb44EWijUpsjQqI7UQr5NWd7GS9wyacUjGJ9xod1E0YGG_V3NwWyfq-M" },
+    { name: "Petra", lat: 30.3285, lng: 35.4444, desc: "The magnificent Nabataean capital carved directly into red sandstone cliffs.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCTXRNDmhtdYeOOkf7AXDKpsVh-O71D-OHvBS92n0eTGgJCxra9T8F0tISo5F4Lh5md83LAc07FKVbqC7GDNk3Nu3eh0GOKoT-KwVujAF25C1ctcqYzV-FHzFGCiMIUHxhKPuIgZ8kDsVtYkVoSb5ktnqYf23rNUKqlwrp6U7wTz6mrOG-gZZwW_jPRWqOkmtpH6jWIosElcf48YecUUDYAEO5w21c3yIzOxMbpx0DkD8zwvftkEIkm9iu_uwPisZ0AUO8F8AVEPHk" },
+    { name: "Luxor Temple", lat: 25.6872, lng: 32.6396, desc: "A vast ancient temple complex on the east bank of the Nile, central to the Opet festival.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNZvNvaU9Gzqm_YnHRHDfecBUh4wHl-Rd8WyiI-wkmMPZquOShuTouv_0Vgk5koIIhxO2PTHiDl59US2QYftG4BrVlu5s8_ZezEUX0_5f8P6Fcy9QtndqtShBGV3IfMGdv3mr5fCypBPXTwCKcP3b4wCZuvsX5_yK5xg04OsOuqtQ1g67KwmThl17HwaZvp-NBuW7g7lKEOnauFqlVM63fB4XsMFIooWuqdhWYuj3SBY0Bi3OUbXEKvcmbs-Y_1yMCcbACh5ryXnU" },
+    { name: "Abu Simbel", lat: 22.3372, lng: 31.6225, desc: "Massive rock temples built by Ramesses II, famously relocated to escape the rising waters of Lake Nasser.", img: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&q=80&w=800" }
+];
+
+function initMap() {
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: {
+            'version': 8,
+            'sources': {
+                'satellite-imagery': {
+                    'type': 'raster',
+                    'tiles': [
+                        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                    ],
+                    'tileSize': 256,
+                    'attribution': 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
+                },
+                'labels': {
+                    'type': 'raster',
+                    'tiles': [
+                        'https://a.basemaps.cartocdn.com/rastertiles/light_only_labels/{z}/{x}/{y}.png'
+                    ],
+                    'tileSize': 256
+                }
+            },
+            'layers': [
+                { 'id': 'satellite-imagery', 'type': 'raster', 'source': 'satellite-imagery' },
+                { 'id': 'labels', 'type': 'raster', 'source': 'labels' }
+            ]
+        },
+        center: [30, 20], // MapLibre uses [lng, lat]
+        zoom: 3,
+        pitch: 45, // 3D Tilt
+        bearing: 0, // Slight rotation for depth
+        antialias: true
+    });
+
+    map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+
+    // Manually add iconic historical markers on initialization
+    const listContainer = document.getElementById('site-list');
+    manualSites.forEach(site => {
+        const el = document.createElement('div');
+        el.className = 'marker';
+        el.innerHTML = `<svg width="36" height="36" viewBox="0 0 24 24" fill="#884e08" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 12 2 C 8.13 2 5 5.13 5 9 c 0 5.25 7 13 7 13 s 7 -7.75 7 -13 c 0 -3.87 -3.13 -7 -7 -7 z" stroke="#fcf9ee" stroke-width="2"/>
+                <circle cx="12" cy="9" r="2.5" fill="#fcf9ee"/>
+               </svg>`;
+        el.style.cursor = 'pointer';
+        el.style.filter = 'drop-shadow(0 2px 5px rgba(0,0,0,0.5))';
+
+        const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
+            <div style="padding: 12px; font-family: 'Manrope', sans-serif; width: 240px;">
+                <div style="position: relative; overflow: hidden; border-radius: 6px; margin-bottom: 12px; height: 120px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <img src="${site.img}" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <h3 style="font-family: 'Noto Serif', serif; font-weight: 700; color: #884e08; margin-bottom: 4px; font-size: 18px; line-height: 1.2; font-style: italic;">${site.name}</h3>
+                <p style="font-size: 13px; color: #524438; line-height: 1.5; margin-bottom: 12px;">${site.desc}</p>
+                <button onclick="goToArchive('${site.name.replace(/'/g, "\\'")}', ${site.lat}, ${site.lng})" 
+                    style="width: 100%; background: #4c6078; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em;">Explore Discovery</button>
+            </div>
+        `);
+
+        const marker = new maplibregl.Marker({ element: el })
+            .setLngLat([site.lng, site.lat])
+            .setPopup(popup)
+            .addTo(map);
+
+        // Sidebar Item
+        const li = document.createElement('li');
+        li.style.cssText = "padding:12px;margin-bottom:8px;border-radius:8px;cursor:pointer;font-size:13px;color:#524438;transition:all 0.2s;border: 1px solid transparent;";
+        li.innerText = site.name;
+        li.onmouseover = () => { li.style.background = "#efede1"; li.style.borderColor = "#d7c3b3"; };
+        li.onmouseout = () => { li.style.background = "transparent"; li.style.borderColor = "transparent"; };
+        li.onclick = () => {
+            map.flyTo({ center: [site.lng, site.lat], zoom: 14, pitch: 60 });
+            marker.togglePopup();
+        };
+        listContainer.appendChild(li);
+    });
+
+    // Search Functionality using Nominatim (OpenStreetMap)
+    const searchInput = document.getElementById("search");
+    searchInput.addEventListener("keypress", async (e) => {
+        if (e.key === "Enter") {
+            const query = searchInput.value;
+            if (!query) return;
+
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
+                const results = await res.json();
+
+                if (results.length > 0) {
+                    const first = results[0];
+                    const lat = parseFloat(first.lat);
+                    const lon = parseFloat(first.lon);
+                    
+                    map.flyTo({ center: [lon, lat], zoom: 12, pitch: 45 });
+
+                    const el = document.createElement('div');
+                    el.innerHTML = `<svg width="30" height="30" viewBox="0 0 24 24" fill="#884e08" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 12 2 C 8.13 2 5 5.13 5 9 c 0 5.25 7 13 7 13 s 7 -7.75 7 -13 c 0 -3.87 -3.13 -7 -7 -7 z" stroke="#fcf9ee" stroke-width="2"/>
+                       </svg>`;
+                    el.style.filter = 'drop-shadow(0 2px 5px rgba(0,0,0,0.5))';
+
+                    const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
+                        <div style="padding: 12px; max-width: 240px; font-family: 'Manrope', sans-serif; background: #fdfbf3;">
+                            <div style="position: relative; overflow: hidden; border-radius: 6px; margin-bottom: 12px; height: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                <img src="https://images.unsplash.com/photo-1541410965313-5996e5c03788?auto=format&fit=crop&q=80&w=400" style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                            <h3 style="font-family: 'Noto Serif', serif; font-weight: 700; color: #884e08; margin-bottom: 4px; font-size: 16px; line-height: 1.2; font-style: italic;">${first.display_name.split(',')[0]}</h3>
+                            <p style="font-size: 12px; color: #524438; line-height: 1.4; margin-bottom: 12px;">Location identified via Open Archive.</p>
+                            <button onclick="goToArchive('${first.display_name.split(',')[0].replace(/'/g, "\\'")}', ${lat}, ${lon})" 
+                                style="width: 100%; background: #884e08; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em;">View Archive</button>
+                        </div>
+                    `);
+
+                    new maplibregl.Marker({ element: el })
+                        .setLngLat([lon, lat])
+                        .setPopup(popup)
+                        .addTo(map)
+                        .togglePopup();
+                }
+            } catch (err) {
+                console.error("Search failed:", err);
+            }
+        }
+    });
+}
+
+async function goToArchive(name, lat, lng) {
+    const drawer = document.getElementById('archive-drawer');
+    const content = document.getElementById('archive-content');
+    
+    drawer.style.width = '750px';
+    content.innerHTML = `
+        <div class="animate-pulse space-y-8">
+            <div class="h-72 bg-stone-200 rounded-xl"></div>
+            <div class="space-y-4">
+                <div class="h-10 bg-stone-200 rounded w-3/4"></div>
+                <div class="h-4 bg-stone-200 rounded w-1/2"></div>
+            </div>
+            <div class="space-y-3">
+                <div class="h-4 bg-stone-200 rounded w-full"></div>
+                <div class="h-4 bg-stone-200 rounded w-full"></div>
+                <div class="h-4 bg-stone-200 rounded w-2/3"></div>
+            </div>
+        </div>
+    `;
+
+    try {
+        const apiName = name.trim().replace(/\s+/g, '_');
+        let summaryRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(apiName)}`);
+        let data = summaryRes.ok ? await summaryRes.json() : null;
+
+        if (!data || data.type === 'disambiguation') {
+            const sRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(name)}&srlimit=1&format=json&origin=*`);
+            const sData = await sRes.json();
+            if (sData.query.search.length > 0) {
+                const targetTitle = sData.query.search[0].title;
+                const summaryRes2 = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(targetTitle.replace(/\s+/g, '_'))}`);
+                data = summaryRes2.ok ? await summaryRes2.json() : data;
+            }
+        }
+
+        if (!data) throw new Error();
+
+        const img = data.originalimage || data.thumbnail;
+        content.innerHTML = `
+            ${img ? `<img src="${img.source}" class="w-full h-72 object-cover rounded-xl mb-8 shadow-xl border border-white/50">` : ''}
+            <span class="text-[10px] font-bold text-amber-800 uppercase tracking-[0.2em] mb-3 block">Archival Dossier</span>
+            <h1 class="text-4xl font-serif italic font-bold mb-4 text-stone-900 leading-tight">${data.displaytitle || data.title}</h1>
+            <p class="text-stone-500 italic mb-10 text-lg leading-relaxed">${data.description || 'Verified Historical Record'}</p>
+            <div class="prose prose-stone text-stone-700 leading-relaxed space-y-6 text-base font-light">
+                ${data.extract.split('\n').map(p => `<p>${p}</p>`).join('')}
+            </div>
+            <div class="mt-12 pt-8 border-t border-stone-200/60">
+                <a href="discoveries.html?placeName=${encodeURIComponent(data.title)}" class="inline-flex items-center gap-3 px-6 py-3 bg-stone-900 text-white rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-stone-800 transition-all shadow-lg">
+                    Access Full Archive <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+        `;
+    } catch (e) {
+        content.innerHTML = '<p class="text-stone-400 italic py-20 text-center">No archival records found in immediate strata.</p>';
+    }
+}
+
+function closeArchive() {
+    document.getElementById('archive-drawer').style.width = '0';
+}
+
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+
+<script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9qW1U2mvpJz64W3KZKKXVx5DI5JW_ezo&callback=initMap" 
+    async defer></script>
+
+</body>
+</html>
