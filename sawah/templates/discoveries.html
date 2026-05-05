@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth scroll-pt-24">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah | Archive</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
+.font-serif { font-family: 'Noto Serif', serif; }
+
+/* High-End Styling for Wikipedia Raw Content */
+.wiki-content { font-size: 1.1rem; line-height: 1.8; color: #374151; }
+.wiki-content h2 { font-family: 'Noto Serif', serif; font-size: 1.875rem; font-weight: 700; font-style: italic; color: #1c1c15; margin: 3rem 0 1.5rem; border-bottom: 1px solid #e5e2d8; padding-bottom: 0.5rem; }
+.wiki-content h3 { font-family: 'Noto Serif', serif; font-size: 1.5rem; font-weight: 600; color: #884e08; margin: 2rem 0 1rem; }
+.wiki-content p { margin-bottom: 1.5rem; }
+.wiki-content table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.85rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+.wiki-content td, .wiki-content th { border: 1px solid #f1eee3; padding: 1rem; text-align: left; vertical-align: top; }
+.wiki-content th { background: #fdfbf3; color: #884e08; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; }
+
+.wiki-content .infobox { float: right; width: 340px; margin: 0 0 2.5rem 2.5rem; background: #fff; border: 1px solid #e5e2d8; padding: 1.5rem; font-size: 0.8rem; border-radius: 12px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05); }
+.wiki-content .infobox caption { font-family: 'Noto Serif', serif; font-weight: 700; font-size: 1.2rem; color: #1c1c15; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f1eee3; }
+.wiki-content .infobox img { border-radius: 8px; margin-bottom: 1rem; }
+
+.wiki-content .reflist { font-size: 0.8rem; color: #524438; column-count: 1; column-gap: 3rem; margin-top: 3rem; border-top: 1px solid #d7c3b3; padding: 2.5rem 0; }
+@media (min-width: 768px) { .wiki-content .reflist { column-count: 2; } }
+.wiki-content .reflist ol, .wiki-content ol.references { list-style-type: decimal !important; margin-left: 0; padding-left: 2rem; }
+.wiki-content .reflist li, .wiki-content ol.references li { margin-bottom: 0.8rem; word-wrap: break-word; display: list-item !important; list-style-position: outside; }
+.wiki-content .mw-cite-backlink { font-family: 'Manrope', sans-serif; font-weight: 700; color: #884e08; margin-right: 0.5rem; text-decoration: none; }
+.wiki-content .reflist a { color: #4c6078; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; }
+.wiki-content .reflist a:hover { color: #884e08; border-bottom-color: #884e08; }
+
+.wiki-content .thumb { margin: 2.5rem 0; padding: 1rem; background: #fff; border: 1px solid #f1eee3; border-radius: 12px; width: fit-content; max-width: 100%; transition: all 0.3s ease; display: flex; flex-direction: column; }
+.wiki-content .thumb:hover { border-color: #d7c3b3; box-shadow: 0 12px 40px -10px rgba(0,0,0,0.05); }
+.wiki-content .thumb img { border-radius: 8px; filter: sepia(0.15) contrast(1.05); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+.wiki-content .thumb:hover img { filter: sepia(0) contrast(1); }
+.wiki-content .thumbcaption, .wiki-content .gallerytext { font-family: 'Manrope', sans-serif; font-size: 0.75rem !important; color: #857467 !important; margin-top: 0.75rem !important; font-style: italic !important; line-height: 1.5 !important; border: none !important; padding: 0 !important; display: block !important; }
+.wiki-content .reference { vertical-align: super; font-size: 0.65rem; font-weight: 800; color: #884e08; margin-left: 2px; text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
+.wiki-content .reference:hover { opacity: 1; }
+
+/* Styling for native Wikipedia Galleries found inside sections (like Abu Simbel #section-5) */
+.wiki-content .gallery { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important; gap: 1.5rem !important; padding: 0 !important; list-style: none !important; margin: 2rem 0 !important; }
+.wiki-content .gallerybox { width: 100% !important; margin: 0 !important; height: auto !important; }
+.wiki-content .gallerybox .thumb { width: 100% !important; margin: 0 !important; padding: 0.75rem !important; display: flex !important; flex-direction: column !important; height: auto !important; }
+.wiki-content .gallerybox .thumb img { width: 100% !important; height: 180px !important; object-fit: cover !important; }
+
+/* Hide Wikipedia administrative metadata, maintenance tags, hatnotes, and navigation boxes */
+.wiki-content .mw-editsection, .wiki-content .hatnote, .wiki-content .ambox, .wiki-content .metadata, .wiki-content .navbox, .wiki-content .banner-shell { display: none !important; }
+
+/* Navigation Index Styles */
+#toc-list li { margin-bottom: 0.5rem; }
+#toc-list a { transition: all 0.2s; }
+#toc-list a:hover { color: #884e08; padding-left: 4px; }
+
+/* Lightbox Animation */
+#lightbox-modal { transition: opacity 0.3s ease; }
+#lightbox-modal.hidden { opacity: 0; pointer-events: none; }
+#lightbox-modal { opacity: 1; display: flex !important; }
+
+.gallery-image { filter: sepia(0.15) contrast(1.05); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+.gallery-image:hover { filter: sepia(0) contrast(1); transform: scale(1.05); }
+#lightbox-img { cursor: grab; user-select: none; transition: transform 0.1s ease-out; }
+#lightbox-img:active { cursor: grabbing; }
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 sticky top-0 z-50 h-16 flex items-center">
+    <nav class="flex justify-between items-center w-full px-8 max-w-screen-2xl mx-auto">
+        <div class="flex items-center gap-8">
+            <a href="homepage.html" class="text-2xl font-serif italic text-secondary hover:opacity-80 transition-opacity">Sawah</a>
+            <nav class="hidden md:flex items-center gap-6">
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="homepage.html">Discover</a>
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="map.html">Map</a>
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="research.html">Timeline</a>
+                <a class="text-primary border-b-2 border-primary pb-1 font-bold transition-colors duration-300" href="discoveries.html">Archives</a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="relative group hidden sm:block">
+                <input id="article-search" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic" placeholder="Explore the Past..." type="text"/>
+                <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
+            </div>
+            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button>
+        </div>
+    </nav>
+</header>
+
+<main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-12 w-full mt-8">
+    <div class="lg:col-span-3">
+        <article id="content" class="bg-white p-12 rounded-2xl shadow-sm border border-stone-200/50">
+            <div class="animate-pulse space-y-8">
+                <div class="h-96 bg-stone-100 rounded-xl"></div>
+                <div class="h-10 bg-stone-100 rounded w-3/4"></div>
+                <div class="space-y-4">
+                    <div class="h-4 bg-stone-100 rounded w-full"></div>
+                    <div class="h-4 bg-stone-100 rounded w-full"></div>
+                    <div class="h-4 bg-stone-100 rounded w-2/3"></div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <aside class="space-y-8">
+        <!-- Chronicle Index -->
+        <div id="toc-container" class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm hidden sticky top-28">
+            <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-6 border-b border-stone-100 pb-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-primary">list_alt</span>
+                Chronicle Index
+            </h3>
+            <ul id="toc-list" class="text-[11px] text-stone-500 font-bold uppercase tracking-wider space-y-3"></ul>
+        </div>
+
+        <!-- Archival Metadata -->
+        <div class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm">
+            <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-primary">dataset</span>
+                Archival Registry
+            </h3>
+            <ul id="meta-list" class="text-[10px] space-y-3 text-stone-600 font-medium">
+                <li class="flex justify-between"><span>Status</span> <span class="text-primary font-bold">Verified</span></li>
+                <li class="flex justify-between"><span>Repository</span> <span>Wikimedia Global</span></li>
+                <li id="meta-rev" class="flex justify-between"><span>Revision</span> <span class="italic">Syncing...</span></li>
+            </ul>
+        </div>
+    </aside>
+</main>
+
+<!-- Technical Fact Sheet Component (Inserted into sidebar via JS) -->
+<template id="fact-sheet-template">
+    <div id="fact-sheet-container" class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm mt-8">
+        <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm text-primary">fact_check</span>
+            Technical Fact Sheet
+        </h3>
+        <ul id="fact-sheet-list" class="text-[10px] space-y-3 text-stone-600 font-medium"></ul>
+    </div>
+</template>
+
+<!-- Lightbox Modal -->
+<div id="lightbox-modal" class="fixed inset-0 z-[100] bg-stone-900/95 hidden items-center justify-center p-8">
+    <button onclick="closeLightbox()" class="absolute top-8 right-8 text-white hover:text-primary transition-colors group">
+        <span class="material-symbols-outlined text-4xl">close</span>
+        <span class="block text-[10px] font-bold tracking-widest uppercase mt-1 opacity-0 group-hover:opacity-100 transition-opacity text-center">Close</span>
+    </button>
+    <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded shadow-2xl">
+    <div id="lightbox-caption" class="absolute bottom-12 left-1/2 -translate-x-1/2 max-w-2xl text-center text-white/80 font-body text-sm italic"></div>
+</div>
+
+<script>
+let scale = 1, pointX = 0, pointY = 0, startX = 0, startY = 0, isPanning = false;
+const img = document.getElementById('lightbox-img');
+
+/**
+ * Converts Wikipedia thumbnail URLs to high-resolution original URLs
+ */
+function getHighResUrl(url) {
+    if (url.includes('/thumb/')) {
+        const parts = url.split('/');
+        // Removing the last segment (the thumbnail size) and the /thumb/ marker
+        return parts.slice(0, parts.length - 1).join('/').replace('/thumb/', '/');
+    }
+    return url;
+}
+
+function updateTransform() {
+    img.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+}
+
+function openLightbox(url, caption = "") {
+    const modal = document.getElementById('lightbox-modal');
+    const cap = document.getElementById('lightbox-caption');
+    
+    scale = 1; pointX = 0; pointY = 0;
+    updateTransform();
+    
+    img.src = getHighResUrl(url);
+    cap.innerHTML = caption;
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    const modal = document.getElementById('lightbox-modal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+img.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    startX = e.clientX - pointX;
+    startY = e.clientY - pointY;
+    isPanning = true;
+});
+
+window.addEventListener('mouseup', () => { isPanning = false; });
+
+window.addEventListener('mousemove', (e) => {
+    if (!isPanning) return;
+    pointX = e.clientX - startX;
+    pointY = e.clientY - startY;
+    updateTransform();
+});
+
+img.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const xs = (e.clientX - pointX) / scale;
+    const ys = (e.clientY - pointY) / scale;
+    const delta = -e.deltaY;
+    (delta > 0) ? (scale *= 1.2) : (scale /= 1.2);
+    scale = Math.min(Math.max(0.5, scale), 10);
+    pointX = e.clientX - xs * scale;
+    pointY = e.clientY - ys * scale;
+    updateTransform();
+});
+
+
+async function loadWikidataFacts(title) {
+    try {
+        // Get Wikidata ID from Wikipedia title
+        const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&titles=${encodeURIComponent(title)}&format=json&origin=*`);
+        const data = await res.json();
+        const page = Object.values(data.query.pages)[0];
+        const qid = page.pageprops?.wikibase_item;
+        if (!qid) return;
+
+        const wdRes = await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=claims&format=json&origin=*`);
+        const wdData = await wdRes.json();
+        const claims = wdData.entities[qid].claims;
+
+        const props = { "P571": "Inception", "P186": "Material", "P84": "Architect", "P2048": "Height", "P1435": "Status",
+                        "P17": "Country", "P131": "Location", "P31": "Instance of", "P149": "Style" };
+        const list = document.getElementById('fact-sheet-list');
+        const template = document.getElementById('fact-sheet-template');
+        
+        if (!list) {
+            const aside = document.querySelector('aside');
+            aside.appendChild(template.content.cloneNode(true));
+        }
+
+        const factList = document.getElementById('fact-sheet-list');
+        factList.innerHTML = '';
+
+        for (const [id, label] of Object.entries(props)) {
+            if (claims[id]) {
+                const val = claims[id][0].mainsnak.datavalue;
+                let text = '';
+                if (val.type === 'time') {
+                    text = val.value.time.substring(1).split('-')[0];
+                    if (val.value.time.startsWith('-')) text += ' BCE';
+                } else if (val.type === 'quantity') {
+                    text = parseFloat(val.value.amount).toLocaleString() + (id === "P2048" ? " m" : "");
+                }
+                
+                if (text) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<div class="flex justify-between"><span>${label}</span><span class="text-stone-900 font-bold">${text}</span></div>`;
+                    factList.appendChild(li);
+                }
+            }
+        }
+    } catch (e) { console.error("Wikidata Sync Failed", e); }
+}
+
+async function loadGallery(title) {
+    const grid = document.getElementById('gallery-grid');
+    const container = document.getElementById('gallery-container');
+    if (!grid || !container) return;
+
+    try {
+        const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=images&titles=${encodeURIComponent(title)}&imlimit=20&format=json&origin=*`);
+        const data = await res.json();
+        const page = Object.values(data.query.pages)[0];
+
+        if (page.images) {
+            const imageTitles = page.images
+                .map(img => img.title)
+                .filter(t => !t.includes('.svg') && !t.includes('.pdf') && !t.includes('Icon') && !t.includes('Symbol') && !t.includes('stub') && !t.includes('Logo') && !t.includes('Map'))
+                .slice(0, 12)
+                .join('|');
+
+            if (imageTitles) {
+                const imgInfoRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(imageTitles)}&prop=imageinfo&iiprop=url|extmetadata&format=json&origin=*`);
+                const imgInfoData = await imgInfoRes.json();
+                
+                grid.innerHTML = '';
+                Object.values(imgInfoData.query.pages).forEach(imgPage => {
+                    if (imgPage.imageinfo?.[0]?.url) {
+                        const url = imgPage.imageinfo[0].url;
+                        const meta = imgPage.imageinfo[0].extmetadata;
+                        const caption = (meta?.ImageDescription?.value || meta?.ObjectName?.value || "Historic record")
+                            .replace(/<\/?[^>]+(>|$)/g, "")
+                            .replace(/^File:/, "")
+                            .replace(/_/g, " ")
+                            .trim();
+                        
+                        const div = document.createElement('div');
+                        div.className = 'flex flex-col group cursor-pointer';
+                        div.onclick = () => openLightbox(url, caption);
+                        div.innerHTML = `
+                            <div class="aspect-square rounded-xl overflow-hidden bg-stone-200 border border-stone-200 shadow-sm hover:shadow-2xl transition-all duration-500 mb-2">
+                                <img src="${url}" class="w-full h-full object-cover gallery-image" loading="lazy">
+                            </div>
+                            <p class="text-[13px] text-stone-600 font-bold uppercase tracking-widest text-center leading-tight transition-colors group-hover:text-primary px-2 mt-4 block overflow-visible">${caption}</p>
+                        `;
+                        grid.appendChild(div);
+                    }
+                });
+
+                if (grid.children.length > 0) {
+                    container.classList.remove('hidden');
+                }
+            }
+        }
+    } catch (e) { console.error("Gallery sync failed", e); }
+}
+
+const CACHE_TIME = 1000 * 60 * 60 * 24; // 24 hours
+
+function getCache(key){
+    const raw = localStorage.getItem(key);
+    if(!raw) return null;
+    const data = JSON.parse(raw);
+    if(Date.now() - data.time > CACHE_TIME){
+        localStorage.removeItem(key);
+        return null;
+    }
+    return data.value;
+}
+
+function setCache(key,value){
+    localStorage.setItem(key, JSON.stringify({value, time: Date.now()}));
+}
+
+async function loadArchive() {
+    const container = document.getElementById("content");
+
+    const params = new URLSearchParams(location.search);
+    let name = params.get("placeName") || "Luxor Temple";
+
+    // Article Search listener
+    document.getElementById('article-search').addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') window.location.href = `discoveries.html?placeName=${encodeURIComponent(e.target.value)}`;
+    });
+
+    try {
+        // STEP 1: SEARCH FIRST (MOST RELIABLE)
+        const searchRes = await fetch(
+            `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(name)}&format=json&origin=*`
+        );
+
+        const searchData = await searchRes.json();
+
+        if (!searchData.query.search.length) {
+            throw new Error("No results");
+        }
+
+        const title = searchData.query.search[0].title;
+
+        // STEP 2: GET FULL SUMMARY
+        const summaryRes = await fetch(
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
+        );
+
+        const data = await summaryRes.json();
+
+        if (!data || data.type === "disambiguation") {
+            throw new Error("Disambiguation or empty page");
+        }
+
+        // STEP 3: GET FULL CONTENT (SAFE)
+        const contentRes = await fetch(
+            `https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&prop=text&format=json&origin=*`
+        );
+
+        const contentData = await contentRes.json();
+        let html = contentData.parse?.text?.["*"] || "";
+
+        // Enhanced cleanup of Wikipedia content (Remove Climate, Weather, and Maintenance clutter)
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Remove hatnotes, maintenance boxes (ambox), and metadata elements
+        doc.querySelectorAll('.hatnote, .ambox, .metadata, .navbox, .banner-shell, .mw-empty-elt, .vertical-navbox, .infobox-talk').forEach(el => el.remove());
+
+        // Robust removal of Climate/Weather sections by header detection
+        const keywords = ['climate', 'weather', 'environment', 'geography', 'see also'];
+        doc.querySelectorAll('h2, h3').forEach(header => {
+            const id = header.querySelector('.mw-headline')?.id?.toLowerCase() || header.id?.toLowerCase() || "";
+            const text = header.textContent.toLowerCase();
+            
+            if (keywords.some(k => id.includes(k) || text.includes(k))) {
+                let node = header;
+                while (node) {
+                    const next = node.nextElementSibling;
+                    node.remove();
+                    node = next;
+                    if (!node || node.tagName === 'H2') break;
+                }
+            }
+        });
+
+        // Also remove any standalone climate tables or templates
+        doc.querySelectorAll('table, .weather-box, .climate-table').forEach(el => {
+            if (el.textContent.includes('Climate data') || el.textContent.includes('Weather box')) {
+                el.remove();
+            }
+        });
+
+        html = doc.body.innerHTML;
+
+        // Process links to stay within Sawah
+        html = html.replace(/href="\/wiki\/([^"]+)"/g, 'href="discoveries.html?placeName=$1"');
+
+        container.innerHTML = `
+            ${data.originalimage ? `<img src="${data.originalimage.source}" class="w-full h-[450px] object-cover rounded-xl mb-10 shadow-2xl border border-white/50 cursor-zoom-in" onclick="openLightbox('${data.originalimage.source}', '${(data.displaytitle || data.title).replace(/'/g, "\\'")}')">` : ""}
+
+            <h1 class="text-5xl font-serif italic font-bold mb-6 text-stone-900 leading-tight">${data.displaytitle || data.title}</h1>
+
+            <p class="text-stone-500 italic mb-6">${data.description || ""}</p>
+
+            <div class="wiki-content text-stone-700 leading-relaxed font-light">
+                ${html}
+            </div>
+
+            <!-- Historic Pictures Gallery -->
+            <div id="gallery-container" class="mt-20 pt-10 border-t border-stone-100 hidden">
+                <h3 class="font-serif italic text-2xl mb-8 text-stone-800">Historic Pictures</h3>
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                </div>
+            </div>
+
+            <div class="mt-16 pt-8 border-t border-stone-100 text-center">
+                <p class="text-[10px] text-stone-400 font-bold uppercase tracking-[0.2em]">End of Archival Record</p>
+            </div>
+        `;
+
+        // Handle Internal Wiki Images for Lightbox
+        container.querySelectorAll('.wiki-content img').forEach(img => {
+            img.style.cursor = 'zoom-in';
+            
+            img.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                let caption = img.alt;
+                const thumb = img.closest('.thumbinner, .thumb, .gallerybox, figure');
+                if (thumb) {
+                    const capEl = thumb.querySelector('.thumbcaption, .gallerytext, figcaption');
+                    if (capEl) caption = capEl.textContent.replace('[edit]', '').trim();
+                }
+                openLightbox(img.src, caption || "Archival Detail");
+            };
+        });
+
+        loadWikidataFacts(title);
+        loadGallery(title);
+
+        // Update Sidebar Stats
+        document.getElementById('meta-rev').innerHTML = `<span>Last Sync</span> <span>${new Date().toLocaleDateString()}</span>`;
+
+        // Generate Index (TOC)
+        const tocList = document.getElementById('toc-list');
+        const headings = container.querySelectorAll('h2');
+        if(headings.length > 0) {
+            document.getElementById('toc-container').classList.remove('hidden');
+            headings.forEach((h, i) => {
+                const text = h.textContent.replace('[edit]', '');
+                const id = `section-${i}`;
+                h.id = id;
+                
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#${id}" class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-primary/20 rounded-full"></span>
+                    ${text}
+                </a>`;
+                tocList.appendChild(li);
+            });
+        }
+
+        // Smooth Scroll for Index
+        document.querySelectorAll('#toc-list a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Final Step: Handle initial hash scroll for direct section links
+        if (window.location.hash) {
+            setTimeout(() => {
+                const target = document.querySelector(window.location.hash);
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            }, 600);
+        }
+
+    } catch (err) {
+        console.log(err);
+
+        container.innerHTML = `
+            <div class="text-center py-20">
+                <p class="text-stone-400 italic mb-4">No archive found</p>
+                <p class="text-xs text-stone-300 mb-6">
+                    Try a simpler name like "Luxor Temple" or "Petra"
+                </p>
+                <a href="map.html" class="text-amber-800 font-bold">← Back to map</a>
+            </div>
+        `;
+    }
+}
+
+loadArchive();
+</script>
+
+</body>
+</html>
