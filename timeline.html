@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="light scroll-smooth scroll-pt-24" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sawah | Timeline</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-background": "#1c1c15",
+                        "surface-container-highest": "#e5e2d8",
+                        "secondary": "#4c6078",
+                        "on-secondary-container": "#51647d",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#dddacf",
+                        "on-primary-fixed": "#2d1600",
+                        "on-surface": "#1c1c15",
+                        "secondary-container": "#cde1fe",
+                        "on-tertiary-fixed-variant": "#763221",
+                        "on-secondary-fixed": "#061d32",
+                        "surface-tint": "#8b500b",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#914634",
+                        "background": "#fcf9ee",
+                        "outline": "#857467",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "on-primary-fixed-variant": "#6b3b00",
+                        "surface": "#fcf9ee",
+                        "on-primary": "#ffffff",
+                        "primary": "#884e08",
+                        "surface-container-low": "#f7f4e9",
+                        "tertiary-fixed": "#ffdad2",
+                        "primary-fixed": "#ffdcc0",
+                        "inverse-surface": "#31312a",
+                        "inverse-primary": "#ffb876",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#b4c8e4",
+                        "surface-variant": "#e5e2d8",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed": "#d1e4ff",
+                        "surface-bright": "#fcf9ee",
+                        "primary-container": "#a66622",
+                        "on-tertiary-fixed": "#3c0700",
+                        "on-surface-variant": "#524438",
+                        "primary-fixed-dim": "#ffb876",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#af5e4a",
+                        "on-primary-container": "#fffbff",
+                        "outline-variant": "#d7c3b3",
+                        "inverse-on-surface": "#f4f1e6",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#35485f",
+                        "surface-container-high": "#ebe8dd",
+                        "surface-container": "#f1eee3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .asymmetric-bleed { margin-right: -4rem; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="bg-[#fcf9ee]/80 dark:bg-stone-900/80 backdrop-blur-md sticky top-0 z-50 no-border tonal-shift-surface-container-low">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-serif italic text-[#4c6078] dark:text-stone-200">Sawah</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-[#4c6078] dark:text-stone-400 font-medium hover:text-[#914634] transition-colors duration-300" href="index.html">Discover</a>
+<a class="text-[#4c6078] dark:text-stone-400 font-medium hover:text-[#914634] transition-colors duration-300" href="map.html">Map</a>
+<a class="text-[#884e08] border-b-2 border-[#884e08] pb-1 font-bold transition-colors duration-300" href="timeline.html">Timeline</a>
+<a class="text-[#4c6078] dark:text-stone-400 font-medium hover:text-[#914634] transition-colors duration-300" href="archive.html">Archives</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#4c6078] hover:text-[#914634] transition-colors">account_circle</button>
+<button class="md:hidden material-symbols-outlined text-[#4c6078]">menu</button>
+</div>
+</div>
+</nav>
+<main class="max-w-screen-2xl mx-auto px-8 pt-12 pb-24">
+<!-- Hero Header -->
+<header class="mb-20 max-w-3xl">
+<h1 class="text-5xl md:text-7xl font-serif text-on-surface leading-tight tracking-tight mb-6">
+                The Echoes <br/> of <span class="italic text-primary">Eternity</span>
+</h1>
+<p class="text-lg text-on-surface-variant font-body leading-relaxed">
+                Navigate through the layered strata of human civilization. From the dawn of stone architecture to the intricate craftsmanship of the late empires, explore how our collective legacy was forged in silence and fire.
+            </p>
+</header>
+<!-- Timeline Container -->
+<div class="relative">
+<!-- Vertical Timeline Spine -->
+<div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-[1px] bg-outline-variant opacity-30 transform md:-translate-x-1/2"></div>
+<!-- Era Section: Old Kingdom (Asymmetric Shift) -->
+<section class="relative mb-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<div class="relative group">
+<div class="absolute -inset-4 bg-surface-container-low rounded-xl -z-10 transition-all group-hover:bg-surface-container"></div>
+<img class="w-full aspect-[16/9] object-cover rounded-lg shadow-sm border border-outline-variant/15" data-alt="Wide cinematic shot of the Great Pyramids of Giza during a soft golden sunrise with hazy desert atmosphere and long shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2FtUVZ1aHjJ4s0aBY8idSRCFekdoZQJ2OEDc4DRsbehcmIWDOhNmHIKwoNEgaYrUCHJmoLiQaCcBSefH84NLbYLAI9KpIMeeI1aTu3rMBwJQAH2cOr0rzlZv0RxnPTosKjO47ZuqZvWmLaI6qrcwq0be3oBEc3n2Ckei2aDYKhANfyQqBIzC3nkGJaK71Aic0aLHShZXxkTvALxiSif_fvp7QZO4uieCa-qsu5RIrqBjQ6lnWgfbGJ1P2lcc_Kb-5RZgHqiNiEtY"/>
+<div class="absolute top-1/2 -right-12 md:-right-6 w-12 h-12 bg-surface border border-outline-variant rounded-full flex items-center justify-center transform -translate-y-1/2 z-10">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">architecture</span>
+</div>
+</div>
+<div class="md:pl-12">
+<span class="text-label-md font-bold text-tertiary tracking-widest uppercase block mb-2">2686 — 2181 BCE</span>
+<h2 class="text-3xl font-serif text-on-surface mb-4">The Age of Stone Giants</h2>
+<p class="text-on-surface-variant leading-relaxed mb-6 md:max-w-md">
+                        The Old Kingdom witnessed the perfection of stone masonry. From the Step Pyramid at Saqqara to the massive plateaus of Giza, these structures were engineered to bridge the gap between mortality and the divine.
+                    </p>
+<div class="p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-lg max-w-sm">
+<h4 class="font-serif text-secondary mb-2 italic">Curator's Note</h4>
+<p class="text-sm text-on-surface-variant">Recent scans indicate the internal ramp systems were likely lubricated with wetted sand to minimize friction during block transport.</p>
+</div>
+</div>
+</section>
+<!-- Era Section: Middle Kingdom -->
+<section class="relative mb-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<div class="order-2 md:order-1 md:text-right">
+<span class="text-label-md font-bold text-tertiary tracking-widest uppercase block mb-2">2055 — 1650 BCE</span>
+<h2 class="text-3xl font-serif text-on-surface mb-4">The Renaissance of Letters</h2>
+<p class="text-on-surface-variant leading-relaxed mb-6 md:ml-auto md:max-w-md">
+                        A period of cultural restoration. The Middle Kingdom prioritized literature and personal piety. The Story of Sinuhe and the Prophecies of Neferti represent a pinnacle of classical Egyptian language.
+                    </p>
+<div class="flex md:justify-end gap-3">
+<span class="px-3 py-1 bg-secondary-fixed text-on-secondary-fixed text-xs rounded-full">Hieroglyphic Script</span>
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed text-xs rounded-full">Papyrus Scrolls</span>
+</div>
+</div>
+<div class="order-1 md:order-2 relative group">
+<div class="absolute -inset-4 bg-surface-container-low rounded-xl -z-10 transition-all group-hover:bg-surface-container"></div>
+<img class="w-full aspect-square object-cover rounded-lg shadow-sm border border-outline-variant/15" data-alt="Extreme close-up of intricate hieroglyphics carved into weathered limestone with warm side lighting revealing deep shadows in the glyphs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp79PbtFlB-3ST_rvM114iFTi5hrhUxjgSafI8Q4zRKdtN0ke_hz7681lCtoE3fjHE3nNX-8RlWzVQkP7qrt17HJmgFwgCvP0KRtv0KTHW9JSeiAsEuenXo5wlERLbDC1jnBlf_aL3nP1OpjaAlxPOKWRlIM6-dxr5tt5nt-ezUERPfS_0hWFjoIXzVKeC0kpqjBMQrtNZYZNJrZrkE-dj45qaiSbakEovTnLnCvBjfbdgDk8BB7GDK27lsWESXzxYUKAz0EUv9to"/>
+<div class="absolute top-1/2 -left-12 md:-left-6 w-12 h-12 bg-surface border border-outline-variant rounded-full flex items-center justify-center transform -translate-y-1/2 z-10">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+</div>
+</div>
+</section>
+<!-- Interactive Highlight: Floating Museum Plaque -->
+<div class="relative z-20 my-16 max-w-4xl mx-auto p-12 bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-4" style="font-variation-settings: 'FILL' 1;">stars</span>
+<h3 class="text-2xl font-serif text-on-surface mb-4 italic">"Time is a river whose current is composed of the events that happen; a violent stream; for as soon as a thing has been seen, it is carried away, and another comes in its place, and this will be carried away too."</h3>
+<p class="text-label text-on-surface-variant font-bold">— Marcus Aurelius</p>
+</div>
+<!-- Era Section: New Kingdom (Imperial Grandeur) -->
+<section class="relative mb-32 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<div class="relative group">
+<div class="absolute -inset-4 bg-surface-container-low rounded-xl -z-10 transition-all group-hover:bg-surface-container"></div>
+<img class="w-full aspect-[3/4] object-cover rounded-lg shadow-sm border border-outline-variant/15" data-alt="Low angle shot of majestic columns at Karnak Temple with sunlight filtering through the hypostyle hall creating dramatic god rays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNZvNvaU9Gzqm_YnHRHDfecBUh4wHl-Rd8WyiI-wkmMPZquOShuTouv_0Vgk5koIIhxO2PTHiDl59US2QYftG4BrVlu5s8_ZezEUX0_5f8P6Fcy9QtndqtShBGV3IfMGdv3mr5fCypBPXTwCKcP3b4wCZuvsX5_yK5xg04OsOuqtQ1g67KwmThl17HwaZvp-NBuW7g7lKEOnauFqlVM63fB4XsMFIooWuqdhWYuj3SBY0Bi3OUbXEKvcmbs-Y_1yMCcbACh5ryXnU"/>
+<div class="absolute top-1/2 -right-12 md:-right-6 w-12 h-12 bg-surface border border-outline-variant rounded-full flex items-center justify-center transform -translate-y-1/2 z-10">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+</div>
+<div class="md:pl-12">
+<span class="text-label-md font-bold text-tertiary tracking-widest uppercase block mb-2">1550 — 1070 BCE</span>
+<h2 class="text-3xl font-serif text-on-surface mb-4">The Empire of Gold</h2>
+<p class="text-on-surface-variant leading-relaxed mb-8 md:max-w-md">
+                        The height of Egyptian international power. From the temples of Luxor to the hidden tombs in the Valley of the Kings, the New Kingdom was an era of unprecedented wealth and architectural ambition.
+                    </p>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-high rounded-lg text-center">
+<span class="block text-2xl font-serif text-primary">60+</span>
+<span class="text-xs text-on-surface-variant uppercase font-bold">Tombs Discovered</span>
+</div>
+<div class="p-4 bg-surface-container-high rounded-lg text-center">
+<span class="block text-2xl font-serif text-primary">500</span>
+<span class="text-xs text-on-surface-variant uppercase font-bold">Years of Stability</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Call to Action -->
+<footer class="mt-32 pt-16 border-t border-outline-variant/20 flex flex-col items-center text-center">
+<h2 class="text-3xl font-serif mb-6 text-on-surface">Continue the Journey</h2>
+<div class="flex flex-wrap justify-center gap-6">
+<a href="map.html" class="px-8 py-3 bg-primary text-on-primary font-bold rounded-md hover:bg-primary-container transition-all shadow-md">Explore Map View</a>
+<a href="excavation.html" class="px-8 py-3 bg-secondary text-on-secondary font-bold rounded-md hover:opacity-90 transition-all shadow-md">Current Excavations</a>
+</div>
+</footer>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-[#f7f4e9] dark:bg-stone-950 full-width py-12 px-8 mt-auto tonal-shift via surface-container-low">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8 max-w-screen-2xl mx-auto">
+<div class="text-xl font-serif text-[#4c6078] dark:text-stone-300">Sawah</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-sm font-body text-[#4c6078] dark:text-stone-500 hover:underline decoration-[#914634] hover:text-[#914634] transition-all" href="#">Historical Resources</a>
+<a class="text-sm font-body text-[#4c6078] dark:text-stone-500 hover:underline decoration-[#914634] hover:text-[#914634] transition-all" href="#">Scholarly Database</a>
+<a class="text-sm font-body text-[#4c6078] dark:text-stone-500 hover:underline decoration-[#914634] hover:text-[#914634] transition-all" href="#">Conservation Efforts</a>
+<a class="text-sm font-body text-[#4c6078] dark:text-stone-500 hover:underline decoration-[#914634] hover:text-[#914634] transition-all" href="#">Contact Curator</a>
+</div>
+<div class="text-xs text-on-surface-variant opacity-60">
+                © 2024 Sawah: The Digital Curator. Preserving the legacy of antiquity.
+            </div>
+</div>
+</footer>
+<script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('-translate-x-full');
+    }
+</script>
+</body>
+</html>

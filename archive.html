@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth scroll-pt-24">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah | Archives</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                "colors": {
+                    "on-error": "#ffffff",
+                    "on-background": "#1c1c15",
+                    "surface-container-highest": "#e5e2d8",
+                    "secondary": "#4c6078",
+                    "on-secondary-container": "#51647d",
+                    "on-tertiary": "#ffffff",
+                    "surface-dim": "#dddacf",
+                    "on-primary-fixed": "#2d1600",
+                    "on-surface": "#1c1c15",
+                    "secondary-container": "#cde1fe",
+                    "on-tertiary-fixed-variant": "#763221",
+                    "on-secondary-fixed": "#061d32",
+                    "surface-tint": "#8b500b",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#914634",
+                    "background": "#fcf9ee",
+                    "outline": "#857467",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#ffb4a3",
+                    "on-primary-fixed-variant": "#6b3b00",
+                    "surface": "#fcf9ee",
+                    "on-primary": "#ffffff",
+                    "primary": "#884e08",
+                    "surface-container-low": "#f7f4e9",
+                    "tertiary-fixed": "#ffdad2",
+                    "primary-fixed": "#ffdcc0",
+                    "inverse-surface": "#31312a",
+                    "inverse-primary": "#ffb876",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#b4c8e4",
+                    "surface-variant": "#e5e2d8",
+                    "on-tertiary-container": "#fffbff",
+                    "secondary-fixed": "#d1e4ff",
+                    "surface-bright": "#fcf9ee",
+                    "primary-container": "#a66622",
+                    "on-tertiary-fixed": "#3c0700",
+                    "on-surface-variant": "#524438",
+                    "primary-fixed-dim": "#ffb876",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#af5e4a",
+                    "on-primary-container": "#fffbff",
+                    "outline-variant": "#d7c3b3",
+                    "inverse-on-surface": "#f4f1e6",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#35485f",
+                    "surface-container-high": "#ebe8dd",
+                    "surface-container": "#f1eee3"
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
+.parchment-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+}
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #d7c3b3;
+    border-radius: 10px;
+}
+.font-serif { font-family: 'Noto Serif', serif; }
+
+/* High-End Styling for Wikipedia Raw Content */
+.wiki-content { font-size: 1.1rem; line-height: 1.8; color: #374151; }
+.wiki-content h2 { font-family: 'Noto Serif', serif; font-size: 1.875rem; font-weight: 700; font-style: italic; color: #1c1c15; margin: 3rem 0 1.5rem; border-bottom: 1px solid #e5e2d8; padding-bottom: 0.5rem; }
+.wiki-content h3 { font-family: 'Noto Serif', serif; font-size: 1.5rem; font-weight: 600; color: #884e08; margin: 2rem 0 1rem; }
+.wiki-content p { margin-bottom: 1.5rem; }
+.wiki-content table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.85rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+.wiki-content td, .wiki-content th { border: 1px solid #f1eee3; padding: 1rem; text-align: left; vertical-align: top; }
+.wiki-content th { background: #fdfbf3; color: #884e08; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; }
+
+.wiki-content .infobox { float: right; width: 340px; margin: 0 0 2.5rem 2.5rem; background: #fff; border: 1px solid #e5e2d8; padding: 1.5rem; font-size: 0.8rem; border-radius: 12px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05); }
+.wiki-content .infobox caption { font-family: 'Noto Serif', serif; font-weight: 700; font-size: 1.2rem; color: #1c1c15; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f1eee3; }
+.wiki-content .infobox img { border-radius: 8px; margin-bottom: 1rem; }
+
+@media (max-width: 768px) {
+    .wiki-content .infobox {
+        float: none;
+        width: 100%;
+        margin: 0 0 2rem 0;
+    }
+}
+
+.wiki-content .reflist { font-size: 0.8rem; color: #524438; column-count: 1; column-gap: 3rem; margin-top: 3rem; border-top: 1px solid #d7c3b3; padding: 2.5rem 0; }
+@media (min-width: 768px) { .wiki-content .reflist { column-count: 2; } }
+.wiki-content .reflist ol, .wiki-content ol.references { list-style-type: decimal !important; margin-left: 0; padding-left: 2rem; }
+.wiki-content .reflist li, .wiki-content ol.references li { margin-bottom: 0.8rem; word-wrap: break-word; display: list-item !important; list-style-position: outside; }
+.wiki-content .mw-cite-backlink { font-family: 'Manrope', sans-serif; font-weight: 700; color: #884e08; margin-right: 0.5rem; text-decoration: none; }
+.wiki-content .reflist a { color: #4c6078; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; }
+.wiki-content .reflist a:hover { color: #884e08; border-bottom-color: #884e08; }
+
+.wiki-content .thumb { margin: 2.5rem 0; padding: 1rem; background: #fff; border: 1px solid #f1eee3; border-radius: 12px; width: fit-content; max-width: 100%; transition: all 0.3s ease; display: flex; flex-direction: column; }
+.wiki-content .thumb:hover { border-color: #d7c3b3; box-shadow: 0 12px 40px -10px rgba(0,0,0,0.05); }
+.wiki-content .thumb img { border-radius: 8px; filter: sepia(0.15) contrast(1.05); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+.wiki-content .thumb:hover img { filter: sepia(0) contrast(1); }
+.wiki-content .thumbcaption, .wiki-content .gallerytext { font-family: 'Manrope', sans-serif; font-size: 0.75rem !important; color: #857467 !important; margin-top: 0.75rem !important; font-style: italic !important; line-height: 1.5 !important; border: none !important; padding: 0 !important; display: block !important; }
+.wiki-content .reference { vertical-align: super; font-size: 0.65rem; font-weight: 800; color: #884e08; margin-left: 2px; text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
+.wiki-content .reference:hover { opacity: 1; }
+
+/* Styling for native Wikipedia Galleries found inside sections (like Abu Simbel #section-5) */
+.wiki-content .gallery { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important; gap: 1.5rem !important; padding: 0 !important; list-style: none !important; margin: 2rem 0 !important; }
+.wiki-content .gallerybox { width: 100% !important; margin: 0 !important; height: auto !important; }
+.wiki-content .gallerybox .thumb { width: 100% !important; margin: 0 !important; padding: 0.75rem !important; display: flex !important; flex-direction: column !important; height: auto !important; }
+.wiki-content .gallerybox .thumb img { width: 100% !important; height: 180px !important; object-fit: cover !important; }
+
+/* Hide Wikipedia administrative metadata, maintenance tags, hatnotes, and navigation boxes */
+.wiki-content .mw-editsection, .wiki-content .hatnote, .wiki-content .ambox, .wiki-content .metadata, .wiki-content .navbox, .wiki-content .banner-shell { display: none !important; }
+
+/* Navigation Index Styles */
+#toc-list li { margin-bottom: 0.5rem; }
+#toc-list a { transition: all 0.2s; }
+#toc-list a:hover { color: #884e08; padding-left: 4px; }
+
+/* Lightbox Animation */
+#lightbox-modal { transition: opacity 0.3s ease; }
+#lightbox-modal.hidden { opacity: 0; pointer-events: none; }
+#lightbox-modal { opacity: 1; display: flex !important; }
+/* Ensure images that can be lightboxed show a cursor */
+.wiki-content img, .header-img, .cursor-zoom-in {
+    cursor: zoom-in;
+}
+
+.gallery-image { filter: sepia(0.15) contrast(1.05); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+.gallery-image:hover { filter: sepia(0) contrast(1); transform: scale(1.05); }
+#lightbox-img { cursor: grab; user-select: none; transition: transform 0.1s ease-out; }
+#lightbox-img:active { cursor: grabbing; }
+</style>
+</head>
+
+<body class="bg-background text-on-surface">
+    
+<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 sticky top-0 z-50 h-16 flex items-center">
+    <div class="flex justify-between items-center w-full px-8 max-w-screen-2xl mx-auto"> 
+        <div class="flex items-center gap-8">
+            <a href="index.html" class="text-2xl font-serif italic text-secondary hover:opacity-80 transition-opacity">Sawah</a>
+            <nav class="hidden md:flex items-center gap-6">
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="index.html">Discover</a>
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="map.html">Map</a>
+                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="timeline.html">Timeline</a>
+                <a class="text-primary border-b-2 border-primary pb-1 font-bold transition-colors duration-300" href="archive.html">Archives</a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-2 md:gap-4">
+            <div class="relative group hidden sm:block">
+                <input id="article-search" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic" placeholder="Explore the Past..." type="text"/>
+                <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
+            </div>
+            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button> 
+            <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+        </div>
+    </div>
+</header>
+
+<!-- Mobile Menu Drawer -->
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[70] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
+    <div class="p-6 flex flex-col h-full">
+        <div class="flex justify-between items-center mb-8">
+            <a href="index.html" class="text-2xl font-serif italic text-secondary">Sawah</a>
+            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">close</button>
+        </div>
+        <nav class="flex flex-col gap-4 text-lg font-body flex-grow">
+            <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html" onclick="toggleMobileMenu()">Discover</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors" href="map.html" onclick="toggleMobileMenu()">Map</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors" href="timeline.html" onclick="toggleMobileMenu()">Timeline</a>
+            <a class="text-primary font-bold hover:text-primary-container transition-colors" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
+        </nav>
+        <div class="mt-auto pt-6 border-t border-outline-variant/20">
+            <input id="mobile-search" onkeypress="if(event.key==='Enter') { window.location.href = `archive.html?placeName=${encodeURIComponent(this.value)}`; toggleMobileMenu(); }" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic mb-4" placeholder="Explore the Past..." type="text"/>
+            <button class="w-full text-left text-on-surface-variant hover:text-primary transition-colors py-2">Account</button>
+        </div>
+    </div>
+</div>
+
+<main class="max-w-screen-2xl mx-auto px-6 lg:px-8 py-10 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10">
+    <div class="lg:col-span-9 min-w-0">
+        <article id="content" class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-stone-200/50">
+            <div class="animate-pulse space-y-8">
+                <div class="h-[400px] bg-stone-100 rounded-xl"></div>
+                <div class="h-10 bg-stone-100 rounded w-3/4"></div>
+                <div class="space-y-4">
+                    <div class="h-4 bg-stone-100 rounded w-full"></div>
+                    <div class="h-4 bg-stone-100 rounded w-full"></div>
+                    <div class="h-4 bg-stone-100 rounded w-2/3"></div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <aside class="lg:col-span-3 space-y-8">
+        <!-- Chronicle Index -->
+        <div id="toc-container" class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm hidden sticky top-28">
+            <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-6 border-b border-stone-100 pb-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-primary">list_alt</span>
+                Chronicle Index
+            </h3>
+            <ul id="toc-list" class="text-[11px] text-stone-500 font-bold uppercase tracking-wider space-y-3"></ul>
+        </div>
+
+        <!-- Archival Metadata -->
+        <div class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm">
+            <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-primary">dataset</span>
+                Archival Registry
+            </h3>
+            <ul id="meta-list" class="text-[10px] space-y-3 text-stone-600 font-medium">
+                <li class="flex justify-between"><span>Status</span> <span class="text-primary font-bold">Verified</span></li>
+                <li class="flex justify-between"><span>Repository</span> <span>Wikimedia Global</span></li>
+                <li id="meta-rev" class="flex justify-between"><span>Revision</span> <span class="italic">Syncing...</span></li>
+            </ul>
+        </div>
+    </aside>
+</main>
+
+<!-- Technical Fact Sheet Component (Inserted into sidebar via JS) -->
+<template id="fact-sheet-template">
+    <div id="fact-sheet-container" class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm mt-8">
+        <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm text-primary">fact_check</span>
+            Technical Fact Sheet
+        </h3>
+        <ul id="fact-sheet-list" class="text-[10px] space-y-3 text-stone-600 font-medium"></ul>
+    </div>
+</template>
+
+<!-- Lightbox Modal -->
+<div id="lightbox-modal" class="fixed inset-0 z-[100] bg-stone-900/95 hidden items-center justify-center p-8">
+    <button onclick="closeLightbox()" class="absolute top-8 right-8 text-white hover:text-primary transition-colors group">
+        <span class="material-symbols-outlined text-4xl">close</span>
+        <span class="block text-[10px] font-bold tracking-widest uppercase mt-1 opacity-0 group-hover:opacity-100 transition-opacity text-center">Close</span>
+    </button>
+    <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded shadow-2xl">
+    <div id="lightbox-caption" class="absolute bottom-12 left-1/2 -translate-x-1/2 max-w-2xl text-center text-white/80 font-body text-sm italic"></div>
+</div>
+
+<div id="ai-chat-container" class="fixed bottom-28 right-8 w-80 md:w-96 h-[500px] max-h-[80vh] bg-surface-container rounded-3xl shadow-2xl border border-outline-variant/20 z-[60] flex flex-col hidden overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0">
+    <div class="p-4 bg-primary text-on-primary flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined text-sm">smart_toy</span>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold uppercase tracking-widest">Sawah Oracle</h4>
+                <p class="text-xs opacity-70">Digital Historian AI</p>
+            </div>
+        </div>
+        <button onclick="toggleChat()" class="material-symbols-outlined hover:bg-white/10 rounded-full p-1 transition-colors text-sm">close</button>
+    </div>
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-surface-container-lowest">
+        <div class="flex gap-2">
+            <div class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-[14px] text-primary">smart_toy</span>
+            </div>
+            <div class="bg-surface-container p-3 rounded-lg rounded-tl-none max-w-[85%]">
+                <p class="text-sm text-on-surface leading-relaxed italic">Greetings, seeker of antiquity. I am the Sawah Oracle. How may I assist your journey through the archives today?</p>
+            </div>
+        </div>
+
+        <!-- Quick Assist Chips -->
+        <div id="chat-suggestions" class="flex flex-wrap gap-2 pt-2">
+            <button onclick="useQuickPrompt('Tell me about the Pyramids')" class="text-xs bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/30 hover:border-primary hover:text-primary transition-all font-bold uppercase tracking-wider">The Pyramids</button>
+            <button onclick="useQuickPrompt('Where is Machu Picchu?')" class="text-xs bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/30 hover:border-primary hover:text-primary transition-all font-bold uppercase tracking-wider">Machu Picchu</button>
+            <button onclick="useQuickPrompt('Archaeological Methodology')" class="text-xs bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/30 hover:border-primary hover:text-primary transition-all font-bold uppercase tracking-wider">Methodology</button>
+        </div>
+    </div>
+    <div class="p-4 bg-surface-container border-t border-outline-variant/10">
+        <div class="flex gap-2 bg-surface-container-low p-2 rounded-lg border border-outline-variant/20">
+            <input id="chat-input" type="text" placeholder="Ask about ancient wonders..." class="flex-1 bg-transparent border-none focus:ring-0 text-sm italic" onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()" class="material-symbols-outlined text-primary hover:scale-110 transition-transform text-lg">send</button>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Action Buttons -->
+<div class="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+    <button onclick="toggleChat()" id="chat-fab" class="w-14 h-14 bg-secondary text-on-secondary rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+        <span class="material-symbols-outlined">chat_bubble</span>
+    </button>
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+        <span class="material-symbols-outlined">vertical_align_top</span>
+    </button>
+</div>
+
+<!-- Archive Detail Drawer -->
+<div id="archive-drawer" class="fixed top-0 right-0 h-full w-0 bg-surface shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[100] overflow-y-auto border-l border-outline-variant/20">
+    <div class="p-6 md:p-10 w-full md:w-[750px]">
+        <button onclick="closeArchive()" class="mb-10 flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest transition-colors group">
+            <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">close</span>
+            Close Archive
+        </button>
+        <div id="archive-content"></div>
+    </div>
+</div>
+
+<!-- AI Dossier Drawer (for chatbot responses) -->
+<div id="ai-dossier-drawer" class="fixed top-0 right-0 h-full w-0 bg-surface shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[100] overflow-y-auto border-l border-outline-variant/20">
+    <div class="p-6 md:p-10 w-full md:w-[750px]">
+        <button onclick="closeAIDossier()" class="mb-10 flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest transition-colors group">
+            <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">close</span>
+            Close AI Dossier
+        </button>
+        <div id="ai-dossier-content"></div>
+    </div>
+</div>
+
+<script>
+const GROQ_API_KEY = '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';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+/* Wikipedia Archival Loading Logic */
+async function loadWikiContent(title) {
+    const contentArea = document.getElementById('content');
+    const tocList = document.getElementById('toc-list');
+    const tocContainer = document.getElementById('toc-container');
+    
+    const searchTitle = title.trim();
+
+    try {
+        // Using action=parse with origin=* is the most reliable way to bypass CORS on local servers
+        const url = `https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(searchTitle)}&format=json&origin=*&prop=text|sections|displaytitle|revid&redirects=1`;
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Archival server responded with status: ${response.status}`);
+        
+        const data = await response.json();
+        
+        if (data.error) throw new Error(data.error.info || "Archival record not found.");
+        const parse = data.parse;
+
+        // Helper to fix Wikipedia relative links and protocol-relative image paths
+        const cleanWikiHtml = (html) => {
+            return html
+                .replace(/href="\.\/([^"]+)"/g, 'href="https://en.wikipedia.org/wiki/$1" target="_blank"')
+                .replace(/href="\/wiki\/([^"]+)"/g, 'href="https://en.wikipedia.org/wiki/$1" target="_blank"')
+                .replace(/src="\/\//g, 'src="https://') 
+                .replace(/srcset="([^"]+)"/g, (match, p1) => `srcset="${p1.replace(/(^|,)\s*\/\//g, '$1 https://')}"`);
+        };
+
+        const displayTitle = parse.displaytitle || parse.title;
+        let fullHtml = `<h1 class="text-5xl font-serif italic font-bold mb-8 text-stone-900 leading-tight">${displayTitle}</h1>`;
+        fullHtml += `<div class="wiki-content">${cleanWikiHtml(parse.text['*'])}</div>`;
+        
+        tocList.innerHTML = '';
+
+        // Process sub-sections safely
+        const sections = parse.sections || [];
+        sections.forEach(section => {
+            if (parseInt(section.toclevel) === 1) {
+                const li = document.createElement('li');
+                // Wikipedia anchors are usually the same as the line name or an escaped version
+                li.innerHTML = `<a href="#${encodeURIComponent(section.anchor)}" class="hover:text-primary transition-colors">${section.line}</a>`;
+                tocList.appendChild(li);
+            }
+        });
+
+        contentArea.innerHTML = fullHtml;
+        tocContainer.classList.remove('hidden');
+        document.getElementById('meta-rev').innerText = parse.revid;
+
+        // Setup Lightbox for Wikipedia Images
+        contentArea.querySelectorAll('img').forEach(img => {
+            const link = img.closest('a');
+            if (link && (link.classList.contains('image') || link.href.includes('File:'))) {
+                link.href = "javascript:void(0)";
+                link.removeAttribute('target');
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const fullSrc = img.src.includes('/thumb/') 
+                        ? img.src.replace('/thumb/', '/').split('/').slice(0, -1).join('/') 
+                        : img.src;
+                    const captionText = img.closest('.thumb, .gallerybox')?.querySelector('.thumbcaption, .gallerytext')?.innerText || img.alt || "";
+                    openLightbox(fullSrc, captionText);
+                });
+            }
+        });
+        
+    } catch (error) {
+        console.error("Wikipedia Archival Error:", error);
+        let errorMessage = error.message;
+        if (errorMessage === "Failed to fetch") {
+            const isFileProtocol = window.location.protocol === 'file:';
+            if (isFileProtocol) {
+                errorMessage = "Network request blocked. Browsers prevent API calls when opening HTML files directly. Please use your Live Server address (http://localhost:5500).";
+            } else {
+                errorMessage = "The Archival Registry is currently unreachable. This may be due to a lost internet connection or Wikipedia's API being temporarily down.";
+            }
+        }
+
+        contentArea.innerHTML = `
+            <div class="py-20 text-center">
+                <span class="material-symbols-outlined text-stone-200 text-6xl mb-4">history_edu</span>
+                <p class="text-stone-400 italic px-4 max-w-md mx-auto leading-relaxed">${errorMessage}</p>
+                <button onclick="window.history.back()" class="mt-6 text-[10px] font-bold text-primary flex items-center gap-2 mx-auto uppercase tracking-widest hover:underline">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span> Return to Previous Record
+                </button>
+            </div>`;
+    }
+}
+
+/* Search Integration */
+document.getElementById('article-search').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        window.location.href = `archive.html?placeName=${encodeURIComponent(e.target.value)}`;
+    }
+});
+
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('-translate-x-full');
+}
+
+/* Chat UI State Management */
+function toggleChat() {
+    const chat = document.getElementById('ai-chat-container');
+    const isHidden = chat.classList.contains('hidden');
+    
+    if (isHidden) {
+        chat.classList.remove('hidden');
+        setTimeout(() => chat.classList.remove('opacity-0', 'translate-y-4'), 10);
+    } else {
+        chat.classList.add('opacity-0', 'translate-y-4');
+        setTimeout(() => chat.classList.add('hidden'), 300);
+    }
+}
+
+window.useQuickPrompt = function(text) {
+    document.getElementById('chat-input').value = text;
+    sendMessage();
+    document.getElementById('chat-suggestions').classList.add('hidden');
+}
+
+async function sendMessage() {
+    const input = document.getElementById("chat-input");
+    const container = document.getElementById('chat-messages');
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = "";
+
+    // User Message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'flex justify-end';
+    userMsg.innerHTML = `<div class="bg-primary text-on-primary p-3 rounded-lg rounded-tr-none max-w-[85%] shadow-sm"><p class="text-sm leading-relaxed">${escapeHTML(text)}</p></div>`;
+    container.appendChild(userMsg);
+    container.scrollTop = container.scrollHeight;
+
+    // Bot Typing State
+    const botId = 'bot-' + Date.now();
+    const typingBubble = document.createElement('div');
+    typingBubble.id = botId;
+    typingBubble.className = 'flex gap-2';
+    typingBubble.innerHTML = `
+        <div class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-[14px] text-primary">smart_toy</span>
+        </div>
+        <div class="bg-surface-container p-3 rounded-lg rounded-tl-none max-w-[85%]">
+            <div class="flex gap-1">
+                <span class="w-1 h-1 bg-secondary/40 rounded-full animate-bounce"></span>
+                <span class="w-1 h-1 bg-secondary/40 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                <span class="w-1 h-1 bg-secondary/40 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+            </div>
+        </div>`;
+    container.appendChild(typingBubble);
+    container.scrollTop = container.scrollHeight;
+
+    try {
+        const response = await fetch(GROQ_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${GROQ_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: GROQ_MODEL,
+                messages: [
+                    { role: "system", content: "You are the Sawah Oracle, a digital historian. Answer queries about history or archaeology concisely." },
+                    { role: "user", content: text }
+                ]
+            })
+        });
+
+        const data = await response.json();
+        const aiText = data?.choices?.[0]?.message?.content || "The Oracle is silent. Please try again.";
+
+        setTimeout(() => {
+            renderBotResponse(botId, aiText, text);
+        }, 800 + Math.random() * 500);
+
+    } catch (err) {
+        setTimeout(() => {
+            renderBotResponse(botId, "Connection error: " + err.message);
+        }, 1000);
+    }
+}
+
+function renderBotResponse(id, text, originalQuery) {
+    const botBubble = document.getElementById(id);
+    if (!botBubble) return;
+
+    const contentArea = botBubble.querySelector('.bg-surface-container');
+    contentArea.innerHTML = `
+        <div class="space-y-4">
+            <div class="text-sm text-on-surface leading-relaxed">${text}</div>
+            ${originalQuery ? `
+            <div class="flex items-center justify-between pt-3 border-t border-outline-variant/10">
+                <button onclick="openAIDossier('${escapeHTML(originalQuery)}')" class="text-[10px] font-bold text-primary flex items-center gap-1 hover:underline">
+                    <span class="material-symbols-outlined text-sm">auto_stories</span> Detailed Dossier
+                </button>
+            </div>` : ''}
+        </div>`;
+    
+    document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+}
+
+
+/* =========================
+   AI DOSSIER (FIXED DRAWER)
+========================= */
+
+async function openAIDossier(name) {
+    const drawer = document.getElementById('ai-dossier-drawer');
+    const content = document.getElementById('ai-dossier-content');
+
+    if (!drawer || !content) return;
+
+    drawer.style.width = window.innerWidth > 768 ? '750px' : '100%';
+    content.innerHTML = `
+        <div class="animate-pulse space-y-8 p-6">
+            <div class="h-10 bg-stone-100 rounded w-3/4"></div>
+            <div class="space-y-4">
+                <div class="h-4 bg-stone-100 rounded w-full"></div>
+                <div class="h-4 bg-stone-100 rounded w-5/6"></div>
+            </div>
+        </div>
+    `;
+
+    try {
+        const response = await fetch(GROQ_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${GROQ_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: GROQ_MODEL,
+                messages: [{ role: "user", content: `Generate a detailed archaeological dossier for "${name}". Include significance and architecture. Format with <p> and <h3> tags.` }]
+            })
+        });
+
+        if (!response.ok) throw new Error(`Oracle connection failed (${response.status})`);
+        const data = await response.json();
+        const aiText = data?.choices?.[0]?.message?.content || "No data.";
+
+        content.innerHTML = `
+            <h2 class="text-3xl font-serif italic font-bold mb-6">${escapeHTML(name)}</h2><div class="prose prose-stone max-w-none text-sm leading-relaxed">${aiText}</div>`;
+    } catch (err) {
+        content.innerHTML = `<div class="p-10 text-center"><p class="text-red-500 italic">Failed to fetch dossier: ${err.message}</p></div>`;
+    }
+}
+
+/* =========================
+   CLOSE DOSSIER
+========================= */
+
+window.openLightbox = function(src, caption) {
+    const modal = document.getElementById('lightbox-modal');
+    const img = document.getElementById('lightbox-img');
+    const cap = document.getElementById('lightbox-caption');
+    img.src = src;
+    cap.innerText = caption;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+window.closeLightbox = function() {
+    const modal = document.getElementById('lightbox-modal');
+    const img = document.getElementById('lightbox-img');
+    if (img) img.src = "";
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function closeAIDossier() {
+    const drawer = document.getElementById('ai-dossier-drawer');
+    if (drawer) drawer.style.width = "0";
+}
+
+/* =========================
+   SECURITY & INIT
+========================= */
+
+function escapeHTML(str) {
+    return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const placeName = params.get('placeName');
+    if (placeName) {
+        document.getElementById('content').innerHTML = `<div class="animate-pulse space-y-8"><div class="h-96 bg-stone-100 rounded-xl"></div><div class="h-10 bg-stone-100 rounded w-3/4"></div><div class="space-y-4"><div class="h-4 bg-stone-100 rounded w-full"></div><div class="h-4 bg-stone-100 rounded w-full"></div><div class="h-4 bg-stone-100 rounded w-2/3"></div></div></div>`; // Show loader
+        loadWikiContent(placeName);
+    }
+});
+</script>
+
+</body>
+</html>
