@@ -189,14 +189,13 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
             <a class="text-on-surface-variant hover:text-primary transition-colors" href="timeline.html" onclick="toggleMobileMenu()">Timeline</a>
             <a class="text-primary font-bold hover:text-primary-container transition-colors" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
         </nav>
-        <div class="mt-auto pt-6 border-t border-outline-variant/20">
             <input id="mobile-search" onkeypress="if(event.key==='Enter') { window.location.href = `archive.html?placeName=${encodeURIComponent(this.value)}`; toggleMobileMenu(); }" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic mb-4" placeholder="Explore the Past..." type="text"/>
             <button class="w-full text-left text-on-surface-variant hover:text-primary transition-colors py-2">Account</button>
         </div>
     </div>
 </div>
 
-<main class="max-w-screen-2xl mx-auto px-6 lg:px-8 py-10 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10">
+<main class="max-w-screen-2xl mx-auto px-6 lg:px-8 py-10 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 relative">
     <div class="lg:col-span-9 min-w-0">
         <article id="content" class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-stone-200/50">
             <div class="animate-pulse space-y-8">
@@ -212,7 +211,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
     </div>
 
     <aside class="lg:col-span-3 space-y-8">
-        <!-- Chronicle Index -->
+        <!-- Chronicle Index --> 
         <div id="toc-container" class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm hidden sticky top-28">
             <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-6 border-b border-stone-100 pb-2 flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm text-primary">list_alt</span>
@@ -221,7 +220,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
             <ul id="toc-list" class="text-[11px] text-stone-500 font-bold uppercase tracking-wider space-y-3"></ul>
         </div>
 
-        <!-- Archival Metadata -->
+        <!-- Archival Metadata --> 
         <div class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm">
             <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm text-primary">dataset</span>
@@ -235,7 +234,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
         </div>
     </aside>
 </main>
-
+ 
 <!-- Technical Fact Sheet Component (Inserted into sidebar via JS) -->
 <template id="fact-sheet-template">
     <div id="fact-sheet-container" class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm mt-8">
@@ -248,7 +247,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
 </template>
 
 <!-- Lightbox Modal -->
-<div id="lightbox-modal" class="fixed inset-0 z-[100] bg-stone-900/95 hidden items-center justify-center p-8">
+<div id="lightbox-modal" class="fixed inset-0 z-[1000] bg-stone-900/95 hidden items-center justify-center p-8">
     <button onclick="closeLightbox()" class="absolute top-8 right-8 text-white hover:text-primary transition-colors group">
         <span class="material-symbols-outlined text-4xl">close</span>
         <span class="block text-[10px] font-bold tracking-widest uppercase mt-1 opacity-0 group-hover:opacity-100 transition-opacity text-center">Close</span>
@@ -257,7 +256,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
     <div id="lightbox-caption" class="absolute bottom-12 left-1/2 -translate-x-1/2 max-w-2xl text-center text-white/80 font-body text-sm italic"></div>
 </div>
 
-<div id="ai-chat-container" class="fixed bottom-28 right-8 w-80 md:w-96 h-[500px] max-h-[80vh] bg-surface-container rounded-3xl shadow-2xl border border-outline-variant/20 z-[60] flex flex-col hidden overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0">
+<div id="ai-chat-container" class="fixed bottom-28 right-8 w-80 md:w-96 h-[500px] max-h-[80vh] bg-surface-container rounded-3xl shadow-2xl border border-outline-variant/20 z-[1000] flex flex-col hidden overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0">
     <div class="p-4 bg-primary text-on-primary flex justify-between items-center shadow-md">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -270,7 +269,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
         </div>
         <button onclick="toggleChat()" class="material-symbols-outlined hover:bg-white/10 rounded-full p-1 transition-colors text-sm">close</button>
     </div>
-    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-surface-container-lowest">
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-surface-container-lowest"> 
         <div class="flex gap-2">
             <div class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-[14px] text-primary">smart_toy</span>
@@ -296,7 +295,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
 </div>
 
 <!-- Floating Action Buttons -->
-<div class="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+<div class="fixed bottom-8 right-8 flex flex-col gap-4 z-[900]">
     <button onclick="toggleChat()" id="chat-fab" class="w-14 h-14 bg-secondary text-on-secondary rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
         <span class="material-symbols-outlined">chat_bubble</span>
     </button>
@@ -306,7 +305,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
 </div>
 
 <!-- Archive Detail Drawer -->
-<div id="archive-drawer" class="fixed top-0 right-0 h-full w-0 bg-surface shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[100] overflow-y-auto border-l border-outline-variant/20">
+<div id="archive-drawer" class="fixed top-0 right-0 h-full w-0 bg-surface shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[1000] overflow-y-auto border-l border-outline-variant/20">
     <div class="p-6 md:p-10 w-full md:w-[750px]">
         <button onclick="closeArchive()" class="mb-10 flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest transition-colors group">
             <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">close</span>
@@ -317,7 +316,7 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
 </div>
 
 <!-- AI Dossier Drawer (for chatbot responses) -->
-<div id="ai-dossier-drawer" class="fixed top-0 right-0 h-full w-0 bg-surface shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[100] overflow-y-auto border-l border-outline-variant/20">
+<div id="ai-dossier-drawer" class="fixed top-0 right-0 h-full w-0 bg-surface shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[1000] overflow-y-auto border-l border-outline-variant/20">
     <div class="p-6 md:p-10 w-full md:w-[750px]">
         <button onclick="closeAIDossier()" class="mb-10 flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest transition-colors group">
             <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">close</span>

@@ -115,23 +115,23 @@
 <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="archive.html">Archives</a>
 </div>
 </div>
-<div class="flex items-center gap-1">
+        <div class="flex items-center gap-4">
 <div class="relative group hidden sm:block">
-<input id="home-search" onkeypress="if(event.key==='Enter') openArchiveDetail(this.value)" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic" placeholder="Explore the Past..." type="text"/>
+                <input id="home-search" onkeypress="if(event.key==='Enter') window.openArchiveDetail(this.value)" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic uppercase tracking-widest" placeholder="EXPLORE THE PAST..." type="text"/>
 <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
 </div>
 <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button>
-<button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+            <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">menu</button>
 </div>
 </nav>
 </header>
 
 <!-- Mobile Menu Drawer -->
-<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[70] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
     <div class="p-6 flex flex-col h-full">
         <div class="flex justify-between items-center mb-8">
             <a href="index.html" class="text-2xl font-serif italic text-secondary">Sawah</a>
-            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">close</button>
+            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">close</button>
         </div>
         <nav class="flex flex-col gap-4 text-lg font-body flex-grow">
             <a class="text-primary font-bold hover:text-primary-container transition-colors" href="index.html" onclick="toggleMobileMenu()">Discover</a>
@@ -141,7 +141,7 @@
         </nav>
         <div class="mt-auto pt-6 border-t border-outline-variant/20">
             <div class="relative group mb-4">
-                <input id="mobile-search" onkeypress="if(event.key==='Enter') { openArchiveDetail(this.value); toggleMobileMenu(); }" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic" placeholder="Explore the Past..." type="text"/>
+                <input id="mobile-search" onkeypress="if(event.key==='Enter') { window.openArchiveDetail(this.value); window.toggleMobileMenu(); }" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic uppercase tracking-widest" placeholder="EXPLORE THE PAST..." type="text"/>
                 <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
             </div>
             <button class="w-full text-left text-on-surface-variant hover:text-primary transition-colors py-2">Account</button>
@@ -478,7 +478,7 @@
         document.getElementById('archive-drawer').style.width = '0';
     }
 
-    function toggleMobileMenu() {
+    window.toggleMobileMenu = function() {
         const menu = document.getElementById('mobile-menu');
         menu.classList.toggle('-translate-x-full');
     }

@@ -1,83 +1,262 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth scroll-pt-24">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Sawah Map</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;700&display=swap" rel="stylesheet"/>
-<link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
+
+<!-- MapLibre -->
+<link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet"/>
+<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                "colors": {
+                    "on-error": "#ffffff",
+                    "on-background": "#1c1c15",
+                    "surface-container-highest": "#e5e2d8",
+                    "secondary": "#4c6078",
+                    "on-secondary-container": "#51647d",
+                    "on-tertiary": "#ffffff",
+                    "surface-dim": "#dddacf",
+                    "on-primary-fixed": "#2d1600",
+                    "on-surface": "#1c1c15",
+                    "secondary-container": "#cde1fe",
+                    "on-tertiary-fixed-variant": "#763221",
+                    "on-secondary-fixed": "#061d32",
+                    "surface-tint": "#8b500b",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#914634",
+                    "background": "#fcf9ee",
+                    "outline": "#857467",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#ffb4a3",
+                    "on-primary-fixed-variant": "#6b3b00",
+                    "surface": "#fcf9ee",
+                    "on-primary": "#ffffff",
+                    "primary": "#884e08",
+                    "surface-container-low": "#f7f4e9",
+                    "tertiary-fixed": "#ffdad2",
+                    "primary-fixed": "#ffdcc0",
+                    "inverse-surface": "#31312a",
+                    "inverse-primary": "#ffb876",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#b4c8e4",
+                    "surface-variant": "#e5e2d8",
+                    "on-tertiary-container": "#fffbff",
+                    "secondary-fixed": "#d1e4ff",
+                    "surface-bright": "#fcf9ee",
+                    "primary-container": "#a66622",
+                    "on-tertiary-fixed": "#3c0700",
+                    "on-surface-variant": "#524438",
+                    "primary-fixed-dim": "#ffb876",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#af5e4a",
+                    "on-primary-container": "#fffbff",
+                    "outline-variant": "#d7c3b3",
+                    "inverse-on-surface": "#f4f1e6",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#35485f",
+                    "surface-container-high": "#ebe8dd",
+                    "surface-container": "#f1eee3"
+                },
+                "fontFamily": {
+                    "headline": ["Newsreader"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+                }
+            }
+        }
+    }
+</script>
+
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
 <style>
-body { font-family: 'Manrope', sans-serif; margin:0; background-color: #fcf9ee; }
-#map { height: 100vh; width: 100%; flex-grow: 1; z-index: 1; }
-.map-layout { display: flex; flex-direction: column; height: calc(100vh - 64px); }
-.sidebar { width: 100%; border-bottom: 1px solid #d7c3b3; overflow-y: auto; background: #fdfbf3; padding: 24px; }
 
-@media (min-width: 768px) {
-    .map-layout { flex-direction: row; }
-    .sidebar { width: 320px; border-bottom: none; border-right: 1px solid #d7c3b3; }
-}
-.sidebar h2 { font-family: 'Noto Serif', serif; color: #884e08; font-size: 11px; letter-spacing: 0.15em; border-bottom: 1px solid #e5e2d8; padding-bottom: 12px; }
-.map-control-btn { background: white; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.3); width: 40px; height: 40px; border-radius: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; transition: color 0.2s; }
-.map-control-btn:hover { color: #884e08; }
-
-.maplibregl-popup-content {
-    background: #fdfbf3 !important;
-    padding: 0 !important;
-    border-radius: 12px !important;
-    overflow: hidden !important;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* Larger, more prominent close button for popups */
-.maplibregl-popup-close-button {
-    font-size: 18px !important; /* Make the 'x' character bigger */
-    width: 28px !important;    /* Increase clickable area */
-    height: 28px !important;   /* Increase clickable area */
-    line-height: 28px !important; /* Vertically center 'x' */
-    color: #4c6078 !important; /* Match text color with secondary */
-    background-color: #fdfbf3 !important; /* Match surface-container color */
-    border-radius: 50% !important; /* Make it circular */
-    transition: all 0.2s; /* Smooth transition for hover effects */
+body{
+    font-family:'Manrope',sans-serif;
+    background:#fcf9ee;
+    overflow:hidden;
 }
-#lightbox-modal { transition: opacity 0.3s ease; }
-#lightbox-modal.hidden { opacity: 0; pointer-events: none; }
-#lightbox-modal { opacity: 1; display: flex !important; }
-.cursor-zoom-in { cursor: zoom-in; }
-#lightbox-img { cursor: grab; user-select: none; transition: transform 0.1s ease-out; }
-#lightbox-img:active { cursor: grabbing; }
+
+#map{
+    width:100%;
+    height:100%;
+}
+
+.map-layout{
+    position: relative;
+    display: flex;
+    height: calc(100vh - 64px);
+    overflow: hidden;
+}
+
+/* MARKERS */
+.marker{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    overflow:hidden;
+    border:3px solid #ffffff; /* White border for sticker effect */
+    outline: 1px solid rgba(136, 78, 8, 0.2); /* Subtle outline */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(0,0,0,0.05); /* Refined shadow */
+    cursor:pointer;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+    background: white;
+}
+
+.marker:hover{
+    transform: scale(1.15); /* No rotation on hover for cleaner look */
+}
+
+.marker img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* POPUP */
+
+/* Ensure popups are always above markers */
+.maplibregl-popup {
+    z-index: 1000 !important;
+}
+.maplibregl-popup {
+    z-index: 100 !important;
+}
+
+.maplibregl-popup-content{
+    padding:0 !important;
+    border-radius:20px !important;
+    overflow:hidden;
+    background:#fdfbf3 !important;
+    box-shadow:0 20px 40px rgba(0,0,0,0.18) !important;
+}
+
+.maplibregl-popup-close-button{
+    font-size:20px !important;
+    width:30px !important;
+    height:30px !important;
+    border-radius:50% !important;
+    background:white !important;
+    border: 1px solid #e5e2d8; /* Add a subtle border to the close button */
+    color:#333 !important;
+    right:10px !important;
+    top:10px !important;
+}
+
+/* ARCHIVE DRAWER */
+
+#archiveDrawer{
+    position:absolute;
+    top:0;
+    right:0; /* Start hidden off-screen to the right */
+    transform: translateX(100%); /* Hide it completely */
+    width:750px; /* Desktop width */
+    max-width:100%;
+    height:100%;
+    background:#fdfbf3;
+    z-index:1000;
+    overflow-y:auto;
+    transition: transform 0.5s ease-in-out; /* Animate transform */
+    box-shadow:-20px 0 40px rgba(0,0,0,0.15);
+}
+
+/* Custom Scrollbar for Chat and Drawers */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+@media (max-width: 767px) {
+    #archiveDrawer { width: 100%; }
+}
+
+/* When open, slide it into view */
+#archiveDrawer.open {
+    transform: translateX(0);
+}
+
+.archive-content{
+    padding: 40px 40px 120px 40px; /* Added extra bottom padding for mobile link visibility */
+}
+
+.close-btn{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:30px;
+    cursor:pointer;
+    font-size:12px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:#777;
+    font-weight:bold;
+}
+
+.archive-title{
+    font-family:'Newsreader',serif;
+    font-size:44px;
+    font-style:italic;
+    color:#111;
+    margin-bottom:20px;
+}
+
+.archive-text{
+    line-height:1.9;
+    color:#524438;
+}
+
+/* MOBILE */
+
 </style>
 </head>
-<body class="flex flex-col h-screen">
+<body class="bg-surface text-on-surface">
+<div class="fixed inset-0 pointer-events-none parchment-grain z-0"></div>
+
+<!-- TopNavBar -->
 <header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 sticky top-0 z-50 h-16 flex items-center">
-    <nav class="flex justify-between items-center w-full px-4 md:px-8 max-w-screen-2xl mx-auto">
-        <div class="flex items-center gap-8"> 
+    <nav class="flex justify-between items-center w-full px-8 max-w-screen-2xl mx-auto">
+        <div class="flex items-center gap-8">
             <a href="index.html" class="text-2xl font-serif italic text-secondary hover:opacity-80 transition-opacity">Sawah</a>
-            <div class="hidden md:flex items-center gap-6">
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="index.html">Discover</a>
-                <a class="text-primary border-b-2 border-primary pb-1 font-bold transition-colors duration-300" href="map.html">Map</a>
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="timeline.html">Timeline</a>
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="archive.html">Archives</a>
+            <div class="hidden md:flex items-center gap-6 text-sm font-bold uppercase tracking-widest">
+                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="index.html">Discover</a>
+                <a class="text-primary border-b-2 border-primary pb-1 transition-colors duration-300" href="map.html">Map</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="timeline.html">Timeline</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="archive.html">Archives</a>
             </div>
         </div>
-        <div class="relative group hidden sm:block"> 
-            <input id="search" placeholder="Search Atlas..." class="bg-gray-100 px-4 py-1.5 rounded-full text-sm w-48 md:w-64 border-none focus:ring-2 focus:ring-amber-900/20 italic">
-            <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
+        <div class="flex items-center gap-2">
+            <div class="relative group hidden sm:block">
+                <input id="searchInput" onkeypress="if(event.key==='Enter') window.performSearch(this.value)" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic" placeholder="Explore the Past..." type="text"/>
+                <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
+            </div>
+            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button>
+            <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">menu</button>
         </div>
-        <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
-    </nav>
+    </nav> 
 </header>
 
 <!-- Mobile Menu Drawer -->
-<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[70] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
     <div class="p-6 flex flex-col h-full">
         <div class="flex justify-between items-center mb-8">
             <a href="index.html" class="text-2xl font-serif italic text-secondary">Sawah</a>
-            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">close</button>
+            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">close</button>
         </div>
         <nav class="flex flex-col gap-4 text-lg font-body flex-grow">
             <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html" onclick="toggleMobileMenu()">Discover</a>
@@ -85,109 +264,235 @@ body { font-family: 'Manrope', sans-serif; margin:0; background-color: #fcf9ee; 
             <a class="text-on-surface-variant hover:text-primary transition-colors" href="timeline.html" onclick="toggleMobileMenu()">Timeline</a>
             <a class="text-on-surface-variant hover:text-primary transition-colors" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
         </nav>
-        <div class="mt-auto pt-6 border-t border-outline-variant/20">
-            <input id="mobile-search" placeholder="Search Atlas..." class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic mb-4">
+        <div class="mt-auto pt-6 border-t border-outline-variant/20"> 
+            <div class="relative group mb-4">
+                <input id="mobile-search" onkeypress="if(event.key==='Enter') { window.performSearch(this.value); toggleMobileMenu(); }" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic" placeholder="EXPLORE THE PAST..." type="text"/>
+                <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
+            </div>
             <button class="w-full text-left text-on-surface-variant hover:text-primary transition-colors py-2">Account</button>
         </div>
     </div>
 </div>
-<div class="map-layout">
-    <aside class="sidebar">
-        <h2 style="font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;color:#a8a29e;margin-bottom:15px;">Encyclopedic Index</h2>
-        <ul id="site-list" style="list-style:none;padding:0;margin:0;">
-            <!-- Populated by JS -->
-        </ul>
-    </aside>
-    <div class="flex-grow relative overflow-hidden">
-        <div id="map" class="h-full w-full"></div>
 
-        <!-- Archive Detail Drawer -->
-        <div id="archive-drawer" class="absolute top-0 right-0 h-full w-0 bg-[#fdfbf3] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[100] overflow-y-auto border-l border-outline-variant/20">
-            <div class="p-6 md:p-10 w-full md:w-[750px]">
-                <button onclick="closeArchive()" class="mb-10 flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest transition-colors group">
-                    <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                    Back to Atlas
-                </button>
-                <div id="archive-content"></div>
+<div class="map-layout relative z-10 flex-col md:flex-row">
+
+    <!-- SIDEBAR -->
+    <aside id="side-index" class="absolute bottom-0 left-0 right-0 z-20 md:relative md:inset-auto md:w-80 bg-surface/95 backdrop-blur-md md:bg-surface-container-low border-t md:border-t-0 md:border-r border-outline-variant/20 md:border-none flex flex-col h-[45vh] md:h-full overflow-y-auto p-6 shadow-2xl md:shadow-none custom-scrollbar rounded-t-3xl md:rounded-none transition-transform duration-500 transform translate-y-[calc(100%-60px)] md:translate-y-0">
+        <div onclick="window.toggleSideIndex()" class="flex justify-between items-center cursor-pointer mb-6 border-b border-stone-100 pb-4 md:pb-2 md:cursor-default">
+            <div class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em]">
+                Encyclopedic Index
+            </div>
+            <span id="index-toggle-icon" class="material-symbols-outlined text-sm transition-transform duration-300 md:hidden">expand_less</span>
+        </div>
+        <div id="siteList" class="space-y-2 custom-scrollbar"></div>
+    </aside>
+
+    <!-- MAP AREA -->
+    <div class="flex-1 relative z-10">
+        <div id="map" class="h-full w-full"></div>
+    </div>
+
+    <!-- DRAWER (Moved outside map container for correct stacking context) -->
+    <div id="archiveDrawer">
+        <div class="archive-content">
+            <img id="archiveImage" src="" alt="" class="w-full h-64 object-cover rounded-xl mb-6 hidden"/>
+            <div class="close-btn" onclick="window.closeArchive()">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Back To Atlas
+            </div>
+            <div id="archiveBody"></div>
+        </div>
+    </div>
+
+    <!-- AI Chatbot UI -->
+    <div id="ai-chat-container" class="fixed bottom-28 right-8 w-80 md:w-96 h-[500px] max-h-[80vh] bg-surface-container rounded-3xl shadow-2xl border border-outline-variant/20 z-[1100] flex flex-col hidden overflow-hidden transition-all duration-300">
+        <div class="p-4 bg-primary text-on-primary flex justify-between items-center shadow-md">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-sm">smart_toy</span>
+                <h4 class="text-sm font-bold uppercase tracking-widest text-white">Sawah Oracle</h4>
+            </div>
+            <button onclick="toggleChat()" class="material-symbols-outlined text-white">close</button>
+        </div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-container-lowest text-sm italic custom-scrollbar">
+            <p class="text-on-surface">Greetings, seeker. I am the Sawah Oracle. Ask me about any historical site on the atlas.</p>
+        </div>
+        <div class="p-4 bg-surface-container border-t border-outline-variant/10">
+            <div class="flex gap-2 bg-surface-container-low p-2 rounded-lg">
+                <input id="chat-input" type="text" placeholder="Ask the Oracle..." class="flex-1 bg-transparent border-none focus:ring-0 text-sm italic" onkeypress="if(event.key==='Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()" class="material-symbols-outlined text-primary">send</button>
             </div>
         </div>
     </div>
+
+    <!-- Floating Action Buttons -->
+    <div id="map-fabs" class="fixed bottom-20 right-8 md:bottom-8 md:right-8 flex flex-col gap-4 z-[100] transition-transform duration-500 md:translate-y-0">
+        <button onclick="window.toggleChat()" class="w-12 h-12 md:w-14 md:h-14 bg-secondary text-on-secondary rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-white">chat_bubble</span>
+        </button>
+    </div>
+
 </div>
-<script type="module">
+
+<script>
+
+/* =========================================================
+   ORACLE CONFIG
+========================================================= */
 const GROQ_API_KEY = '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';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
-const manualSites = [
-    { name: "Great Pyramid of Giza", lat: 29.9792, lng: 31.1342, desc: "The only surviving Wonder of the Ancient World, a masterpiece of Old Kingdom engineering.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDMw1ZjXIfPFO6bpo_-Gj42tT83hhcE_z9EX3yDq5cgrGJRpLx9CNnlUrGlC3JNLeI7NMC-xZOm0TBy_xPfSwgh_zpPxlYF_gbQg4x9FpwDkYkwzsyrTdBYZl2T6iP6SlQvuQdJUyHxw1zFMLCGUUwwqWtniwzKBznDGJUzkRvPAV2PCoT0sJTTbCRIjXmBg3C8GtU8m-q-aRFfllo3ls9LTtkqtXyVUUSabu5o4cDgaEauhLKMz62DLQzhTQ-bx3p0CmIhnDLJfhc" },
-    { name: "Colosseum", lat: 41.8902, lng: 12.4922, desc: "The grandest amphitheatre of the Roman Empire, used for gladiatorial contests.", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=800" },
-    { name: "Machu Picchu", lat: -13.1631, lng: -72.5450, desc: "A 15th-century Inca citadel nestled high in the Andes Mountains.", img: "https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&q=80&w=800" },
-    { name: "Stonehenge", lat: 51.1789, lng: -1.8262, desc: "A prehistoric stone circle aligned with the midsummer sunrise.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBDfy2HjLFlPzdJSEjshEbtHPp82RP5rsWR-MId3kDs2rNvyUmcr8oTUHvRP0ElvgJt8Pd8xZqEtG2SETkWikmiAsME-EuEyiVAbJgmlweIr5xodeM-3X9XszZJzPSBsDLiRG2Qq1aLtcSHdOVTYBTgEmh8tGOPTq6Ij-krK94NkO3vv-CeB6TzP7SqJNzwGXI4gTB5NMmpUh4F_Eh_rKSYb44EWijUpsjQqI7UQr5NWd7GS9wyacUjGJ9xod1E0YGG_V3NwWyfq-M" },
-    { name: "Petra", lat: 30.3285, lng: 35.4444, desc: "The magnificent Nabataean capital carved directly into red sandstone cliffs.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCTXRNDmhtdYeOOkf7AXDKpsVh-O71D-OHvBS92n0eTGgJCxra9T8F0tISo5F4Lh5md83LAc07FKVbqC7GDNk3Nu3eh0GOKoT-KwVujAF25C1ctcqYzV-FHzFGCiMIUHxhKPuIgZ8kDsVtYkVoSb5ktnqYf23rNUKqlwrp6U7wTz6mrOG-gZZwW_jPRWqOkmtpH6jWIosElcf48YecUUDYAEO5w21c3yIzOxMbpx0DkD8zwvftkEIkm9iu_uwPisZ0AUO8F8AVEPHk" },
-    { name: "Luxor Temple", lat: 25.6872, lng: 32.6396, desc: "A vast ancient temple complex on the east bank of the Nile, central to the Opet festival.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNZvNvaU9Gzqm_YnHRHDfecBUh4wHl-Rd8WyiI-wkmMPZquOShuTouv_0Vgk5koIIhxO2PTHiDl59US2QYftG4BrVlu5s8_ZezEUX0_5f8P6Fcy9QtndqtShBGV3IfMGdv3mr5fCypBPXTwCKcP3b4wCZuvsX5_yK5xg04OsOuqtQ1g67KwmThl17HwaZvp-NBuW7g7lKEOnauFqlVM63fB4XsMFIooWuqdhWYuj3SBY0Bi3OUbXEKvcmbs-Y_1yMCcbACh5ryXnU" },
-    { name: "Abu Simbel", lat: 22.3372, lng: 31.6225, desc: "Massive rock temples built by Ramesses II, famously relocated to escape the rising waters of Lake Nasser.", img: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&q=80&w=800" },
-];
-window.initMap = function() {
-    window.sawahMap = new maplibregl.Map({
-        container: 'map',
-        style: {
-            'version': 8,
-            'sources': {
-                'satellite-imagery': {
-                    'type': 'raster',
-                    'tiles': [
-                        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-                    ],
-                    'tileSize': 256,
-                    'attribution': 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
-                    'maxzoom': 17
-                },
-                'labels': {
-                    'type': 'raster',
-                    'tiles': [
-                        'https://a.basemaps.cartocdn.com/rastertiles/light_only_labels/{z}/{x}/{y}.png'
-                    ],
-                    'tileSize': 256,
-                    'maxzoom': 20
-                }
+/* =========================================================
+   MAP
+========================================================= */
+
+const map = new maplibregl.Map({
+    container:'map',
+
+    style:{
+        version:8,
+
+        sources:{
+            satellite:{
+                type:'raster',
+                tiles:[
+                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                ],
+                tileSize:256,
+                maxzoom:19
             },
-            'layers': [
-                { 'id': 'background', 'type': 'background', 'paint': { 'background-color': '#fcf9ee' } },
-                { 'id': 'satellite-imagery', 'type': 'raster', 'source': 'satellite-imagery' },
-                { 'id': 'labels', 'type': 'raster', 'source': 'labels' }
-            ]
+
+            labels:{
+                type:'raster',
+                tiles:[
+                    // Option 1: CartoDB Dark Matter (White text, dark halo - Best for Satellite)
+                    // 'https://a.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png'
+                    
+                    // Option 2: ESRI World Boundaries (Standard)
+                     'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'
+                    
+                    // Option 3: CartoDB Voyager (Neutral/Themed for "Sawah" aesthetic)
+                    // 'https://a.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png'
+                ],
+                tileSize:256
+            }
         },
-        center: [30, 20], // MapLibre uses [lng, lat]
-        zoom: 3,
-        maxZoom: 22,
-        pitch: 45, // 3D Tilt
-        bearing: 0, // Slight rotation for depth
-        antialias: true
-    });
 
-    window.sawahMap.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+        layers:[
+            {
+                id:'satellite',
+                type:'raster',
+                source:'satellite'
+            },
+            {
+                id:'labels',
+                type:'raster',
+                source:'labels'
+            }
+        ]
+    },
 
-    // Manually add iconic historical markers on initialization
-    const listContainer = document.getElementById('site-list');
-    manualSites.forEach(site => {
-        const el = document.createElement('div');
-        el.className = 'marker w-14 h-14 bg-surface rounded-full flex items-center justify-center border-4 border-surface shadow-xl cursor-pointer overflow-hidden ring-1 ring-black/5 transition-transform hover:scale-110 hover:z-50';
-        el.innerHTML = `<img src="${site.img}" class="w-full h-full object-cover" alt="${site.name}">`;
+    center:[20,30],
+    zoom:2.4,
+    pitch:30,
+    antialias:true
 
-        const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
-            <div style="padding: 12px; font-family: 'Manrope', sans-serif; width: 240px;">
-                <div style="position: relative; overflow: hidden; border-radius: 6px; margin-bottom: 12px; height: 120px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                    <img src="${site.img}" style="width: 100%; height: 100%; object-fit: cover;" />
-                </div>
-                <h3 style="font-family: 'Noto Serif', serif; font-weight: 700; color: #884e08; margin-bottom: 4px; font-size: 18px; line-height: 1.2; font-style: italic;">${site.name}</h3>
-                <p style="font-size: 13px; color: #524438; line-height: 1.5; margin-bottom: 12px;">${site.desc}</p>
-                <div style="display: flex; gap: 8px;">
-                    <button onclick="goToArchive('${site.name.replace(/'/g, "\\'")}', ${site.lat}, ${site.lng})" 
-                        style="flex: 1; background: #4c6078; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em;">Explore</button>
-                    <button onclick="calculateRoute(${site.lat}, ${site.lng})" 
-                        style="flex: 1; background: #884e08; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">directions</span> Directions
-                    </button>
+});
+
+/* =========================================================
+   INITIALIZATION & SITES
+========================================================= */
+
+map.addControl(new maplibregl.NavigationControl(),'bottom-right');
+
+/* Force map to resize once the DOM layout is stable */
+setTimeout(() => map.resize(), 100);
+
+/* 
+   SITES DATA
+========================================================= */
+
+const sites = [
+
+{
+    name:"Great Pyramid of Giza",
+    lat:29.9792,
+    lng:31.1342,
+    img:"data:image/jpeg;base64,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",
+    desc:"The only surviving Wonder of the Ancient World."
+},
+
+{
+    name:"Luxor Temple",
+    lat:25.6872,
+    lng:32.6396,
+    img:"https://lh3.googleusercontent.com/aida-public/AB6AXuDNZvNvaU9Gzqm_YnHRHDfecBUh4wHl-Rd8WyiI-wkmMPZquOShuTouv_0Vgk5koIIhxO2PTHiDl59US2QYftG4BrVlu5s8_ZezEUX0_5f8P6Fcy9QtndqtShBGV3IfMGdv3mr5fCypBPXTwCKcP3b4wCZuvsX5_yK5xg04OsOuqtQ1g67KwmThl17HwaZvp-NBuW7g7lKEOnauFqlVM63fB4XsMFIooWuqdhWYuj3SBY0Bi3OUbXEKvcmbs-Y_1yMCcbACh5ryXnU",
+    desc:"One of the greatest temple complexes of Ancient Egypt."
+},
+
+{
+    name:"Colosseum",
+    lat:41.8902,
+    lng:12.4922,
+    img:"https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80",
+    desc:"Rome's iconic gladiator arena."
+},
+
+{
+    name:"Petra",
+    lat:30.3285,
+    lng:35.4444,
+    img:"https://lh3.googleusercontent.com/aida-public/AB6AXuCTXRNDmhtdYeOOkf7AXDKpsVh-O71D-OHvBS92n0eTGgJCxra9T8F0tISo5F4Lh5md83LAc07FKVbqC7GDNk3Nu3eh0GOKoT-KwVujAF25C1ctcqYzV-FHzFGCiMIUHxhKPuIgZ8kDsVtYkVoSb5ktnqYf23rNUKqlwrp6U7wTz6mrOG-gZZwW_jPRWqOkmtpH6jWIosElcf48YecUUDYAEO5w21c3yIzOxMbpx0DkD8zwvftkEIkm9iu_uwPisZ0AUO8F8AVEPHk",
+    desc:"The rose-red city carved into stone."
+},
+
+{
+    name:"Machu Picchu",
+    lat:-13.1631,
+    lng:-72.5450,
+    img:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgByl_C1oXuw09lNsJg9XWu4UYrpVfGGEzIXzqDpwtrWO25JgvYhcx03ifwhlvMFVa5uW94GjCazbImoSVxIv-Zw0euwN38gSG42o-AcbyclqvcaFzRE2-pKVa3LbBlC3l8e0=w270-h312-n-k-no",
+    desc:"Ancient Inca citadel in Peru."
+},
+
+{
+    name:"Stonehenge",
+    lat:51.1789,
+    lng:-1.8262,
+    img:"https://lh3.googleusercontent.com/aida-public/AB6AXuBDfy2HjLFlPzdJSEjshEbtHPp82RP5rsWR-MId3kDs2rNvyUmcr8oTUHvRP0ElvgJt8Pd8xZqEtG2SETkWikmiAsME-EuEyiVAbJgmlweIr5xodeM-3X9XszZJzPSBsDLiRG2Qq1aLtcSHdOVTYBTgEmh8tGOPTq6Ij-krK94NkO3vv-CeB6TzP7SqJNzwGXI4gTB5NMmpUh4F_Eh_rKSYb44EWijUpsjQqI7UQr5NWd7GS9wyacUjGJ9xod1E0YGG_V3NwWyfq-M",
+    desc:"Prehistoric monument in Wiltshire, England."
+},
+
+{
+    name:"Abu Simbel",
+    lat:22.3372,
+    lng:31.6225,
+    img:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAERWAcvizsb8qrPZ68Vu2uyjRoJTN3nO_TNnHIS0I5V5QGJst5OvpzeHZKYnsySeMfRUfjEjSRy3TDPxzW5bkqpbjkYuEVedO2smxP4jssPaWFC_ZwsPoe3wfsGUjXqyrRPmI9z=w270-h312-n-k-no",
+    desc:"Two massive rock-cut temples in southern Egypt."
+}
+
+];
+
+map.on('load', () => {
+    map.resize();
+    renderSites();
+});
+
+function renderSites() {
+    const siteList = document.getElementById('siteList');
+    siteList.innerHTML = '';
+
+    sites.forEach(site => {
+    const el = document.createElement('div');
+        el.className = 'marker';
+        el.innerHTML = `<img src="${site.img}" alt="${site.name}" style="pointer-events:none;">`;
+
+        const popup = new maplibregl.Popup({ offset: 25, maxWidth: '280px' }).setHTML(`
+            <div class="font-body overflow-hidden">
+                <img src="${site.img}" class="w-full h-40 object-cover">
+                <div class="p-5 bg-surface">
+                    <h3 class="font-headline text-xl text-primary italic font-bold mb-2">${site.name}</h3>
+                    <p class="text-on-surface-variant text-sm leading-relaxed mb-5">${site.desc}</p>
+                    <button onclick="window.openArchive('${site.name.replace(/'/g,"\\'")}')" class="w-full bg-primary text-on-primary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm">Explore Archive</button>
                 </div>
             </div>
         `);
@@ -195,239 +500,166 @@ window.initMap = function() {
         const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
             .setLngLat([site.lng, site.lat])
             .setPopup(popup)
-            .addTo(window.sawahMap);
+            .addTo(map);
 
-        // Sidebar Item
-        const li = document.createElement('li');
-        li.style.cssText = "padding:12px;margin-bottom:8px;border-radius:8px;cursor:pointer;font-size:13px;color:#524438;transition:all 0.2s;border: 1px solid transparent;";
-        li.innerText = site.name;
-        li.onmouseover = () => { li.style.background = "#efede1"; li.style.borderColor = "#d7c3b3"; };
-        li.onmouseout = () => { li.style.background = "transparent"; li.style.borderColor = "transparent"; };
-        li.onclick = () => {
-            window.sawahMap.flyTo({ center: [site.lng, site.lat], zoom: 14, pitch: 60 });
+        const item = document.createElement('div');
+        item.className = 'p-4 rounded-xl cursor-pointer hover:bg-surface-container-highest transition-all text-sm font-medium text-stone-700';
+        item.innerHTML = `<div>${site.name}</div><div class="text-[10px] opacity-60 uppercase mt-1">${site.desc.substring(0, 30)}...</div>`;
+        item.onclick = () => {
+            map.flyTo({ center: [site.lng, site.lat], zoom: 14, pitch: 30, speed: 1.2 });
             marker.togglePopup();
         };
-        listContainer.appendChild(li);
+        siteList.appendChild(item);
     });
+}
 
-    // Search Functionality using Nominatim (OpenStreetMap)
-    const searchInput = document.getElementById("search");
-    searchInput.addEventListener("keypress", async (e) => {
-        if (e.key === "Enter") {
-            const query = searchInput.value;
-            if (!query) return;
+/* =========================================================
+   SEARCH & AI
+========================================================= */
 
-            try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
-                const results = await res.json();
+window.performSearch = async function(query) {
+    if(!query) return;
+    try{
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        if(!data.length) return alert('Location not found');
+        
+        const place = data[0];
+        const lat = parseFloat(place.lat);
+        const lng = parseFloat(place.lon);
 
-                if (results.length > 0) {
-                    const first = results[0];
-                    const lat = parseFloat(first.lat);
-                    const lon = parseFloat(first.lon);
-                    
-                    window.sawahMap.flyTo({ center: [lon, lat], zoom: 12, pitch: 45 });
+        map.flyTo({ center: [lng, lat], zoom: 12, pitch: 30 });
 
-                    const el = document.createElement('div');
-                    el.className = 'marker w-10 h-10 bg-surface rounded-full flex items-center justify-center border-2 border-surface shadow-lg cursor-pointer overflow-hidden ring-1 ring-black/5 transition-transform hover:scale-110';
-                    el.innerHTML = `<img src="https://images.unsplash.com/photo-1541410965313-5996e5c03788?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover" />`;
+        const el = document.createElement('div');
+        el.className = 'marker';
+        el.innerHTML = `<img src="https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=800&q=80">`;
 
-                    const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
-                        <div style="padding: 12px; max-width: 240px; font-family: 'Manrope', sans-serif; background: #fdfbf3;">
-                            <div style="position: relative; overflow: hidden; border-radius: 6px; margin-bottom: 12px; height: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                <img src="https://images.unsplash.com/photo-1541410965313-5996e5c03788?auto=format&fit=crop&q=80&w=400" style="width: 100%; height: 100%; object-fit: cover;" />
-                            </div>
-                            <h3 style="font-family: 'Noto Serif', serif; font-weight: 700; color: #884e08; margin-bottom: 4px; font-size: 16px; line-height: 1.2; font-style: italic;">${first.display_name.split(',')[0]}</h3>
-                            <p style="font-size: 12px; color: #524438; line-height: 1.4; margin-bottom: 12px;">Location identified via Open Archive.</p>
-                            <div style="display: flex; gap: 8px;">
-                                <button onclick="goToArchive('${first.display_name.split(',')[0].replace(/'/g, "\\'")}', ${lat}, ${lon})" 
-                                    style="flex: 1; background: #884e08; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em;">Archive</button>
-                                <button onclick="calculateRoute(${lat}, ${lon})" 
-                                    style="flex: 1; background: #4c6078; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                    <span class="material-symbols-outlined" style="font-size: 14px;">directions</span> Directions
-                                </button>
-                            </div>
-                        </div>
-                    `);
-
-                    new maplibregl.Marker({ element: el, anchor: 'bottom' })
-                        .setLngLat([lon, lat])
-                        .setPopup(popup)
-                        .addTo(window.sawahMap)
-                        .togglePopup();
-                }
-            } catch (err) {
-                console.error("Search failed:", err);
-            }
-        }
-    });
+        new maplibregl.Marker({ element: el, anchor: 'bottom' })
+            .setLngLat([lng, lat])
+            .setPopup(new maplibregl.Popup({ offset: 25, maxWidth: '240px' }).setHTML(`
+                <div class="p-6 bg-surface font-body">
+                    <h3 class="font-headline text-lg text-primary font-bold italic mb-2">${place.display_name.split(',')[0]}</h3>
+                    <p class="text-on-surface-variant text-xs leading-relaxed">Archival coordinates identified via OpenStreetMap.</p>
+                </div>`))
+            .addTo(map).togglePopup();
+    }catch(err){
+        console.error(err);
+    }
 };
 
-window.goToArchive = async function(name, lat, lng) {
-    const drawer = document.getElementById('archive-drawer');
-    const content = document.getElementById('archive-content');
-    
-    drawer.style.width = window.innerWidth > 768 ? '750px' : '100%';
-    content.innerHTML = `
-        <div class="animate-pulse space-y-8">
-            <div class="h-72 bg-stone-200 rounded-xl"></div>
-            <div class="space-y-4">
-                <div class="h-10 bg-stone-200 rounded w-3/4"></div>
-                <div class="h-4 bg-stone-200 rounded w-1/2"></div>
-            </div>
-            <div class="space-y-3">
-                <div class="h-4 bg-stone-200 rounded w-full"></div>
-                <div class="h-4 bg-stone-200 rounded w-full"></div>
-                <div class="h-4 bg-stone-200 rounded w-2/3"></div>
-            </div>
-        </div>
-    `;
+/* =========================================================
+   ARCHIVE
+========================================================= */
+
+window.openArchive = async function(name){
+    const drawer = document.getElementById('archiveDrawer');
+    const body = document.getElementById('archiveBody');
+    drawer.classList.add('open');
+
+    const site = sites.find(s => s.name === name);
+    const archiveImg = document.getElementById('archiveImage');
+    if (site && site.img) {
+        archiveImg.src = site.img;
+        archiveImg.classList.remove('hidden');
+    } else {
+        archiveImg.classList.add('hidden');
+    }
+
+    body.innerHTML = `<div class="animate-pulse space-y-4 pt-10"><div class="h-10 bg-stone-100 rounded w-3/4"></div><div class="h-4 bg-stone-100 rounded"></div><div class="h-4 bg-stone-100 rounded"></div></div>`;
 
     try {
-        const prompt = `Generate a detailed archaeological dossier for "${name}". Include historical significance and architectural features. Format with <p> and <h3> tags.`;
         const response = await fetch(GROQ_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${GROQ_API_KEY}`
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
             body: JSON.stringify({
                 model: GROQ_MODEL,
-                messages: [{ role: 'user', content: prompt }]
+                messages: [{ role: 'user', content: `Generate a brief archaeological dossier for "${name}". Include historical significance. Format with <p> and <h3> tags.` }]
             })
         });
-            
-            if (!response.ok) throw new Error(`API Error: ${response.status}`);
         const data = await response.json();
-        if (data.error) throw new Error(data.error.message);
         const aiText = data.choices[0].message.content;
 
-        content.innerHTML = `
-            <span class="text-[10px] font-bold text-amber-800 uppercase tracking-[0.2em] mb-3 block">AI Archival Record</span>
-            <h1 class="text-4xl font-serif italic font-bold mb-4 text-stone-900 leading-tight">${name}</h1>
-            <div class="prose prose-stone text-stone-700 leading-relaxed space-y-6 text-base font-light">
-                ${aiText}
-            </div>
-            <div class="mt-12 pt-8 border-t border-stone-200/60">
-                <a href="archive.html?placeName=${encodeURIComponent(name)}" class="inline-flex items-center gap-3 px-6 py-3 bg-stone-900 text-white rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-stone-800 transition-all shadow-lg">
-                    Access Full Archive <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        body.innerHTML = `
+            <div class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-4">Archaeological Dossier</div>
+            <h1 class="text-4xl font-serif italic mb-6">${name}</h1>
+            <div class="text-stone-700 leading-relaxed space-y-4 font-body text-sm">${aiText}</div>
+            <div class="mt-8 pt-6 border-t border-stone-100">
+                <a href="archive.html?placeName=${encodeURIComponent(name)}" class="inline-flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-widest hover:underline">
+                    see full archive <span class="material-symbols-outlined text-sm">open_in_new</span>
                 </a>
             </div>
         `;
     } catch (e) {
-        console.error("Map AI Sync Error:", e);
-        content.innerHTML = `<p class="text-stone-400 italic py-20 text-center">AI synchronization failed: ${e.message}.</p>`;
+        body.innerHTML = `<p class="pt-10 text-stone-400 italic">Oracle offline. Wikipedia links available below.</p>`;
     }
-}
+};
 
-window.calculateRoute = async function(destLat, destLng) {
-    if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your browser");
-        return;
+window.closeArchive = function(){
+    document.getElementById('archiveDrawer').classList.remove('open');
+    document.getElementById('archiveImage').classList.add('hidden');
+    }; 
+
+window.toggleSideIndex = function() {
+    if (window.innerWidth >= 768) return;
+    
+    const aside = document.getElementById('side-index');
+    const icon = document.getElementById('index-toggle-icon');
+    const fabs = document.getElementById('map-fabs');
+    
+    const isCollapsed = aside.classList.contains('translate-y-[calc(100%-60px)]');
+    
+    if (isCollapsed) {
+        aside.classList.remove('translate-y-[calc(100%-60px)]');
+        aside.classList.add('translate-y-0');
+        icon.style.transform = 'rotate(180deg)';
+        fabs.style.transform = 'translateY(-38vh)';
+    } else {
+        aside.classList.add('translate-y-[calc(100%-60px)]');
+        aside.classList.remove('translate-y-0');
+        icon.style.transform = 'rotate(0deg)';
+        fabs.style.transform = 'translateY(0)';
     }
+};
 
-    navigator.geolocation.getCurrentPosition(async (position) => {
-        const startLng = position.coords.longitude;
-        const startLat = position.coords.latitude;
+window.toggleChat = function() {
+    const chat = document.getElementById('ai-chat-container');
+    chat.classList.toggle('hidden');
+};
 
-        // Using OSRM public API for high-end driving directions
-        const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${destLng},${destLat}?overview=full&geometries=geojson`;
+window.sendChatMessage = async function() {
+    const input = document.getElementById('chat-input');
+    const container = document.getElementById('chat-messages');
+    if(!input.value.trim()) return;
+    
+    const userText = input.value;
+    input.value = '';
+    container.innerHTML += `<p class="text-right text-stone-900 not-italic font-bold mb-4">${userText}</p>`;
 
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
+    try {
+        const res = await fetch(GROQ_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+            body: JSON.stringify({
+                model: GROQ_MODEL,
+                messages: [{ role: 'system', content: "You are the Sawah Oracle, a digital historian. Answer queries about history or archaeology concisely." }, { role: 'user', content: userText }]
+            })
+        });
+        const data = await res.json();
+        container.innerHTML += `<p class="text-stone-600 mb-6">${data.choices[0].message.content}</p>`;
+        container.scrollTop = container.scrollHeight;
+    } catch (e) {
+        container.innerHTML += `<p class="text-stone-400">The Oracle is momentarily silent.</p>`;
+    }
+};
 
-            if (data.code !== 'Ok') {
-                alert("Unable to calculate route. Note that cross-continental driving paths are not supported.");
-                return;
-            }
-
-            const route = data.routes[0].geometry;
-
-            // Remove existing route layers before drawing new ones
-            if (window.sawahMap.getLayer('route-outline')) window.sawahMap.removeLayer('route-outline');
-            if (window.sawahMap.getLayer('route')) window.sawahMap.removeLayer('route'); // Main route layer
-            
-            if (window.sawahMap.getSource('route')) window.sawahMap.removeSource('route');
-
-            window.sawahMap.addSource('route', {
-                'type': 'geojson',
-                'data': {
-                    'type': 'Feature',
-                    'properties': {},
-                    'geometry': route
-                }
-            });
-
-            // Add the outline layer first (thicker, black)
-            window.sawahMap.addLayer({
-                'id': 'route-outline',
-                'type': 'line',
-                'source': 'route',
-                'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                'paint': {
-                    'line-color': '#ffffff', // white outline
-                    'line-width': 8, // Slightly thicker than the main line
-                    'line-opacity': 0.9
-                }
-            });
-
-            // Add the main route layer on top (thinner, colored)
-            window.sawahMap.addLayer({
-                'id': 'route',
-                'type': 'line',
-                'source': 'route',
-                'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                'paint': {
-                    'line-color': '#884e08', // Your desired line color
-                    'line-width': 6,
-                    'line-opacity': 0.9
-                }
-            });
-
-            const coordinates = route.coordinates;
-            const bounds = coordinates.reduce((bounds, coord) => bounds.extend(coord), new maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
-            window.sawahMap.fitBounds(bounds, { padding: 80, speed: 1.2 });
-        } catch (err) {
-            console.error("Routing error:", err);
-        }
-    }, (err) => alert("Access to location denied. Please enable geolocation to calculate directions."));
-}
-
-window.closeArchive = function() {
-    document.getElementById('archive-drawer').style.width = '0';
-}
-
-window.openLightbox = function(src, caption) {
-    const modal = document.getElementById('lightbox-modal');
-    const img = document.getElementById('lightbox-img');
-    const cap = document.getElementById('lightbox-caption');
-    img.src = src;
-    cap.innerText = caption;
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-window.closeLightbox = function() {
-    const modal = document.getElementById('lightbox-modal');
-    const img = document.getElementById('lightbox-img');
-    if (img) img.src = "";
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-const modal = document.getElementById('lightbox-modal');
-modal.addEventListener('click', (e) => { if (e.target === modal) closeLightbox(); });
-
-function toggleMobileMenu() {
+window.toggleMobileMenu = function() {
     const menu = document.getElementById('mobile-menu');
     menu.classList.toggle('-translate-x-full');
-}
+};
 
-document.addEventListener('DOMContentLoaded', window.initMap);
+window.addEventListener('resize', () => map.resize());
+
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9qW1U2mvpJz64W3KZKKXVx5DI5JW_ezo" async defer></script>
 </body>
 </html>

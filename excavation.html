@@ -23,6 +23,11 @@
                         "on-primary-fixed-variant": "#733420",
                         "surface-container-lowest": "#ffffff",
                         "primary-container": "#a25942",
+                        "on-error": "#ffffff",
+                        "on-background": "#1c1c15",
+                        "surface-container-highest": "#e5e2d8",
+                        "secondary": "#4c6078",
+                        "on-secondary-container": "#51647d",
                         "on-tertiary": "#ffffff",
                         "tertiary-fixed": "#ffdcbd",
                         "inverse-on-surface": "#f2f1ed",
@@ -35,6 +40,13 @@
                         "on-tertiary-fixed-variant": "#623f18",
                         "tertiary-container": "#8d643a",
                         "surface-dim": "#dbdad6",
+                        "surface-dim": "#dddacf",
+                        "on-primary-fixed": "#2d1600",
+                        "on-surface": "#1c1c15",
+                        "secondary-container": "#cde1fe",
+                        "on-tertiary-fixed-variant": "#763221",
+                        "on-secondary-fixed": "#061d32",
+                        "surface-tint": "#8b500b",
                         "on-secondary": "#ffffff",
                         "surface-container-low": "#f4f4f0",
                         "primary": "#84422c",
@@ -42,6 +54,20 @@
                         "on-secondary-container": "#5c6370",
                         "on-tertiary-container": "#ffecde",
                         "on-surface-variant": "#54433e",
+                        "tertiary": "#914634",
+                        "background": "#fcf9ee",
+                        "outline": "#857467",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "on-primary-fixed-variant": "#6b3b00",
+                        "surface": "#fcf9ee",
+                        "on-primary": "#ffffff",
+                        "primary": "#884e08",
+                        "surface-container-low": "#f7f4e9",
+                        "tertiary-fixed": "#ffdad2",
+                        "primary-fixed": "#ffdcc0",
+                        "inverse-surface": "#31312a",
+                        "inverse-primary": "#ffb876",
                         "error": "#ba1a1a",
                         "secondary": "#585f6c",
                         "on-tertiary-fixed": "#2c1600",
@@ -55,11 +81,28 @@
                         "inverse-surface": "#2f312e",
                         "tertiary-fixed-dim": "#f0bd8b",
                         "surface-container-highest": "#e3e2df",
+                        "secondary-fixed-dim": "#b4c8e4",
+                        "surface-variant": "#e5e2d8",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed": "#d1e4ff",
+                        "surface-bright": "#fcf9ee",
+                        "primary-container": "#a66622",
+                        "on-tertiary-fixed": "#3c0700",
+                        "on-surface-variant": "#524438",
+                        "primary-fixed-dim": "#ffb876",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#af5e4a",
+                        "on-primary-container": "#fffbff",
+                        "outline-variant": "#d7c3b3",
+                        "inverse-on-surface": "#f4f1e6",
                         "error-container": "#ffdad6",
                         "on-error": "#ffffff",
                         "on-primary": "#ffffff",
                         "secondary-fixed-dim": "#c0c7d6",
-                        "outline-variant": "#d9c1bb"
+                        "outline-variant": "#d9c1bb",
+                        "on-secondary-fixed-variant": "#35485f",
+                        "surface-container-high": "#ebe8dd",
+                        "surface-container": "#f1eee3"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.125rem",
@@ -101,29 +144,31 @@
 </head>
 <body class="bg-background text-on-background font-body antialiased">
 <!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-[#faf9f5]/80 dark:bg-stone-900/80 backdrop-blur-xl shadow-[0_12px_32px_rgba(27,28,26,0.06)]">
-<div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
-<a href="index.html" class="text-2xl font-serif italic text-[#4c6078] dark:text-stone-200">Sawah</a>
-<div class="hidden md:flex items-center gap-6">
-<a class="text-[#4c6078] dark:text-stone-400 font-medium hover:text-[#914634] transition-colors duration-300 font-label uppercase tracking-wider text-xs" href="index.html">Discover</a>
-<a class="text-[#84422c] dark:text-[#a25942] border-b-2 border-[#84422c] pb-1 font-bold font-label uppercase tracking-wider text-xs" href="map.html">Map</a>
-<a class="text-[#4c6078] dark:text-stone-400 font-medium hover:text-[#914634] transition-colors duration-300 font-label uppercase tracking-wider text-xs" href="timeline.html">Timeline</a>
-<a class="text-[#4c6078] dark:text-stone-400 font-medium hover:text-[#914634] transition-colors duration-300 font-label uppercase tracking-wider text-xs" href="discoveries.html">Archives</a>
-</div>
-<div class="flex items-center gap-6">
-<div class="hidden lg:flex items-center bg-surface-variant/40 px-4 py-2 rounded-lg">
-<span class="material-symbols-outlined text-secondary text-sm mr-2" data-icon="search">search</span>
-<input class="bg-transparent border-none focus:ring-0 font-label text-[10px] tracking-widest text-on-surface-variant placeholder:text-on-surface-variant/60 w-32 uppercase" placeholder="SEARCH ARCHIVE..." type="text"/>
-</div>
-<button class="font-label uppercase tracking-wider text-xs text-secondary hover:text-primary transition-colors">Login</button>
-<button class="bg-primary text-on-primary px-6 py-2.5 rounded-md font-label uppercase tracking-wider text-xs shadow-sm hover:bg-primary-container scale-98 active:opacity-80 transition-transform">Join Fieldwork</button>
-<button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
-</div>
-</div>
-</nav>
+<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 sticky top-0 z-50 h-16 flex items-center">
+    <nav class="flex justify-between items-center w-full px-8 max-w-screen-2xl mx-auto">
+        <div class="flex items-center gap-8">
+            <a href="index.html" class="text-2xl font-serif italic text-secondary hover:opacity-80 transition-opacity">Sawah</a>
+            <div class="hidden md:flex items-center gap-6 text-sm font-bold uppercase tracking-widest">
+                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="index.html">Discover</a>
+                <a class="text-primary border-b-2 border-primary pb-1 font-bold transition-colors duration-300" href="map.html">Map</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="timeline.html">Timeline</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="archive.html">Archives</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="hidden lg:flex items-center bg-surface-variant/40 px-4 py-2 rounded-lg">
+                <span class="material-symbols-outlined text-secondary text-sm mr-2">search</span>
+                <input class="bg-transparent border-none focus:ring-0 font-label text-[10px] tracking-widest text-on-surface-variant placeholder:text-on-surface-variant/60 w-32 uppercase" placeholder="SEARCH ARCHIVE..." type="text"/>
+            </div>
+            <button class="font-label uppercase tracking-wider text-xs text-secondary hover:text-primary transition-colors">Login</button>
+            <button class="bg-primary text-on-primary px-6 py-2.5 rounded-md font-label uppercase tracking-wider text-xs shadow-sm hover:bg-primary-container scale-98 active:opacity-80 transition-transform hidden sm:block">Join Fieldwork</button>
+            <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+        </div>
+    </nav>
+</header>
 
 <!-- Mobile Menu Drawer -->
-<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[70] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden"> 
     <div class="p-6 flex flex-col h-full">
         <div class="flex justify-between items-center mb-8">
             <a href="index.html" class="text-2xl font-serif italic text-secondary">Sawah</a>
@@ -133,7 +178,7 @@
             <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html" onclick="toggleMobileMenu()">Discover</a>
             <a class="text-primary font-bold hover:text-primary-container transition-colors" href="map.html" onclick="toggleMobileMenu()">Map</a>
             <a class="text-on-surface-variant hover:text-primary transition-colors" href="timeline.html" onclick="toggleMobileMenu()">Timeline</a>
-            <a class="text-on-surface-variant hover:text-primary transition-colors" href="discoveries.html" onclick="toggleMobileMenu()">Archives</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
         </nav>
         <div class="mt-auto pt-6 border-t border-outline-variant/20">
             <div class="relative group mb-4">
@@ -145,8 +190,7 @@
         </div>
     </div>
 </div>
-</nav>
-<main class="pt-20 min-h-screen flex flex-col md:flex-row">
+<main class="min-h-screen flex flex-col md:flex-row">
 <!-- Sidebar: Site List -->
 <aside class="w-full md:w-[400px] bg-surface-container-low border-r border-outline-variant/15 flex flex-col h-[50vh] md:h-[calc(100vh-5rem)]">
 <div class="p-8 pb-4">
@@ -429,7 +473,7 @@
     const GROQ_MODEL = 'llama-3.3-70b-versatile';
     const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
-    window.openArchiveDetail = async function(name) {
+    window.openArchiveDetail = async function(name) { 
         const drawer = document.getElementById('archive-drawer');
         const content = document.getElementById('archive-content');
         drawer.style.width = window.innerWidth > 768 ? '750px' : '100%';
