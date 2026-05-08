@@ -369,6 +369,7 @@ const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 const map = new maplibregl.Map({
     container:'map',
+    maxZoom: 18,
 
     style:{
         version:8,
@@ -380,7 +381,7 @@ const map = new maplibregl.Map({
                     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
                 ],
                 tileSize:256,
-                maxzoom:19
+                maxzoom:18
             },
 
             labels:{
@@ -395,7 +396,8 @@ const map = new maplibregl.Map({
                     // Option 3: CartoDB Voyager (Neutral/Themed for "Sawah" aesthetic)
                     // 'https://a.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png'
                 ],
-                tileSize:256
+                tileSize:256,
+                maxzoom:18
             }
         },
 
