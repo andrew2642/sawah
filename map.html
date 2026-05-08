@@ -178,12 +178,31 @@ body{
     box-shadow:-20px 0 40px rgba(0,0,0,0.15);
 }
 
+/* DIRECTIONS DRAWER */
+#directionsDrawer{
+    position:absolute;
+    top:0;
+    right:0;
+    transform: translateX(100%);
+    width:750px;
+    max-width:100%;
+    height:100%;
+    background:#fdfbf3;
+    z-index:1000;
+    overflow-y:auto;
+    transition: transform 0.5s ease-in-out;
+    box-shadow:-20px 0 40px rgba(0,0,0,0.15);
+}
+#directionsDrawer.open {
+    transform: translateX(0);
+}
+
 /* Custom Scrollbar for Chat and Drawers */
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
 @media (max-width: 767px) {
-    #archiveDrawer { width: 100%; }
+    #archiveDrawer, #directionsDrawer { width: 100%; }
 }
 
 /* When open, slide it into view */
@@ -303,6 +322,8 @@ body{
             <div id="archiveBody"></div>
         </div>
     </div>
+
+
 
     <!-- AI Chatbot UI -->
     <div id="ai-chat-container" class="fixed bottom-28 right-8 w-80 md:w-96 h-[500px] max-h-[80vh] bg-surface-container rounded-3xl shadow-2xl border border-outline-variant/20 z-[1100] flex flex-col hidden overflow-hidden transition-all duration-300">
@@ -491,8 +512,11 @@ function renderSites() {
                 <img src="${site.img}" class="w-full h-40 object-cover">
                 <div class="p-5 bg-surface">
                     <h3 class="font-headline text-xl text-primary italic font-bold mb-2">${site.name}</h3>
-                    <p class="text-on-surface-variant text-sm leading-relaxed mb-5">${site.desc}</p>
-                    <button onclick="window.openArchive('${site.name.replace(/'/g,"\\'")}')" class="w-full bg-primary text-on-primary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm">Explore Archive</button>
+                    <p class="text-on-surface-variant text-sm leading-relaxed mb-4">${site.desc}</p>
+                    <div class="flex gap-2">
+                        <button onclick="window.openArchive('${site.name.replace(/'/g,"\\'")}')" class="flex-1 bg-primary text-on-primary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm">Archive</button>
+                        <button onclick="window.getDirections(${site.lat}, ${site.lng})" class="flex-1 bg-secondary text-on-secondary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:opacity-90 transition-all active:scale-[0.98] shadow-sm">Directions</button>
+                    </div>
                 </div>
             </div>
         `);
@@ -540,6 +564,10 @@ window.performSearch = async function(query) {
                 <div class="p-6 bg-surface font-body">
                     <h3 class="font-headline text-lg text-primary font-bold italic mb-2">${place.display_name.split(',')[0]}</h3>
                     <p class="text-on-surface-variant text-xs leading-relaxed">Archival coordinates identified via OpenStreetMap.</p>
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="window.openArchive('${place.display_name.split(',')[0].replace(/'/g,"\\'")}')" class="flex-1 bg-primary text-on-primary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm">Archive</button>
+                        <button onclick="window.getDirections(${lat}, ${lng})" class="flex-1 bg-secondary text-on-secondary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:opacity-90 transition-all active:scale-[0.98] shadow-sm">Directions</button>
+                    </div>
                 </div>`))
             .addTo(map).togglePopup();
     }catch(err){
@@ -598,6 +626,68 @@ window.closeArchive = function(){
     document.getElementById('archiveDrawer').classList.remove('open');
     document.getElementById('archiveImage').classList.add('hidden');
     }; 
+
+window.getDirections = async function(destLat, destLng) {
+    if (!navigator.geolocation) return alert("Geolocation is not supported by your browser");
+    
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        const startLng = position.coords.longitude;
+        const startLat = position.coords.latitude;
+
+        try {
+            const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${destLng},${destLat}?steps=true&geometries=geojson&overview=full`);
+            const data = await response.json();
+            if (data.code !== 'Ok') throw new Error("Directions not found");
+
+            const route = data.routes[0];
+            const geojson = { 'type': 'Feature', 'properties': {}, 'geometry': route.geometry };
+
+            if (map.getSource('route')) {
+                map.getSource('route').setData(geojson);
+            } else {
+                map.addSource('route', { 'type': 'geojson', 'data': geojson });
+                map.addLayer({
+                    'id': 'route-outline',
+                    'type': 'line',
+                    'source': 'route',
+                    'layout': { 'line-join': 'round', 'line-cap': 'round' },
+                    'paint': { 'line-color': '#ffffff', 'line-width': 10, 'line-opacity': 0.9 }
+                });
+                map.addLayer({
+                    'id': 'route',
+                    'type': 'line',
+                    'source': 'route',
+                    'layout': { 'line-join': 'round', 'line-cap': 'round' },
+                    'paint': { 'line-color': '#884e08', 'line-width': 6, 'line-opacity': 1 }
+                });
+            }
+
+            const coordinates = route.geometry.coordinates;
+            const bounds = coordinates.reduce((acc, coord) => acc.extend(coord), new maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
+            map.fitBounds(bounds, { padding: 100 });
+
+            const drawer = document.getElementById('directionsDrawer');
+            const body = document.getElementById('directionsBody');
+            
+            let stepsHtml = route.legs[0].steps.map(step => `
+                <div class="py-4 border-b border-stone-100 flex gap-4 items-start">
+                    <span class="material-symbols-outlined text-primary text-lg">explore</span>
+                    <div><p class="text-sm font-body text-stone-700 leading-relaxed">${step.maneuver.instruction}</p><p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">${(step.distance / 1000).toFixed(2)} km</p></div>
+                </div>`).join('');
+
+            body.innerHTML = `<div class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-4">In-App Navigation</div><h1 class="text-4xl font-serif italic mb-6">Route Details</h1><div class="bg-surface-container-low p-6 rounded-2xl mb-8 border border-outline-variant/10"><div class="grid grid-cols-2 gap-4"><div><p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Distance</p><p class="text-xl font-headline italic text-primary">${(route.distance / 1000).toFixed(1)} km</p></div><div><p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Time</p><p class="text-xl font-headline italic text-primary">${Math.round(route.duration / 60)} min</p></div></div></div><div class="space-y-2">${stepsHtml}</div>`;
+            drawer.classList.add('open');
+        } catch (e) {
+        }
+    }, () => alert("Please enable location services to get directions."));
+};
+
+window.closeDirections = function() {
+    document.getElementById('directionsDrawer').classList.remove('open');
+    if (map.getLayer('route')) map.removeLayer('route');
+    if (map.getLayer('route-outline')) map.removeLayer('route-outline');
+    if (map.getSource('route')) map.removeSource('route');
+};
 
 window.toggleSideIndex = function() {
     if (window.innerWidth >= 768) return;
