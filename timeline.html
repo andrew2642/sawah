@@ -8,74 +8,65 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-error": "#ffffff",
-                        "on-background": "#1c1c15",
-                        "surface-container-highest": "#e5e2d8",
-                        "secondary": "#4c6078",
-                        "on-secondary-container": "#51647d",
-                        "on-tertiary": "#ffffff",
-                        "surface-dim": "#dddacf",
-                        "on-primary-fixed": "#2d1600",
-                        "on-surface": "#1c1c15",
-                        "secondary-container": "#cde1fe",
-                        "on-tertiary-fixed-variant": "#763221",
-                        "on-secondary-fixed": "#061d32",
-                        "surface-tint": "#8b500b",
-                        "on-secondary": "#ffffff",
-                        "tertiary": "#914634",
-                        "background": "#fcf9ee",
-                        "outline": "#857467",
-                        "on-error-container": "#93000a",
-                        "tertiary-fixed-dim": "#ffb4a3",
-                        "on-primary-fixed-variant": "#6b3b00",
-                        "surface": "#fcf9ee",
-                        "on-primary": "#ffffff",
-                        "primary": "#884e08",
-                        "surface-container-low": "#f7f4e9",
-                        "tertiary-fixed": "#ffdad2",
-                        "primary-fixed": "#ffdcc0",
-                        "inverse-surface": "#31312a",
-                        "inverse-primary": "#ffb876",
-                        "error": "#ba1a1a",
-                        "secondary-fixed-dim": "#b4c8e4",
-                        "surface-variant": "#e5e2d8",
-                        "on-tertiary-container": "#fffbff",
-                        "secondary-fixed": "#d1e4ff",
-                        "surface-bright": "#fcf9ee",
-                        "primary-container": "#a66622",
-                        "on-tertiary-fixed": "#3c0700",
-                        "on-surface-variant": "#524438",
-                        "primary-fixed-dim": "#ffb876",
-                        "surface-container-lowest": "#ffffff",
-                        "tertiary-container": "#af5e4a",
-                        "on-primary-container": "#fffbff",
-                        "outline-variant": "#d7c3b3",
-                        "inverse-on-surface": "#f4f1e6",
-                        "error-container": "#ffdad6",
-                        "on-secondary-fixed-variant": "#35485f",
-                        "surface-container-high": "#ebe8dd",
-                        "surface-container": "#f1eee3"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "fontFamily": {
-                        "headline": ["Noto Serif"],
-                        "body": ["Manrope"],
-                        "label": ["Manrope"]
-                    }
-                },
-            },
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#884e08",
+            "on-primary": "#ffffff",
+            "primary-container": "#a66622",
+            "on-primary-container": "#fffbff",
+            "secondary": "#4c6078",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#cde1fe",
+            "on-secondary-container": "#51647d",
+            "tertiary": "#914634",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#af5e4a",
+            "on-tertiary-container": "#fffbff",
+            "error": "#ba1a1a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            "background": "#fcf9ee",
+            "on-background": "#1c1c15",
+            "surface": "#fcf9ee",
+            "on-surface": "#1c1c15",
+            "surface-variant": "#e5e2d8",
+            "on-surface-variant": "#524438",
+            "outline": "#857467",
+            "outline-variant": "#d7c3b3",
+            "surface-tint": "#8b500b",
+            "inverse-surface": "#31312a",
+            "inverse-on-surface": "#f4f1e6",
+            "inverse-primary": "#ffb876",
+            "primary-fixed": "#ffdcc0",
+            "on-primary-fixed": "#2d1600",
+            "primary-fixed-dim": "#ffb876",
+            "on-primary-fixed-variant": "#6b3b00",
+            "secondary-fixed": "#d1e4ff",
+            "on-secondary-fixed": "#061d32",
+            "secondary-fixed-dim": "#b4c8e4",
+            "on-secondary-fixed-variant": "#35485f",
+            "tertiary-fixed": "#ffdad2",
+            "on-tertiary-fixed": "#3c0700",
+            "tertiary-fixed-dim": "#ffb4a3",
+            "on-tertiary-fixed-variant": "#763221",
+            "surface-dim": "#dddacf",
+            "surface-bright": "#fcf9ee",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f7f4e9",
+            "surface-container": "#f1eee3",
+            "surface-container-high": "#ebe8dd",
+            "surface-container-highest": "#e5e2d8"
+          },
+          borderRadius: { DEFAULT: "0.125rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          fontFamily: { headline: ["Noto Serif", "serif"], body: ["Manrope", "sans-serif"], label: ["Manrope", "sans-serif"] }
         }
-    </script>
+      }
+    };
+</script>
 <style>
         body { font-family: 'Manrope', sans-serif; }
         h1, h2, h3, .font-serif { font-family: 'Noto Serif', serif; }
@@ -98,7 +89,11 @@
                 <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="archive.html">Archives</a>
             </div>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4"> 
+            <div class="relative group hidden sm:block">
+                <input id="home-search" onkeypress="if(event.key==='Enter') window.location.href = `archive.html?placeName=${encodeURIComponent(this.value)}`" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic uppercase tracking-widest" placeholder="EXPLORE THE PAST..." type="text"/>
+                <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
+            </div>
             <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button>
             <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">menu</button>
         </div>
@@ -120,7 +115,7 @@
         </nav>
         <div class="mt-auto pt-6 border-t border-outline-variant/20">
             <div class="relative group mb-4">
-                <input id="mobile-search" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic uppercase tracking-widest" placeholder="EXPLORE THE PAST..." type="text"/>
+                <input id="mobile-search" onkeypress="if(event.key==='Enter') window.location.href = `archive.html?placeName=${encodeURIComponent(this.value)}`" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic uppercase tracking-widest" placeholder="EXPLORE THE PAST..." type="text"/>
                 <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
             </div>
             <button class="w-full text-left text-on-surface-variant hover:text-primary transition-colors py-2">Account</button>

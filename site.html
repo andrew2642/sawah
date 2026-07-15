@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah — Site Details</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: "#884e08", "on-primary": "#ffffff", "primary-container": "#a66622",
+        "on-primary-container": "#fffbff", secondary: "#4c6078", "on-secondary": "#ffffff",
+        "secondary-container": "#cde1fe", "on-secondary-container": "#51647d",
+        tertiary: "#914634", "on-tertiary": "#ffffff", "tertiary-container": "#af5e4a",
+        "on-tertiary-container": "#fffbff", error: "#ba1a1a", "on-error": "#ffffff",
+        "error-container": "#ffdad6", "on-error-container": "#93000a",
+        background: "#fcf9ee", "on-background": "#1c1c15",
+        surface: "#fcf9ee", "on-surface": "#1c1c15",
+        "surface-variant": "#e5e2d8", "on-surface-variant": "#524438",
+        outline: "#857467", "outline-variant": "#d7c3b3",
+        "surface-tint": "#8b500b", "inverse-surface": "#31312a",
+        "inverse-on-surface": "#f4f1e6", "inverse-primary": "#ffb876",
+        "primary-fixed": "#ffdcc0", "on-primary-fixed": "#2d1600",
+        "primary-fixed-dim": "#ffb876", "on-primary-fixed-variant": "#6b3b00",
+        "secondary-fixed": "#d1e4ff", "on-secondary-fixed": "#061d32",
+        "secondary-fixed-dim": "#b4c8e4", "on-secondary-fixed-variant": "#35485f",
+        "tertiary-fixed": "#ffdad2", "on-tertiary-fixed": "#3c0700",
+        "tertiary-fixed-dim": "#ffb4a3", "on-tertiary-fixed-variant": "#763221",
+        "surface-dim": "#dddacf", "surface-bright": "#fcf9ee",
+        "surface-container-lowest": "#ffffff", "surface-container-low": "#f7f4e9",
+        "surface-container": "#f1eee3", "surface-container-high": "#ebe8dd",
+        "surface-container-highest": "#e5e2d8"
+      },
+      borderRadius: { DEFAULT: "0.125rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      fontFamily: { headline: ["Noto Serif", "serif"], body: ["Manrope", "sans-serif"] }
+    }
+  }
+};
+</script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #fcf9ee;
+    color: #1c1c15;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+
+  .card-hover { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.06); border-color: rgba(136,78,8,0.15); }
+  .navbar-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .parchment-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02; pointer-events: none;
+  }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Knowledge Graph */
+  .graph-node {
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .graph-node:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(136,78,8,0.2);
+  }
+  .graph-edge {
+    stroke: #d7c3b3;
+    stroke-width: 1.5;
+  }
+
+  /* Timeline */
+  .timeline-line { position: relative; }
+  .timeline-line::before {
+    content: ''; position: absolute; left: 7px; top: 0; bottom: 0;
+    width: 2px; background: #e5e2d8;
+  }
+
+  /* Masonry */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  /* Tabs */
+  .tab-btn { position: relative; }
+  .tab-btn.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 2px; background: #884e08;
+  }
+</style>
+</head>
+<body>
+
+<div class="fixed inset-0 parchment-grain z-0 pointer-events-none"></div>
+
+<!-- ==================== NAVBAR ==================== -->
+<header class="sticky top-0 z-50 navbar-blur bg-surface/80 border-b border-outline-variant/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="flex items-center gap-2.5 group">
+          <div class="w-7 h-7 rounded-lg border border-primary/30 flex items-center justify-center bg-primary/5 group-hover:border-primary/60 transition-all">
+            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">temple_buddhist</span>
+          </div>
+          <span class="text-lg font-headline italic text-secondary">Sawah</span>
+        </a>
+      <nav class="hidden md:flex items-center gap-5 text-sm">
+        <a href="index.html" class="text-on-surface-variant hover:text-primary transition-colors">Home</a>
+        <a href="dashboard.html" class="text-on-surface-variant hover:text-primary transition-colors">Dashboard</a>
+        <a href="map.html" class="text-on-surface-variant hover:text-primary transition-colors">Map</a>
+        <a href="#" class="text-primary border-b-2 border-primary pb-0.5 font-bold">Site</a>
+        <a href="archive.html" class="text-on-surface-variant hover:text-primary transition-colors">Archives</a>
+        <a href="library.html" class="text-on-surface-variant hover:text-primary transition-colors">Library</a>
+      </nav>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">person</button>
+        <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 shadow-lg md:hidden">
+  <div class="p-6 flex flex-col h-full">
+    <div class="flex justify-between items-center mb-8">
+      <span class="text-xl font-headline italic text-secondary">Sawah</span>
+      <button class="material-symbols-outlined text-secondary" onclick="toggleMobileMenu()">close</button>
+    </div>
+    <nav class="flex flex-col gap-4 text-base flex-grow">
+      <a class="text-on-surface-variant hover:text-primary" href="index.html" onclick="toggleMobileMenu()">Home</a>
+      <a class="text-on-surface-variant hover:text-primary" href="dashboard.html" onclick="toggleMobileMenu()">Dashboard</a>
+      <a class="text-on-surface-variant hover:text-primary" href="map.html" onclick="toggleMobileMenu()">Map</a>
+      <a class="text-primary font-bold" href="#" onclick="toggleMobileMenu()">Site Details</a>
+      <a class="text-on-surface-variant hover:text-primary" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
+      <a class="text-on-surface-variant hover:text-primary" href="library.html" onclick="toggleMobileMenu()">Library</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<section class="relative h-[50vh] min-h-[400px] overflow-hidden">
+  <img id="hero-image" src="https://upload.wikimedia.org/wikipedia/commons/7/72/Luxor_Temple.jpg" alt="Site" class="w-full h-full object-cover"/>
+  <div class="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+  <div class="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent"></div>
+  <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center gap-2 mb-3">
+        <span id="site-period" class="text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/10 px-2 py-1 rounded">New Kingdom</span>
+        <span class="text-[10px] text-on-surface-variant">·</span>
+        <span id="site-region" class="text-[10px] text-on-surface-variant uppercase tracking-wider">Egypt</span>
+      </div>
+      <h1 id="site-title" class="font-headline text-4xl md:text-6xl font-bold text-on-surface mb-3">Karnak Temple</h1>
+      <p id="site-location" class="text-sm text-on-surface-variant flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">location_on</span>
+        Luxor, Egypt
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Action Bar -->
+  <div class="flex flex-wrap items-center gap-3 mb-8">
+    <a href="map.html" class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low border border-outline-variant/30 rounded-lg text-xs font-bold text-on-surface hover:border-primary transition-all">
+      <span class="material-symbols-outlined text-sm">map</span>
+      View on Map
+    </a>
+    <button class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low border border-outline-variant/30 rounded-lg text-xs font-bold text-on-surface hover:border-primary transition-all">
+      <span class="material-symbols-outlined text-sm">bookmark_add</span>
+      Save
+    </button>
+    <button class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low border border-outline-variant/30 rounded-lg text-xs font-bold text-on-surface hover:border-primary transition-all">
+      <span class="material-symbols-outlined text-sm">share</span>
+      Share
+    </button>
+    <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg text-xs font-bold hover:bg-primary-container transition-all">
+      <span class="material-symbols-outlined text-sm">add_to_collection</span>
+      Add to Collection
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- LEFT COLUMN -->
+    <div class="lg:col-span-8 space-y-8">
+
+      <!-- Tabs -->
+      <div class="border-b border-outline-variant/30">
+        <div class="flex gap-6">
+          <button class="tab-btn active px-1 py-3 text-sm font-bold text-on-surface">Overview</button>
+          <button class="tab-btn px-1 py-3 text-sm font-bold text-on-surface-variant hover:text-on-surface transition-colors">Timeline</button>
+          <button class="tab-btn px-1 py-3 text-sm font-bold text-on-surface-variant hover:text-on-surface transition-colors">Gallery</button>
+          <button class="tab-btn px-1 py-3 text-sm font-bold text-on-surface-variant hover:text-on-surface transition-colors">Artifacts</button>
+        </div>
+      </div>
+
+      <!-- Overview -->
+      <div class="reveal">
+        <h2 class="font-headline text-2xl font-bold text-on-surface mb-4">Overview</h2>
+        <div class="prose prose-sm max-w-none">
+          <p id="site-summary" class="text-sm text-on-surface-variant leading-relaxed mb-4">
+            Luxor Temple, founded by Amenhotep III and expanded by Ramses II, was a major cult center on the east bank of the Nile at Thebes. 
+            The temple was dedicated to the rejuvenation of kingship and was the stage for the annual Opet Festival.
+          </p>
+        </div>
+
+        <!-- Key Facts -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant/20">
+            <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Established</div>
+            <div class="text-sm font-bold text-on-surface">c. 1400 BCE</div>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant/20">
+            <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Period</div>
+            <div class="text-sm font-bold text-on-surface">New Kingdom</div>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant/20">
+            <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Material</div>
+            <div class="text-sm font-bold text-on-surface">Sandstone</div>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant/20">
+            <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Location</div>
+            <div class="text-sm font-bold text-on-surface">Luxor, Egypt</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="reveal">
+        <h2 class="font-headline text-2xl font-bold text-on-surface mb-6">Historical Timeline</h2>
+        <div class="space-y-4">
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-4 h-4 rounded-full bg-primary border-4 border-primary/20"></div>
+              <div class="w-0.5 h-full bg-outline-variant/30 mt-1"></div>
+            </div>
+            <div class="pb-6">
+              <div class="text-xs font-bold text-primary mb-1">c. 1390 BCE</div>
+              <p class="text-sm text-on-surface-variant">Amenhotep III begins construction of the temple complex.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-4 h-4 rounded-full bg-primary border-4 border-primary/20"></div>
+              <div class="w-0.5 h-full bg-outline-variant/30 mt-1"></div>
+            </div>
+            <div class="pb-6">
+              <div class="text-xs font-bold text-primary mb-1">c. 1279 BCE</div>
+              <p class="text-sm text-on-surface-variant">Ramses II adds the first pylon and colonnade.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-4 h-4 rounded-full bg-secondary border-4 border-secondary/20"></div>
+              <div class="w-0.5 h-full bg-outline-variant/30 mt-1"></div>
+            </div>
+            <div class="pb-6">
+              <div class="text-xs font-bold text-secondary mb-1">30 BCE</div>
+              <p class="text-sm text-on-surface-variant">Romans convert the temple into a fortress and administrative center.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-4 h-4 rounded-full bg-tertiary border-4 border-tertiary/20"></div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-tertiary mb-1">1798 CE</div>
+              <p class="text-sm text-on-surface-variant">Napoleon's expedition records the temple's reliefs for the first time in Europe.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gallery -->
+      <div class="reveal">
+        <h2 class="font-headline text-2xl font-bold text-on-surface mb-6">Gallery</h2>
+        <div class="gallery-grid">
+          <div class="gallery-item rounded-lg overflow-hidden border border-outline-variant/20 card-hover cursor-pointer">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/49/Luxor_Temple_Night.jpg" alt="Luxor Temple" class="w-full h-48 object-cover"/>
+          </div>
+          <div class="gallery-item rounded-lg overflow-hidden border border-outline-variant/20 card-hover cursor-pointer">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Luxor_Temple.jpg" alt="Luxor Temple" class="w-full h-48 object-cover"/>
+          </div>
+          <div class="gallery-item rounded-lg overflow-hidden border border-outline-variant/20 card-hover cursor-pointer">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Ramses_II%27s_colossus_in_Luxor_Temple.jpg" alt="Colossus" class="w-full h-48 object-cover"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Artifacts -->
+      <div class="reveal">
+        <h2 class="font-headline text-2xl font-bold text-on-surface mb-6">Related Artifacts</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20 card-hover flex items-center gap-4">
+            <div class="w-16 h-16 rounded-lg bg-surface-container-high flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-3xl text-outline">museum</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-on-surface">Ramses II Colossus</h4>
+              <p class="text-xs text-on-surface-variant mt-1">Granite statue, c. 1250 BCE</p>
+            </div>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20 card-hover flex items-center gap-4">
+            <div class="w-16 h-16 rounded-lg bg-surface-container-high flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-3xl text-outline">museum</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-on-surface">Obelisk of Luxor</h4>
+              <p class="text-xs text-on-surface-variant mt-1">Granite, c. 1400 BCE</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="lg:col-span-4 space-y-6">
+
+      <!-- Knowledge Graph -->
+      <div class="reveal">
+        <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Knowledge Graph</h3>
+          <div class="relative h-64 bg-surface rounded-lg p-4">
+            <svg class="absolute inset-0 w-full h-full" style="z-index: 0;">
+              <line x1="50%" y1="30%" x2="25%" y2="50%" class="graph-edge"/>
+              <line x1="50%" y1="30%" x2="75%" y2="50%" class="graph-edge"/>
+              <line x1="50%" y1="30%" x2="50%" y2="70%" class="graph-edge"/>
+              <line x1="25%" y1="50%" x2="25%" y2="70%" class="graph-edge"/>
+              <line x1="75%" y1="50%" x2="75%" y2="70%" class="graph-edge"/>
+            </svg>
+            <div class="relative z-10 h-full flex flex-col items-center justify-center">
+              <!-- Center Node -->
+              <div class="graph-node absolute top-[30%] left-1/2 -translate-x-1/2 px-4 py-2 bg-primary text-on-primary rounded-lg text-xs font-bold shadow-lg">
+                Karnak Temple
+              </div>
+              <!-- Level 1 -->
+              <div class="graph-node absolute top-[50%] left-[25%] px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-[10px] font-bold">
+                Amun
+              </div>
+              <div class="graph-node absolute top-[50%] left-[75%] px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-[10px] font-bold">
+                Luxor Temple
+              </div>
+              <!-- Level 2 -->
+              <div class="graph-node absolute bottom-[5%] left-1/2 -translate-x-1/2 px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-[10px] font-bold">
+                New Kingdom
+              </div>
+              <div class="graph-node absolute bottom-[5%] left-[25%] px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-[10px] font-bold">
+                Thebes
+              </div>
+              <div class="graph-node absolute bottom-[5%] left-[75%] px-3 py-1.5 bg-surface-container-high border border-outline-variant/30 rounded-lg text-[10px] font-bold">
+                Hatshepsut
+              </div>
+            </div>
+          </div>
+          <p class="text-[10px] text-on-surface-variant mt-3 text-center">Click nodes to explore connections</p>
+        </div>
+      </div>
+
+      <!-- Quick Info -->
+      <div class="reveal">
+        <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Quick Information</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+              <span class="text-xs text-on-surface-variant">Period</span>
+              <span class="text-xs font-bold text-on-surface">New Kingdom</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+              <span class="text-xs text-on-surface-variant">Culture</span>
+              <span class="text-xs font-bold text-on-surface">Egyptian</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+              <span class="text-xs text-on-surface-variant">Site Type</span>
+              <span class="text-xs font-bold text-on-surface">Temple</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+              <span class="text-xs text-on-surface-variant">Coordinates</span>
+              <span class="text-xs font-bold text-on-surface">25.6872° N, 32.6396° E</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <span class="text-xs text-on-surface-variant">UNESCO Status</span>
+              <span class="text-xs font-bold text-primary">World Heritage Site</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Excavation History -->
+      <div class="reveal">
+        <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Excavation History</h3>
+          <div class="space-y-4">
+            <div class="flex gap-3">
+              <div class="text-xs font-bold text-primary w-12 flex-shrink-0">1798</div>
+              <div>
+                <p class="text-xs font-bold text-on-surface">Napoleon's Expedition</p>
+                <p class="text-[10px] text-on-surface-variant mt-0.5">First detailed European documentation</p>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="text-xs font-bold text-primary w-12 flex-shrink-0">1884</div>
+              <div>
+                <p class="text-xs font-bold text-on-surface">French Mission</p>
+                <p class="text-[10px] text-on-surface-variant mt-0.5">Systematic excavation begins</p>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="text-xs font-bold text-primary w-12 flex-shrink-0">1978</div>
+              <div>
+                <p class="text-xs font-bold text-on-surface">Egyptian Mission</p>
+                <p class="text-[10px] text-on-surface-variant mt-0.5">Restoration and conservation project</p>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="text-xs font-bold text-primary w-12 flex-shrink-0">2024</div>
+              <div>
+                <p class="text-xs font-bold text-on-surface">Conservation Project</p>
+                <p class="text-[10px] text-on-surface-variant mt-0.5">Ongoing preservation efforts</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Sites -->
+      <div class="reveal">
+        <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Related Sites</h3>
+        <div class="space-y-2">
+          <a href="archive.html?placeName=Karnak" class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg border border-outline-variant/20 card-hover">
+            <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Luxor_Temple.jpg" alt="Karnak" class="w-full h-full object-cover"/>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs font-bold text-on-surface">Karnak Temple</div>
+              <div class="text-[10px] text-on-surface-variant">Egypt · New Kingdom</div>
+            </div>
+            <span class="material-symbols-outlined text-outline text-sm">arrow_forward</span>
+          </a>
+          <a href="archive.html?placeName=Valley of the Kings" class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg border border-outline-variant/20 card-hover">
+            <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Valley_of_the_Kings.jpg" alt="Valley of the Kings" class="w-full h-full object-cover"/>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs font-bold text-on-surface">Valley of the Kings</div>
+              <div class="text-[10px] text-on-surface-variant">Egypt · New Kingdom</div>
+            </div>
+            <span class="material-symbols-outlined text-outline text-sm">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="relative z-10 bg-surface-container-low border-t border-outline-variant/10 mt-12 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <p class="text-xs text-on-surface-variant">© 2024 Sawah. The digital operating system for archaeology.</p>
+    <div class="flex gap-6 text-xs text-on-surface-variant">
+      <a href="#" class="hover:text-primary transition-colors">About</a>
+      <a href="#" class="hover:text-primary transition-colors">Privacy</a>
+      <a href="#" class="hover:text-primary transition-colors">Terms</a>
+      <a href="#" class="hover:text-primary transition-colors">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('-translate-x-full');
+}
+
+document.querySelectorAll('.reveal').forEach(el => {
+  new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 }).observe(el);
+});
+</script>
+</body>
+</html>

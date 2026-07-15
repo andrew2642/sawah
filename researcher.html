@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah — Researcher Profile</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: "#884e08", "on-primary": "#ffffff", "primary-container": "#a66622",
+        "on-primary-container": "#fffbff", secondary: "#4c6078", "on-secondary": "#ffffff",
+        "secondary-container": "#cde1fe", "on-secondary-container": "#51647d",
+        tertiary: "#914634", "on-tertiary": "#ffffff", "tertiary-container": "#af5e4a",
+        "on-tertiary-container": "#fffbff", error: "#ba1a1a", "on-error": "#ffffff",
+        "error-container": "#ffdad6", "on-error-container": "#93000a",
+        background: "#fcf9ee", "on-background": "#1c1c15",
+        surface: "#fcf9ee", "on-surface": "#1c1c15",
+        "surface-variant": "#e5e2d8", "on-surface-variant": "#524438",
+        outline: "#857467", "outline-variant": "#d7c3b3",
+        "surface-tint": "#8b500b", "inverse-surface": "#31312a",
+        "inverse-on-surface": "#f4f1e6", "inverse-primary": "#ffb876",
+        "primary-fixed": "#ffdcc0", "on-primary-fixed": "#2d1600",
+        "primary-fixed-dim": "#ffb876", "on-primary-fixed-variant": "#6b3b00",
+        "secondary-fixed": "#d1e4ff", "on-secondary-fixed": "#061d32",
+        "secondary-fixed-dim": "#b4c8e4", "on-secondary-fixed-variant": "#35485f",
+        "tertiary-fixed": "#ffdad2", "on-tertiary-fixed": "#3c0700",
+        "tertiary-fixed-dim": "#ffb4a3", "on-tertiary-fixed-variant": "#763221",
+        "surface-dim": "#dddacf", "surface-bright": "#fcf9ee",
+        "surface-container-lowest": "#ffffff", "surface-container-low": "#f7f4e9",
+        "surface-container": "#f1eee3", "surface-container-high": "#ebe8dd",
+        "surface-container-highest": "#e5e2d8"
+      },
+      borderRadius: { DEFAULT: "0.125rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      fontFamily: { headline: ["Noto Serif", "serif"], body: ["Manrope", "sans-serif"] }
+    }
+  }
+};
+</script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #fcf9ee;
+    color: #1c1c15;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+
+  .card-hover { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.06); border-color: rgba(136,78,8,0.15); }
+  .navbar-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .parchment-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02; pointer-events: none;
+  }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Tabs */
+  .tab-btn { position: relative; }
+  .tab-btn.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 2px; background: #884e08;
+  }
+
+  /* Avatar */
+  .avatar-ring {
+    background: linear-gradient(135deg, #884e08, #a66622);
+    padding: 3px;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<div class="fixed inset-0 parchment-grain z-0 pointer-events-none"></div>
+
+<!-- ==================== NAVBAR ==================== -->
+<header class="sticky top-0 z-50 navbar-blur bg-surface/80 border-b border-outline-variant/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="flex items-center gap-2.5 group">
+          <div class="w-7 h-7 rounded-lg border border-primary/30 flex items-center justify-center bg-primary/5 group-hover:border-primary/60 transition-all">
+            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">temple_buddhist</span>
+          </div>
+          <span class="text-lg font-headline italic text-secondary">Sawah</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-5 text-sm">
+          <a href="index.html" class="text-on-surface-variant hover:text-primary transition-colors">Home</a>
+          <a href="dashboard.html" class="text-on-surface-variant hover:text-primary transition-colors">Dashboard</a>
+          <a href="map.html" class="text-on-surface-variant hover:text-primary transition-colors">Map</a>
+          <a href="#" class="text-primary border-b-2 border-primary pb-0.5 font-bold">Researchers</a>
+          <a href="library.html" class="text-on-surface-variant hover:text-primary transition-colors">Library</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">person</button>
+        <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 shadow-lg md:hidden">
+  <div class="p-6 flex flex-col h-full">
+    <div class="flex justify-between items-center mb-8">
+      <span class="text-xl font-headline italic text-secondary">Sawah</span>
+      <button class="material-symbols-outlined text-secondary" onclick="toggleMobileMenu()">close</button>
+    </div>
+    <nav class="flex flex-col gap-4 text-base flex-grow">
+      <a class="text-on-surface-variant hover:text-primary" href="index.html" onclick="toggleMobileMenu()">Home</a>
+      <a class="text-on-surface-variant hover:text-primary" href="dashboard.html" onclick="toggleMobileMenu()">Dashboard</a>
+      <a class="text-on-surface-variant hover:text-primary" href="map.html" onclick="toggleMobileMenu()">Map</a>
+      <a class="text-primary font-bold" href="#" onclick="toggleMobileMenu()">Researchers</a>
+      <a class="text-on-surface-variant hover:text-primary" href="library.html" onclick="toggleMobileMenu()">Library</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ==================== PROFILE HEADER ==================== -->
+<section class="relative bg-surface-container-low border-b border-outline-variant/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex flex-col md:flex-row items-start gap-6">
+      <!-- Avatar -->
+      <div class="avatar-ring flex-shrink-0">
+        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face" alt="Dr. Sarah Johnson" class="w-24 h-24 rounded-full object-cover"/>
+      </div>
+
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h1 class="font-headline text-3xl md:text-4xl font-bold text-on-surface mb-2">Dr. Sarah Johnson</h1>
+            <p class="text-sm text-on-surface-variant mb-1">Professor of Egyptology · University of Cairo</p>
+            <p class="text-xs text-on-surface-variant">Specializes in New Kingdom temple architecture and epigraphy</p>
+          </div>
+          <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg text-xs font-bold hover:bg-primary-container transition-all flex-shrink-0">
+            <span class="material-symbols-outlined text-sm">person_add</span>
+            Follow
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div class="text-center p-3 bg-surface rounded-lg border border-outline-variant/20">
+            <div class="text-xl font-headline font-bold text-primary">42</div>
+            <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">Publications</div>
+          </div>
+          <div class="text-center p-3 bg-surface rounded-lg border border-outline-variant/20">
+            <div class="text-xl font-headline font-bold text-primary">15</div>
+            <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">Projects</div>
+          </div>
+          <div class="text-center p-3 bg-surface rounded-lg border border-outline-variant/20">
+            <div class="text-xl font-headline font-bold text-primary">28</div>
+            <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">Sites</div>
+          </div>
+          <div class="text-center p-3 bg-surface rounded-lg border border-outline-variant/20">
+            <div class="text-xl font-headline font-bold text-primary">1.2K</div>
+            <div class="text-[10px] text-on-surface-variant uppercase tracking-wider">Followers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Tabs -->
+  <div class="border-b border-outline-variant/30 mb-8">
+    <div class="flex gap-6 overflow-x-auto">
+      <button class="tab-btn active px-1 py-3 text-sm font-bold text-on-surface whitespace-nowrap">Overview</button>
+      <button class="tab-btn px-1 py-3 text-sm font-bold text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">Publications</button>
+      <button class="tab-btn px-1 py-3 text-sm font-bold text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">Projects</button>
+      <button class="tab-btn px-1 py-3 text-sm font-bold text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">Media</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- LEFT COLUMN -->
+    <div class="lg:col-span-8 space-y-8">
+
+      <!-- About -->
+      <div class="reveal">
+        <h2 class="font-headline text-2xl font-bold text-on-surface mb-4">About</h2>
+        <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+          Dr. Sarah Johnson is a Professor of Egyptology at the University of Cairo with over 20 years of field experience. 
+          Her research focuses on New Kingdom temple architecture, epigraphic studies, and the religious practices of ancient Egypt.
+        </p>
+        <p class="text-sm text-on-surface-variant leading-relaxed">
+          She has directed excavations at Karnak, Luxor, and the Valley of the Kings, and has published extensively on temple 
+          construction techniques and the symbolic geography of Theban religious complexes.
+        </p>
+
+        <!-- Expertise -->
+        <div class="mt-6">
+          <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Areas of Expertise</h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold">Egyptology</span>
+            <span class="px-3 py-1.5 bg-secondary/10 text-secondary rounded-full text-xs font-bold">New Kingdom</span>
+            <span class="px-3 py-1.5 bg-tertiary/10 text-tertiary rounded-full text-xs font-bold">Temple Architecture</span>
+            <span class="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold">Epigraphy</span>
+            <span class="px-3 py-1.5 bg-secondary/10 text-secondary rounded-full text-xs font-bold">Thebes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Publications -->
+      <div class="reveal">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-headline text-2xl font-bold text-on-surface">Recent Publications</h2>
+          <button class="text-[10px] font-bold text-primary uppercase tracking-widest hover:text-primary-container transition-colors">View All</button>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 card-hover">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-2xl">menu_book</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="text-[10px] font-bold text-primary uppercase tracking-widest">Journal Article</span>
+                  <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                  <span class="text-[10px] text-on-surface-variant">2024</span>
+                </div>
+                <h3 class="font-headline text-base font-bold text-on-surface mb-2 hover:text-primary transition-colors cursor-pointer">Temple Architecture in the New Kingdom: A Comprehensive Analysis</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed mb-3">This paper examines the architectural evolution of New Kingdom temples, focusing on the transition from traditional axial planning to more complex hierarchical layouts.</p>
+                <div class="flex items-center gap-4 text-[10px] text-on-surface-variant">
+                  <span>Journal of Egyptian Archaeology</span>
+                  <span>·</span>
+                  <span>Vol. 108, pp. 45-67</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 card-hover">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-secondary text-2xl">description</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="text-[10px] font-bold text-secondary uppercase tracking-widest">Excavation Report</span>
+                  <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                  <span class="text-[10px] text-on-surface-variant">2023</span>
+                </div>
+                <h3 class="font-headline text-base font-bold text-on-surface mb-2 hover:text-primary transition-colors cursor-pointer">Karnak Temple: Recent Discoveries in the Sacred Lake Area</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed mb-3">Preliminary report on the 2023 excavation season, revealing new insights into ritual practices and water management systems.</p>
+                <div class="flex items-center gap-4 text-[10px] text-on-surface-variant">
+                  <span>Egyptian Ministry of Antiquities</span>
+                  <span>·</span>
+                  <span>Annual Report</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Projects -->
+      <div class="reveal">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-headline text-2xl font-bold text-on-surface">Active Projects</h2>
+          <button class="text-[10px] font-bold text-primary uppercase tracking-widest hover:text-primary-container transition-colors">View All</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 card-hover">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary text-lg">account_balance</span>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-on-surface">New Kingdom Temple Survey</h4>
+                <p class="text-[10px] text-on-surface-variant">4 team members</p>
+              </div>
+            </div>
+            <div class="progress-bar mb-2"><div class="progress-bar-fill" style="width: 65%"></div></div>
+            <div class="flex justify-between"><span class="text-[10px] text-on-surface-variant">65% complete</span><span class="text-[10px] font-bold text-primary">Active</span></div>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 card-hover">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-secondary text-lg">edit_note</span>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-on-surface">Epigraphic Database Project</h4>
+                <p class="text-[10px] text-on-surface-variant">2 team members</p>
+              </div>
+            </div>
+            <div class="progress-bar mb-2"><div class="progress-bar-fill" style="width: 40%"></div></div>
+            <div class="flex justify-between"><span class="text-[10px] text-on-surface-variant">40% complete</span><span class="text-[10px] font-bold text-primary">Active</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="lg:col-span-4 space-y-6">
+
+      <!-- Contact Info -->
+      <div class="reveal">
+        <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Contact</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-outline text-sm">email</span>
+              <span class="text-xs text-on-surface">sarah.johnson@cairo.edu</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-outline text-sm">location_on</span>
+              <span class="text-xs text-on-surface">Cairo, Egypt</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-outline text-sm">language</span>
+              <span class="text-xs text-on-surface">English, Arabic, French, German</span>
+            </div>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <a href="#" class="flex-1 text-center px-3 py-2 bg-surface border border-outline-variant/30 rounded-lg text-[10px] font-bold text-on-surface hover:border-primary transition-colors">Message</a>
+            <a href="#" class="flex-1 text-center px-3 py-2 bg-primary text-on-primary rounded-lg text-[10px] font-bold hover:bg-primary-container transition-colors">CV</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sites Worked On -->
+      <div class="reveal">
+        <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Sites Worked On</h3>
+          <div class="space-y-3">
+            <a href="archive.html?placeName=Karnak" class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container-high transition-colors">
+              <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Luxor_Temple.jpg" alt="Karnak" class="w-full h-full object-cover"/>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-on-surface">Karnak Temple</div>
+                <div class="text-[10px] text-on-surface-variant">Egypt · 1998-Present</div>
+              </div>
+            </a>
+            <a href="archive.html?placeName=Valley of the Kings" class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container-high transition-colors">
+              <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Valley_of_the_Kings.jpg" alt="Valley of the Kings" class="w-full h-full object-cover"/>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-on-surface">Valley of the Kings</div>
+                <div class="text-[10px] text-on-surface-variant">Egypt · 2005-Present</div>
+              </div>
+            </a>
+            <a href="archive.html?placeName=Luxor Temple" class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container-high transition-colors">
+              <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Luxor_Temple.jpg" alt="Luxor Temple" class="w-full h-full object-cover"/>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-on-surface">Luxor Temple</div>
+                <div class="text-[10px] text-on-surface-variant">Egypt · 2010-Present</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="reveal">
+        <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Education</h3>
+          <div class="space-y-4">
+            <div>
+              <div class="text-xs font-bold text-on-surface">PhD in Egyptology</div>
+              <div class="text-[10px] text-on-surface-variant">University of Cambridge · 1998</div>
+            </div>
+            <div class="w-full h-px bg-outline-variant/30"></div>
+            <div>
+              <div class="text-xs font-bold text-on-surface">MA in Archaeology</div>
+              <div class="text-[10px] text-on-surface-variant">University of Cairo · 1994</div>
+            </div>
+            <div class="w-full h-px bg-outline-variant/30"></div>
+            <div>
+              <div class="text-xs font-bold text-on-surface">BA in History</div>
+              <div class="text-[10px] text-on-surface-variant">University of Cairo · 1992</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="relative z-10 bg-surface-container-low border-t border-outline-variant/10 mt-12 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <p class="text-xs text-on-surface-variant">© 2024 Sawah. The digital operating system for archaeology.</p>
+    <div class="flex gap-6 text-xs text-on-surface-variant">
+      <a href="#" class="hover:text-primary transition-colors">About</a>
+      <a href="#" class="hover:text-primary transition-colors">Privacy</a>
+      <a href="#" class="hover:text-primary transition-colors">Terms</a>
+      <a href="#" class="hover:text-primary transition-colors">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('-translate-x-full');
+}
+
+document.querySelectorAll('.reveal').forEach(el => {
+  new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 }).observe(el);
+});
+</script>
+</body>
+</html>

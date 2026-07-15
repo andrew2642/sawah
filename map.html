@@ -1,756 +1,735 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth scroll-pt-24">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Sawah Map</title>
+<title>Sawah — Archaeological Map</title>
 
 <!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
 <!-- MapLibre -->
 <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet"/>
 <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 
 <!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script id="tailwind-config">
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                "colors": {
-                    "on-error": "#ffffff",
-                    "on-background": "#1c1c15",
-                    "surface-container-highest": "#e5e2d8",
-                    "secondary": "#4c6078",
-                    "on-secondary-container": "#51647d",
-                    "on-tertiary": "#ffffff",
-                    "surface-dim": "#dddacf",
-                    "on-primary-fixed": "#2d1600",
-                    "on-surface": "#1c1c15",
-                    "secondary-container": "#cde1fe",
-                    "on-tertiary-fixed-variant": "#763221",
-                    "on-secondary-fixed": "#061d32",
-                    "surface-tint": "#8b500b",
-                    "on-secondary": "#ffffff",
-                    "tertiary": "#914634",
-                    "background": "#fcf9ee",
-                    "outline": "#857467",
-                    "on-error-container": "#93000a",
-                    "tertiary-fixed-dim": "#ffb4a3",
-                    "on-primary-fixed-variant": "#6b3b00",
-                    "surface": "#fcf9ee",
-                    "on-primary": "#ffffff",
-                    "primary": "#884e08",
-                    "surface-container-low": "#f7f4e9",
-                    "tertiary-fixed": "#ffdad2",
-                    "primary-fixed": "#ffdcc0",
-                    "inverse-surface": "#31312a",
-                    "inverse-primary": "#ffb876",
-                    "error": "#ba1a1a",
-                    "secondary-fixed-dim": "#b4c8e4",
-                    "surface-variant": "#e5e2d8",
-                    "on-tertiary-container": "#fffbff",
-                    "secondary-fixed": "#d1e4ff",
-                    "surface-bright": "#fcf9ee",
-                    "primary-container": "#a66622",
-                    "on-tertiary-fixed": "#3c0700",
-                    "on-surface-variant": "#524438",
-                    "primary-fixed-dim": "#ffb876",
-                    "surface-container-lowest": "#ffffff",
-                    "tertiary-container": "#af5e4a",
-                    "on-primary-container": "#fffbff",
-                    "outline-variant": "#d7c3b3",
-                    "inverse-on-surface": "#f4f1e6",
-                    "error-container": "#ffdad6",
-                    "on-secondary-fixed-variant": "#35485f",
-                    "surface-container-high": "#ebe8dd",
-                    "surface-container": "#f1eee3"
-                },
-                "fontFamily": {
-                    "headline": ["Newsreader"],
-                    "body": ["Manrope"],
-                    "label": ["Manrope"]
-                }
-            }
-        }
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#884e08",
+        "on-primary": "#ffffff",
+        "primary-container": "#a66622",
+        "on-primary-container": "#fffbff",
+        "secondary": "#4c6078",
+        "on-secondary": "#ffffff",
+        "secondary-container": "#cde1fe",
+        "on-secondary-container": "#51647d",
+        "tertiary": "#914634",
+        "on-tertiary": "#ffffff",
+        "tertiary-container": "#af5e4a",
+        "on-tertiary-container": "#fffbff",
+        "error": "#ba1a1a",
+        "on-error": "#ffffff",
+        "error-container": "#ffdad6",
+        "on-error-container": "#93000a",
+        "background": "#fcf9ee",
+        "on-background": "#1c1c15",
+        "surface": "#fcf9ee",
+        "on-surface": "#1c1c15",
+        "surface-variant": "#e5e2d8",
+        "on-surface-variant": "#524438",
+        "outline": "#857467",
+        "outline-variant": "#d7c3b3",
+        "surface-tint": "#8b500b",
+        "inverse-surface": "#31312a",
+        "inverse-on-surface": "#f4f1e6",
+        "inverse-primary": "#ffb876",
+        "primary-fixed": "#ffdcc0",
+        "on-primary-fixed": "#2d1600",
+        "primary-fixed-dim": "#ffb876",
+        "on-primary-fixed-variant": "#6b3b00",
+        "secondary-fixed": "#d1e4ff",
+        "on-secondary-fixed": "#061d32",
+        "secondary-fixed-dim": "#b4c8e4",
+        "on-secondary-fixed-variant": "#35485f",
+        "tertiary-fixed": "#ffdad2",
+        "on-tertiary-fixed": "#3c0700",
+        "tertiary-fixed-dim": "#ffb4a3",
+        "on-tertiary-fixed-variant": "#763221",
+        "surface-dim": "#dddacf",
+        "surface-bright": "#fcf9ee",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#f7f4e9",
+        "surface-container": "#f1eee3",
+        "surface-container-high": "#ebe8dd",
+        "surface-container-highest": "#e5e2d8"
+      },
+      borderRadius: { DEFAULT: "0.125rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      fontFamily: { headline: ["Noto Serif", "serif"], body: ["Manrope", "sans-serif"] }
     }
+  }
+};
 </script>
 
 <!-- Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Manrope', sans-serif;
+  background: #fcf9ee;
+  overflow: hidden;
+  height: 100vh;
 }
 
-body{
-    font-family:'Manrope',sans-serif;
-    background:#fcf9ee;
-    overflow:hidden;
+#map { width: 100%; height: 100%; }
+
+.map-layout {
+  display: flex;
+  height: calc(100vh - 64px);
+  overflow: hidden;
 }
 
-#map{
-    width:100%;
-    height:100%;
+/* ---- Sidebar ---- */
+#sidebar {
+  width: 340px;
+  min-width: 340px;
+  background: #fcf9ee;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e2d8;
+  overflow: hidden;
+}
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 4px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+
+/* Filter checkbox */
+.filter-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #d7c3b3;
+  border-radius: 3px;
+  background: white;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  position: relative;
+}
+.filter-checkbox:checked {
+  background: #884e08;
+  border-color: #884e08;
+}
+.filter-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
 }
 
-.map-layout{
-    position: relative;
-    display: flex;
-    height: calc(100vh - 64px);
-    overflow: hidden;
+/* Marker */
+.marker {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid white;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+  background: white;
+}
+.marker:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(136,78,8,0.3);
+}
+.marker img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Popup */
+.maplibregl-popup { z-index: 1000 !important; }
+.maplibregl-popup-content {
+  padding: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: #fdfbf3 !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.18) !important;
+  border: 1px solid rgba(215,195,179,0.3);
+}
+.maplibregl-popup-close-button {
+  font-size: 18px !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: white !important;
+  color: #524438 !important;
+  right: 8px !important;
+  top: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+.maplibregl-popup-tip { border-top-color: #fdfbf3 !important; }
+ 
+/* Site list item */
+.site-list-item {
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.site-list-item:hover { background: #ebe8dd; }
+.site-list-item.active { background: rgba(136,78,8,0.08); border-left: 3px solid #884e08; }
+
+/* Stat counter */
+.stat-value {
+  font-variant-numeric: tabular-nums;
 }
 
-/* MARKERS */
-.marker{
-    width:50px;
-    height:50px;
-    border-radius:50%;
-    overflow:hidden;
-    border:3px solid #ffffff; /* White border for sticker effect */
-    outline: 1px solid rgba(136, 78, 8, 0.2); /* Subtle outline */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(0,0,0,0.05); /* Refined shadow */
-    cursor:pointer;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
-    background: white;
+/* Badge */
+.badge-period {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-block;
 }
 
-.marker:hover{
-    transform: scale(1.15); /* No rotation on hover for cleaner look */
+/* Directions drawer */
+#directionsDrawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+  width: 450px;
+  max-width: 100%;
+  height: 100%;
+  background: #fdfbf3;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: transform 0.4s ease-in-out;
+  box-shadow: -20px 0 40px rgba(0,0,0,0.12);
 }
+#directionsDrawer.open { transform: translateX(0); }
 
-.marker img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+/* Archive drawer */
+#archiveDrawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background: #fdfbf3;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: width 0.4s ease-in-out;
+  box-shadow: -20px 0 40px rgba(0,0,0,0.12);
 }
+#archiveDrawer.open { width: 550px; }
+.archive-content { padding: 32px; }
 
-/* POPUP */
-
-/* Ensure popups are always above markers */
-.maplibregl-popup {
-    z-index: 1000 !important;
-}
-.maplibregl-popup {
-    z-index: 100 !important;
-}
-
-.maplibregl-popup-content{
-    padding:0 !important;
-    border-radius:20px !important;
-    overflow:hidden;
-    background:#fdfbf3 !important;
-    box-shadow:0 20px 40px rgba(0,0,0,0.18) !important;
-}
-
-.maplibregl-popup-close-button{
-    font-size:20px !important;
-    width:30px !important;
-    height:30px !important;
-    border-radius:50% !important;
-    background:white !important;
-    border: 1px solid #e5e2d8; /* Add a subtle border to the close button */
-    color:#333 !important;
-    right:10px !important;
-    top:10px !important;
-}
-
-/* ARCHIVE DRAWER */
-
-#archiveDrawer{
-    position:absolute;
-    top:0;
-    right:0; /* Start hidden off-screen to the right */
-    transform: translateX(100%); /* Hide it completely */
-    width:750px; /* Desktop width */
-    max-width:100%;
-    height:100%;
-    background:#fdfbf3;
-    z-index:1000;
-    overflow-y:auto;
-    transition: transform 0.5s ease-in-out; /* Animate transform */
-    box-shadow:-20px 0 40px rgba(0,0,0,0.15);
-}
-
-/* DIRECTIONS DRAWER */
-#directionsDrawer{
-    position:absolute;
-    top:0;
-    right:0;
-    transform: translateX(100%);
-    width:750px;
-    max-width:100%;
-    height:100%;
-    background:#fdfbf3;
-    z-index:1000;
-    overflow-y:auto;
-    transition: transform 0.5s ease-in-out;
-    box-shadow:-20px 0 40px rgba(0,0,0,0.15);
-}
-#directionsDrawer.open {
-    transform: translateX(0);
-}
-
-/* Custom Scrollbar for Chat and Drawers */
+/* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
-@media (max-width: 767px) {
-    #archiveDrawer, #directionsDrawer { width: 100%; }
+
+/* Collapse category */
+.filter-section-toggle { cursor: pointer; user-select: none; }
+
+/* Masonry gallery */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
 }
 
-/* When open, slide it into view */
-#archiveDrawer.open {
-    transform: translateX(0);
+/* Responsive */
+@media (max-width: 1023px) {
+  #sidebar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    max-height: 45vh;
+    border-right: none;
+    border-top: 1px solid #e5e2d8;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.08);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  #sidebar.collapsed {
+    transform: translateY(calc(100% - 56px));
+  }
+  #archiveDrawer.open { width: 100%; }
+  #directionsDrawer { width: 100%; }
 }
-
-.archive-content{
-    padding: 40px 40px 120px 40px; /* Added extra bottom padding for mobile link visibility */
-}
-
-.close-btn{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:30px;
-    cursor:pointer;
-    font-size:12px;
-    letter-spacing:0.2em;
-    text-transform:uppercase;
-    color:#777;
-    font-weight:bold;
-}
-
-.archive-title{
-    font-family:'Newsreader',serif;
-    font-size:44px;
-    font-style:italic;
-    color:#111;
-    margin-bottom:20px;
-}
-
-.archive-text{
-    line-height:1.9;
-    color:#524438;
-}
-
-/* MOBILE */
-
 </style>
 </head>
-<body class="bg-surface text-on-surface">
-<div class="fixed inset-0 pointer-events-none parchment-grain z-0"></div>
+<body>
 
-<!-- TopNavBar -->
-<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 sticky top-0 z-50 h-16 flex items-center">
-    <nav class="flex justify-between items-center w-full px-8 max-w-screen-2xl mx-auto">
-        <div class="flex items-center gap-8">
-            <a href="index.html" class="text-2xl font-serif italic text-secondary hover:opacity-80 transition-opacity">Sawah</a>
-            <div class="hidden md:flex items-center gap-6 text-sm font-bold uppercase tracking-widest">
-                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="index.html">Discover</a>
-                <a class="text-primary border-b-2 border-primary pb-1 transition-colors duration-300" href="map.html">Map</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="timeline.html">Timeline</a>
-                <a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="archive.html">Archives</a>
-            </div>
+<!-- Navbar -->
+<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 h-16 flex items-center flex-shrink-0 relative z-30">
+  <nav class="flex justify-between items-center w-full px-4 sm:px-8 max-w-screen-2xl mx-auto">
+    <div class="flex items-center gap-6">
+      <a href="index.html" class="flex items-center gap-2.5 group">
+        <div class="w-7 h-7 rounded-lg border border-primary/30 flex items-center justify-center bg-primary/5 group-hover:border-primary/60 transition-all">
+          <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">temple_buddhist</span>
         </div>
-        <div class="flex items-center gap-2">
-            <div class="relative group hidden sm:block">
-                <input id="searchInput" onkeypress="if(event.key==='Enter') window.performSearch(this.value)" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic" placeholder="Explore the Past..." type="text"/>
-                <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
-            </div>
-            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button>
-            <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">menu</button>
-        </div>
-    </nav> 
+        <span class="text-lg font-headline italic text-secondary">Sawah</span>
+      </a>
+      <div class="hidden md:flex items-center gap-5 text-sm">
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">Home</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
+        <a class="text-primary border-b-2 border-primary pb-0.5 font-bold transition-colors" href="map.html">Map</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="archive.html">Archives</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="library.html">Library</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button>
+      <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+    </div>
+  </nav>
 </header>
 
-<!-- Mobile Menu Drawer -->
-<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
-    <div class="p-6 flex flex-col h-full">
-        <div class="flex justify-between items-center mb-8">
-            <a href="index.html" class="text-2xl font-serif italic text-secondary">Sawah</a>
-            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">close</button>
-        </div>
-        <nav class="flex flex-col gap-4 text-lg font-body flex-grow">
-            <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html" onclick="toggleMobileMenu()">Discover</a>
-            <a class="text-primary font-bold hover:text-primary-container transition-colors" href="map.html" onclick="toggleMobileMenu()">Map</a>
-            <a class="text-on-surface-variant hover:text-primary transition-colors" href="timeline.html" onclick="toggleMobileMenu()">Timeline</a>
-            <a class="text-on-surface-variant hover:text-primary transition-colors" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
-        </nav>
-        <div class="mt-auto pt-6 border-t border-outline-variant/20"> 
-            <div class="relative group mb-4">
-                <input id="mobile-search" onkeypress="if(event.key==='Enter') { window.performSearch(this.value); toggleMobileMenu(); }" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic" placeholder="EXPLORE THE PAST..." type="text"/>
-                <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
-            </div>
-            <button class="w-full text-left text-on-surface-variant hover:text-primary transition-colors py-2">Account</button>
-        </div>
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 shadow-lg md:hidden">
+  <div class="p-6 flex flex-col h-full">
+    <div class="flex justify-between items-center mb-8">
+      <span class="text-xl font-headline italic text-secondary">Sawah</span>
+      <button class="material-symbols-outlined text-secondary" onclick="toggleMobileMenu()">close</button>
     </div>
+    <nav class="flex flex-col gap-4 text-base font-body flex-grow">
+      <a class="text-on-surface-variant hover:text-primary" href="index.html" onclick="toggleMobileMenu()">Home</a>
+      <a class="text-on-surface-variant hover:text-primary" href="dashboard.html" onclick="toggleMobileMenu()">Dashboard</a>
+      <a class="text-primary font-bold" href="map.html" onclick="toggleMobileMenu()">Map</a>
+      <a class="text-on-surface-variant hover:text-primary" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
+      <a class="text-on-surface-variant hover:text-primary" href="library.html" onclick="toggleMobileMenu()">Library</a>
+    </nav>
+    <div class="mt-auto pt-6 border-t border-outline-variant/20">
+      <button class="w-full text-left text-on-surface-variant hover:text-primary py-2">Account</button>
+    </div>
+  </div>
 </div>
 
-<div class="map-layout relative z-10 flex-col md:flex-row">
+<!-- Main Layout -->
+<div class="map-layout relative">
 
-    <!-- SIDEBAR -->
-    <aside id="side-index" class="absolute bottom-0 left-0 right-0 z-20 md:relative md:inset-auto md:w-80 bg-surface/95 backdrop-blur-md md:bg-surface-container-low border-t md:border-t-0 md:border-r border-outline-variant/20 md:border-none flex flex-col h-[45vh] md:h-full overflow-y-auto p-6 shadow-2xl md:shadow-none custom-scrollbar rounded-t-3xl md:rounded-none transition-transform duration-500 transform translate-y-[calc(100%-60px)] md:translate-y-0">
-        <div onclick="window.toggleSideIndex()" class="flex justify-between items-center cursor-pointer mb-6 border-b border-stone-100 pb-4 md:pb-2 md:cursor-default">
-            <div class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em]">
-                Encyclopedic Index
-            </div>
-            <span id="index-toggle-icon" class="material-symbols-outlined text-sm transition-transform duration-300 md:hidden">expand_less</span>
-        </div>
-        <div id="siteList" class="space-y-2 custom-scrollbar"></div>
-    </aside>
-
-    <!-- MAP AREA -->
-    <div class="flex-1 relative z-10">
-        <div id="map" class="h-full w-full"></div>
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="flex flex-col">
+    <!-- Handle for mobile -->
+    <div class="hidden max-md:flex items-center justify-between px-5 py-3 border-b border-outline-variant/20" onclick="toggleSidebar()">
+      <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Filters</span>
+      <span id="sidebar-toggle-icon" class="material-symbols-outlined text-sm text-on-surface-variant">expand_less</span>
     </div>
 
-    <!-- DRAWER (Moved outside map container for correct stacking context) -->
-    <div id="archiveDrawer">
-        <div class="archive-content">
-            <img id="archiveImage" src="" alt="" class="w-full h-64 object-cover rounded-xl mb-6 hidden"/>
-            <div class="close-btn" onclick="window.closeArchive()">
-                <span class="material-symbols-outlined">arrow_back</span>
-                Back To Atlas
-            </div>
-            <div id="archiveBody"></div>
+    <div class="sidebar-scroll p-5">
+      <!-- Search -->
+      <div class="relative mb-5">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+        <input id="filter-search" type="text" placeholder="Search sites, artifacts..." oninput="applyFilters()" class="w-full pl-9 pr-3 py-2.5 bg-surface-container-low border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary transition-all"/>
+      </div>
+
+      <!-- Periods -->
+      <div class="mb-4">
+        <div class="filter-section-toggle flex items-center justify-between mb-2" onclick="toggleSection(this)">
+          <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Periods</span>
+          <span class="material-symbols-outlined text-sm text-outline">expand_less</span>
         </div>
+        <div class="space-y-1.5 filter-section-content">
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Old Kingdom" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Ancient Egypt</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Greek" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Greek</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Roman Empire" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Roman</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Byzantine" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Byzantine</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Islamic" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Islamic</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Medieval" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Medieval</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Neolithic" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Prehistoric</span></label>
+        </div>
+      </div>
+
+      <!-- Site Types -->
+      <div class="mb-4">
+        <div class="filter-section-toggle flex items-center justify-between mb-2" onclick="toggleSection(this)">
+          <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Site Types</span>
+          <span class="material-symbols-outlined text-sm text-outline">expand_less</span>
+        </div>
+        <div class="space-y-1.5 filter-section-content">
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Temple" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Temple</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Pyramid" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Pyramid / Tomb</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Amphitheater" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Amphitheater</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="City" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Settlement / City</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Monument" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Monument</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Museum" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Museum</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group"><input type="checkbox" value="Excavation" checked onchange="applyFilters()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">Excavation</span></label>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="bg-surface-container-low rounded-lg p-4 mb-4">
+        <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Visible on Map</div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div><div class="text-lg font-headline font-bold text-primary stat-value" id="stat-sites">0</div><div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Sites</div></div>
+          <div><div class="text-lg font-headline font-bold text-primary stat-value" id="stat-museums">0</div><div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Museums</div></div>
+          <div><div class="text-lg font-headline font-bold text-primary stat-value" id="stat-excavations">0</div><div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Excavations</div></div>
+        </div>
+      </div>
+
+      <!-- Site List -->
+      <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Site Index</div>
+      <div id="siteList" class="space-y-1"></div>
     </div>
+  </aside>
 
+  <!-- MAP -->
+  <div class="flex-1 relative">
+    <div id="map" class="h-full w-full"></div>
 
-
-    <!-- AI Chatbot UI -->
-    <div id="ai-chat-container" class="fixed bottom-28 right-8 w-80 md:w-96 h-[500px] max-h-[80vh] bg-surface-container rounded-3xl shadow-2xl border border-outline-variant/20 z-[1100] flex flex-col hidden overflow-hidden transition-all duration-300">
-        <div class="p-4 bg-primary text-on-primary flex justify-between items-center shadow-md">
-            <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-sm">smart_toy</span>
-                <h4 class="text-sm font-bold uppercase tracking-widest text-white">Sawah Oracle</h4>
-            </div>
-            <button onclick="toggleChat()" class="material-symbols-outlined text-white">close</button>
-        </div>
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-container-lowest text-sm italic custom-scrollbar">
-            <p class="text-on-surface">Greetings, seeker. I am the Sawah Oracle. Ask me about any historical site on the atlas.</p>
-        </div>
-        <div class="p-4 bg-surface-container border-t border-outline-variant/10">
-            <div class="flex gap-2 bg-surface-container-low p-2 rounded-lg">
-                <input id="chat-input" type="text" placeholder="Ask the Oracle..." class="flex-1 bg-transparent border-none focus:ring-0 text-sm italic" onkeypress="if(event.key==='Enter') sendChatMessage()">
-                <button onclick="sendChatMessage()" class="material-symbols-outlined text-primary">send</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Floating Action Buttons -->
-    <div id="map-fabs" class="fixed bottom-20 right-8 md:bottom-8 md:right-8 flex flex-col gap-4 z-[100] transition-transform duration-500 md:translate-y-0">
-        <button onclick="window.toggleChat()" class="w-12 h-12 md:w-14 md:h-14 bg-secondary text-on-secondary rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
-            <span class="material-symbols-outlined text-white">chat_bubble</span>
+    <!-- Directions Drawer -->
+    <div id="directionsDrawer" class="custom-scrollbar">
+      <div class="p-6">
+        <button onclick="closeDirections()" class="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          Back to Map
         </button>
+        <div id="directionsBody"></div>
+      </div>
     </div>
+
+    <!-- Archive Drawer -->
+    <div id="archiveDrawer" class="custom-scrollbar">
+      <div class="archive-content">
+        <button onclick="closeArchive()" class="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          Return to Atlas
+        </button>
+        <img id="archiveImage" src="" alt="" class="w-full h-48 object-cover rounded-lg mb-6 hidden"/>
+        <div id="archiveBody"></div>
+      </div>
+    </div>
+  </div>
 
 </div>
 
-<script>
+<script type="module">
+import { getSites, getLocalArchive, SITE_ARCHIVES } from './js/site-data.js';
 
-/* =========================================================
-   ORACLE CONFIG
-========================================================= */
-const GROQ_API_KEY = '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';
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-
-/* =========================================================
-   MAP
-========================================================= */
-
+// ===================== MAP =====================
 const map = new maplibregl.Map({
-    container:'map',
-    maxZoom: 18,
-
-    style:{
-        version:8,
-
-        sources:{
-            satellite:{
-                type:'raster',
-                tiles:[
-                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-                ],
-                tileSize:256,
-                maxzoom:18
-            },
-
-            labels:{
-                type:'raster',
-                tiles:[
-                    // Option 1: CartoDB Dark Matter (White text, dark halo - Best for Satellite)
-                    // 'https://a.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png'
-                    
-                    // Option 2: ESRI World Boundaries (Standard)
-                     'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'
-                    
-                    // Option 3: CartoDB Voyager (Neutral/Themed for "Sawah" aesthetic)
-                    // 'https://a.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png'
-                ],
-                tileSize:256,
-                maxzoom:18
-            }
-        },
-
-        layers:[
-            {
-                id:'satellite',
-                type:'raster',
-                source:'satellite'
-            },
-            {
-                id:'labels',
-                type:'raster',
-                source:'labels'
-            }
-        ]
+  container: 'map',
+  style: {
+    version: 8,
+    sources: {
+      satellite: {
+        type: 'raster',
+        tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+        tileSize: 256,
+        maxzoom: 18
+      },
+      labels: {
+        type: 'raster',
+        tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'],
+        tileSize: 256,
+        maxzoom: 18
+      }
     },
-
-    center:[20,30],
-    zoom:2.4,
-    pitch:30,
-    antialias:true
-
+    layers: [
+      { id: 'satellite', type: 'raster', source: 'satellite' },
+      { id: 'labels', type: 'raster', source: 'labels' }
+    ]
+  },
+  center: [20, 30],
+  zoom: 2.4,
+  pitch: 30,
+  antialias: true
 });
 
-/* =========================================================
-   INITIALIZATION & SITES
-========================================================= */
-
-map.addControl(new maplibregl.NavigationControl(),'bottom-right');
-
-/* Force map to resize once the DOM layout is stable */
+map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 setTimeout(() => map.resize(), 100);
 
-/* 
-   SITES DATA
-========================================================= */
+// ===================== SITES =====================
+const allSites = SITE_ARCHIVES;
+let markers = [];
+let markerElements = [];
 
-const sites = [
-
-{
-    name:"Great Pyramid of Giza",
-    lat:29.9792,
-    lng:31.1342,
-    img:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIALkBXQMBIgACEQEDEQH/xAAbAAACAwEBAQAAAAAAAAAAAAADBAECBQAGB//EAEAQAAIBAgQDBgQEBAUDBAMAAAECEQADBBIhMUFRYQUTIjJxgRRCkaEjM7HBUnLR8AZiguHxFSRDg5KisjQ2dP/EABoBAAMBAQEBAAAAAAAAAAAAAAABAgMEBQb/xAAjEQACAgIDAAMBAQEBAAAAAAAAAQIRAxIEITEiQVETFDIF/9oADAMBAAIRAxEAPwD6Ei2sSgDMfpWZ21g8Jawz6pmI0nQ0zZe/fUFotnjrXn/8RsVvBAS2mrTXfBWzlk6R5+6iFo+9U+H12oxE61ALJqK6jAqmDYnatPs7s83CRlMjbSkhiWFPYHthrDfiTl6VEm66HGrHMQbuFIRiASa18FdNlVK5+vKsTF9pWcY6s1sgj5ga2uz+0cELKq51rCadG0WrNZHvZe8SGB1INUxNywyZgrFuIq9jFYVhIJIopXD3B4TlrA2MK9ZW7qhZCedThMAFJIYlp3rYuYdbYlcpFKXe91FuB6CnYUWfEdyhFwwprzvarLeuFgFA9a1MRhbj2i9xpJ571jYjDNJmTVxIkxMFFOgHrNHfFkRlOnrSF6EaIBPWps4bEXjKKY9NK1ozY337XDB/WoZZGg1p212XiEUEiasMI5PiEe1O0KmIJYLHUirPhIG4+lOrbWzcBgsRwpw38OUAvAKZmKNgo89cwhiQNOcUscPJ2r02KxmE7sKFDelZVx7THwCKpSJaoUt4SflmmrWEVfEcoiqG8QIBJ6ChO9xxuQKfYkadrG2bI8JANXbtvLpbk9WNZWHwbX2gED1NPp2XZU/iXC45Is1DUV6Wm2Cfti6xOpHtQ7bXsU8uSR9K0kwNu44Fq0RP8QrYwnY+WD4fpWbkkWk2ZuAwGcDwL1mtRezVygBV9hWlbsqgAOkcqpfxFu2IXU1i3ZqlQD4aEiqqFtnV9Kzsf2ncBKJM9BWZdxVzTPeOu4oSY7PTHEJO9HtslwTpXlLGa7qty4PWtbC23VQM7E+tS0UmbHdpvM1MheFKILkanSrvdt2xLH71Iw5unglDuXrm0xSV/tS1bBGYCsrE9toJCmTQosdo2LpU6s1LPibFsGWrzOL7bJkTFZGJ7Y/ztNWoMWx63E9r2rc5P0rHxnbd0zl8I61527jbt0eFifQUTD4ZrwBu5j6zVKCROxbGdpXbhI772FZV3HHNq7n0Nbo7ItOfDbJP8tFXsAEflinaDsbsdo4pNrhI61F6/dvn8Q1yWulFFquykcFsWCV3d9KcWzIqe60p2Bnm3VGt9K0DbqjWqLAzyhFShdTKkinDa6VAsE8KTGdYx120fM3tT9rtxre+Zj1pZcDdKyLZjnQxhGLa6etZtRZabNMf4gvv5UEcjWjhu2m7ublkgcxWdgMJbkaSRwr0FjDr3SSgjkRWUtUaRchS7i7d5MxuXB7Gs+82HaZvt6Vu3rCJbgW/pWXdsNrktKOrUlQ3ZklcPnJS0zQd4rZ7NxNpbH5ZABoD4S49qCwGswCKXKrbXI16F/hU1XpPhsXe0kW0UjU1k4jGOfmketANy0vlLMeors5cRknqapRoTdlWxTsIAjrQDmbnTSYdidqZt4Oau6I9MzuiaNZwmc+IhRzNaq4PkJpj4IqNQB60thpGN8CC3h8Q5xRVwIICi0Z5k1rqLKKczeLpQbl5gD3SwOcVNsdIDhezDOulaa2sNaULdvIvSayW+Ju/M0Hkavh8EXeW19ahq/WWnXhtW7mDQSrhvTWaOmJ7z8tGgdKnBYG2loZoB9KdVLaCFGlZM1Qg4ut0FAvW/CQrMDzitZzIhVpO+jayRSGYrYNM5LPM1b4PCx5Ax9KYvtbSSYrMxXaNq3Izj2o7Yuh1WtWtAoAFAv8Aadm1oIJrBxPaZecqMQOJ0rLuY+87QiR6VSgGx6W725M5TFZuI7XDzmuN7GsxLHfAPdv+qiSaOvZ9sklEuacWFPVILBXMcrmbNp3PUzVO6xmKbRMvtWjYw7qQFLQOS03asv8AMHYk6cBTsDDfsK+8d45PvR7HYFnQucx5AV6O1g7zx4FUU/b7PhfG1S5lJHnU7Ow9qALeo4UZVt29Fs68q9EuHtKAIGlUe1bBlUmosdGOBfK+GyFHrUn4gQAlabKei0vcAza3PtRYyB2UJ0EVB7LjY/avTG2h3igXCqeUCt1NnLojzrYArwNAOHIMDWvTLZS7qSfarjs6ydhrT/oLQ8n8KxOi1xwb8V0r1TYBBqBB51F20MkZZ9qP6B/M8xbwIY+LStLC4G2AFdQAdiaNdwzC5nVTRFv5Ey5SD1WhybGo0N2+zLMCX0HACq3OzcKQY1b0pcY4poHPutL38ZeBzJiT6ZazqRdo652XctEtYbQ76VS3dxVi5la57Uu+PxTCDcJFAa7eY6aHnVpP7IbX0br37ndBiVIjnWZie0wCV0J6UsUvOBnLR1NccHA0+1CivsTkwN3GF9kNCzs2yKJ6UyMNrtRBhWABA0O1WqQuxZLImbh+1HUqNET60dcK7bKaNh8KrEhjBosKAWyxOwp3DqcwJEisztHFfDOMPhipvtuWBhBzNUslgyOLuXEk5gRcOp6gmIrz+T/6WLBLX1nbx+Bkyx28PSi0rCSrIOhoF0WRvmYDjQbWMOLhHhLsDQbN6VD2SfOwHrXZjyRyR2i+jmnCWOWskQ9xSItIo6xNS1i2qG5iLogDnAqMtq2Cz7ASSTFed7W7QfGP3eGQrYUx6nmRWPJ5McMb+zXj4HmlX0P2sRcxNy5fXwWlOW2sxMbk/b61udl4i1cOS6uVwNG/iFYyWlw1m3ZUL4Fg5ufGro3HMoZuRBJ9zXz8eblWRzs9qfFxuGlHqxcC6ACqviAupIrEwvaI/KZyT/FH60a4ly4fMAOde1gzxzRuJ5OXFLE6Y5f7TC6JrWPje07jTBNdesqs95iSTyFZ1+xmMrmI610qjB2K4nFXbhMkRyms+8WY1qHBErJIDcjQ/g9fzF9RV2hdmYlq42meJpi12SXGYsI608uGtKw/ELHrTSWkYeK796lyGkCwfZltIJKj0rSWxhl8xml0s2lMm6Y5TTSPhl4T71m22aJFlFkaJbJNMJb2ORVoBxAGqIoqDeYjVhFSMakA6t9BVjdRRsxpD4nKYBLegodzEAnX6UwHLmLAByARzrPxPaOU6BmPSis4ZcpUKOtCNoFgFgijoBI9oYu40W7B9TUO2P0JuW1J4RMVrLZQjy+vCiLYsqPyxT2QUxwY603zTXG7Ycb1jd6rDaPSozNwJrSjCzZDqp0uaU3axSx5q86HfnRBcfnRQ0z0fehvmArs6bZhXnhiLg4k0ZMYy/LU0x2bRKcpobrbOpQCs9cfzU1PxwJ1AHrS7DoJdFsHwoT6UneZBobcdTvTq4y3zFVvXMOwkifQ1SYmjM/BmSKKLqfLaUdYriFzyFgfWiK6LslVZNDFiyt4jMgHpTNxLNuNASOEUouJIEIIqCzN5jSGGFkXR5QBvAoqWltr4ongKFbdUHmJPpVu9U8yaLAKlskHKAAeNY/bXaCYCbVo5rp87LrkHP1ovafavwts27Lfibsf4B/WvIYi49+6UR8zu4FxhOoOvL9a8zmc3T4Q9PQ4nE3+c/BvA2++uNjLyHMdEbNJ4z1mtCwgVYa3mUsWHgLTJ35ULDrlAVGDr5VCaR9dxpNOYeTbYlyDqSQJjXpXz8pOTtnteKgIZ7V0tlcFD4WiSNNfv+/vqYLFJiVPfkK6iZ4Ec6y76EkXFuA6nxZdvef1qpVDZVYAmJ0Ef8V0cblz47+Pn4c+fjQzLv0V/wAQdovecWMJlNtT4paDPUVjYP4q9dQWmFsZgWdVE78JrRxmG81y0JGhC/KBwg6TRuxbJH4rxlBIAjjWmTkPJc5ejhiWNaobvfFpYDAi5cU7ERPuDSzYllab1k21Pzhs0H2iK2SFKeJfbnSd7Dq76L4h1/XWuVM1FsNiUbW29sazoZY+orQw+MF1+7uZpIGQDQelIXLK3XXvLQLCYM+x+xq1nC2bYcgMWBMgkit8Gd4Z7IyzYllhqzVNtN+7H+pqG9wrouUfyigYW+JyXNQDGY6QeRpw21GpH0r6LDnhljtE8PLiljlTM66txjJn3oJtsdyfatI20J8VRktx4ZNa2Z0Zgw7E8QOppyz2cWHOjLkQ5go96OmLKjRftSbGkVsdnhRDAe1M9zZtjUUvcxdxthFAa47bxS7K6HGu2FGizQmuWyJ0A50sA5Pm+lGTCFzLMSOtKgsFcug6K30FC7tiwaftrWmLFtF0EmhPbE7AetFjK23QLAUCpdgusH2FVLqnzKPQVU4hI+dqQw9ss+wIHM6VeAPmH1pB8ROy/U0Fr7Toq/SgLJUUUChKaMlabGFFoqwFRVxRsFEBRNXyVAq42o2CipWoyUTSrKKNh0CCa1cJNEC1IFFhQMJVslECzV1FGwUDW3V8ulEioajYVAyAKzO1+0RhUZLLA342GuUcyKntftRMGjIpBv5Zg7IP4j0rxmMxjvcW5cOcMCRcXMRufFwJ2k+nCuLlcrX4Q9O7i8Xd7S8GMTdbM97O2aQSzGdDswMn+4prsizlDYi4sLHnnQHYzPvWEtm6bltEOe65yEwfCJnQ8tq9VhbH/bizatqFAyjMQZ0j0P8AzXh5uur9PYgNrlZO8AzGZCoJM9IrnCZshJdYjygFZP6V2HWbhgagjRV0NWYXAc2VVA3gHX61zF2UUlbYLMQRB1TeOP66+lRbtA3AVJQqDJDRvB4/77V3foQVJkRoMoI9JJAocnvc35gMFSQepJ4zwjjVAg3dKxIYMqsANTt6f2ajAk2ECOrFNgSP6frSzm806Bg5AIdjIH+k9OPOrt4VcsR3RG4bMAOM9P0/ReAa4YSTlJ00JMiqFrWU6Ez/AH71nWsYbbhLpIJYhYWAPXlTDPp4bhykSDk3+m/0pk0SO6cmCTHO2dP2rmazEjMR65aDcthiXa9GaQMrR+9WVghhYE+YAzwpgXZLLKQCwnnrU2cQtrwO/gGgMHToaH66AnRht0qGVtsmhnYafX6VrhzTxS2iZ5MUckakJ/4g7at9n2mWwyveyyTOif70n2LicU2F7x3Ys3iJMmKv2z2Pa7QtSGCunQweho+FwpFkwuo58K6cvLllSd0Z4uPHH0aGExa4mVeFuLuJ39KaC1iXbJBDAlDOkToadweOl+5xBC3BoGPzf7138bmKfxl6cWfia/KPg9lrsvSrCriu6zjoqsLwmrd6/AxXRXClYEM9wjzGhMGO5NGqhosdACtVy0VlmqkUtgoCwqpFFNDmjYdFVNGU6UkjiaOtynZFDQNWBoCtpvVs9GwUMrUzQVfSrZqNgoMKutADVcPRsFBxVgKErUVSOdLYdFxUg1QsBpOtRno2FqEzVndr9pJgrLBWU3yJVSfua7tHHphbeVSDeYHIpmPf+9a8xffEPcDXvEzSSQwBI011gSI+9cfJ5Wi1j6dfG4272l4DuXLt7PdKs9xtCQdWYSIgnY8uv0QvWnykpmzMCcmcAjUaxA4bwdaZxLl2Bc2oZhcARzMn02O30pW7b+IVbFlVdrjxLHMI247ESa8xN+s9SvpD/ZgFx++u+EGUtgrqOZ58hxrdCjOBntxt5SefA+1J2MMqItuyBCiB4QZOmv1O3WtJbLEeNRAY5eS69a5JS2dmtUqOXDs+VoUcWiSAZ6e+tWKmD+TLARqRNXRkQw9ktmHmS0TP2NdYxIvOEbLnZQAkb6TsakkGLDwALlsPvJXSOW4oD2pIyraDqTGXSddYPWP01pu7Zuwp1XLMBl0/vel762yCz5DJJynZvr7UDssJRIKoATB6DmdfSuKqFYjROauZHUa1RFR9bLAmBrMzMTRWtjQ2w6g7hWOhoAUy51YuwbNuGbLrw47aba0axiGwyqLqyjalQPKeQ51co7IDkBY/MBoen0qr20DIDKOykQJKn9hRYwi2y35X4izmGU7UO2y3XLpcRjIBKwY35daxsT2i1le7wl5yrkRdBBAadoJ251NnvxbtKpXONXzFgW5f8aVpXViNpjAIc+HgfMJmii3ppElZIgZqWw7m5btrdzFlGpIykg/vRh8Qr5WtsY8pB4dakRIt6iSm+sjTT3oVyzcylliRr4fbkav8MSdFjMJIVtAfeuQHyQwO2UqdftTsBRrd1vEhEHUDTWgmwbi5iZ5ZhTuVmIVFGgIEIeGm5pe4BblPEuu21WmInBYm9ZIt4kyh8r8vWtRLgYSDIPGsJ0UCVBMaTPCpw2LfDvt+CdcmsjqP6V6XH5dfGZxZ+Nfygb8100C3eVlDBpB2IqwuCvQ2ODULNVNUNyo7yaVj1LkxQnaoa5pQXuUWPUlmoRbWhtcNDL60rHQutyDRVu0qcJdZZ724v8wWq/BYoGVvFgP8s/tXP/tx/hr/AJJfppJd60TvJpKzhsYy+ZT6wKaGGvyBoPQDX70/9mMl8aaDpdogudaTOGxVoFrj2ss75Sun1NDOLtLfFnvRnNs3NjGUb67Va5OJ+Ml4Jr6NLvNKstyspe1MMWyi5mMT4axu0u3hfx1vA4S6AreF38Ou8xruI+1OWeCVpjjx5t1RsdudufB2XuYe8pSzPfZVzEGQMumx3quDxFy43xFgWrjOJLKQWblOsUhcvtoWxFt8qgBhEQSNImDvxppbr2xls3AltZCIttBrOwg6V4ufM8rs9XFhWNUOLiiR3crmmZzgqvU8uOlWvdr38NauZrZuE6WW0APXfUf8UN8U+eyuZpkBmJEka9Y30oFy8CuRVUq6iA1lW22nX3qMWWeN3FlZMcciqSEziVuI93EM7OxObMh58xtod9oob4y7h3VEyfiAt4WyHSTGaNf+fWmTZtQbj91mja0qpImdRJ51fGNYxaWb2lq2whla5AWOREjadK03UmKtejMbG3FJZ77OSBoRmMaDTUjiaZ7FwTXg+JJAcnKjKsEgDWRAg9KUxNi4SmHsuzpd8OYMSMus89Rp9BW7hkFtNc8STAUSJ4TGupFLLKo0hx9HUW3llwpaZJGgB4a+36Vm9o9oNbu91YsqFVh3hAnhOhkaiKz7v+IrpxJCAC2dAsbxvxG/pT3ZWPxeLRXuFFMGHW2YjUDj78ax1cVbKu/B8hS4e3mJaGYByrL035RXTce+BnkzBAbcRr80VN2210g5rbEHxZrQ3HWhWQUcsXUKSJHdgCOn1qChp1uC6hRmGaARmM6baAniTr6exEuYkDM9xFU8YOv2FAsq1q4zB8wBzSoj11+lMDEvcLkkAjwwUGb9v75UJksljdILk2soJiJEfQUFb9y4wH4VxWE5ix15biKbt3rd0Du2aVYhshWCRvsftVlyI7AgvIlSCCG24aa/UdaqmTYqYLeLugIlTlOg+lY/aPay953NsAToXRoYnhodY4SKf7Qxi3LZWyGW3OrTExr9DB1mvOYzs/CtiLRFy5iA6shYaEgyZUweR6TWmOCvsGM2LSPcd7Vy1bzBULXGllJ46j0EVspbaxfz22uMGUFgXmT7sPsP6VhdjYCwLRyXvKSQHUEyQPMM2uxB115Vv2MPdxFtDfvW0cEBhbTRxGxE6aaamlk9GvAmIS3fEwvhOq5Z9tNaOt4ouZwhHXQj+5pCxb7kupxCOmUfhZSMvpPOuZe9T8ELEAgrm8Qg7jhqdp4bVAxt7j6ZU1Gyg6dOlQuIcglkZpMb6KPb9ahMStiQ4cwu5TLI6GfSiOVcC/bKhCuYiSARTEVF26XKFmOmkEmem2hql61fd1DMjqZiT4hzEx+9GYXzoogfKpGg9KGtu6Qy2y4UCJOpH9aAFb1oC6szHCFodwouq8TEbf3wpu9ZZ0OZFLGDO00pdRLanPfysPMpO1WmBRb/AHLhrYAB8w2Ddehp23iUuLmRp4ehpAWUPlL7xxigXBcw92VaI+Xn0NduDkOHxfhzZsKn2vTZ7ya7PFJWMQLg00I3Bq7XQK71JPtHE406YZrkmhO9Be8o40J7wp2FBWcVQ3KWa9QnvhTvHrRY6PQ2wheLfH+JjTmQBdHQHkKm38DcH8J6iPvVbqMPyVLDmNa8SzuolbKuCXuQObGlzdwqsVW+GgSVRpNRcUsZZrg0jKQIpW9g7bKAjd0w2YAeHjxFLYpRLXsdYth2BuAIJaROlIYntZ71nu7Iu2JPiuFR4Bzg89NdaPiuy3vWXtpiNW5u2mnrrSw7CdVdmYm6wIDLJRZ1Iy8pk78aaa+2VSM/E4/Bdk4bDq9xx3iyhUZiRy8XrO1V+Cw7XhibN3EKGDAiQQJgxM/3wq3b/YdztNbRtYwYa9Yb8MAHLHIii2MBjrdrIbqm4AIuhtCeJ11H39afWtp9jXvYwrYZ4Ld67ARwBkVV7yIpYW8RncT4RKk8dNYqrdm4y4JN1WMAN4zEAnbT0onwGIvLcVbzqyNIA+aeGYis6L2RPxdhTDWroKRJMiduHH/aqrctXSTh7F10X5k1B3GmusGirgriI3eXL7qDIGZCY3/2oa4dmKPcC207sNLLx4gkilSCyLd68bStdt4lRelWzJIGh0OtAOGVrhi67Bz4QFyttGv/AMtOtaOEwlxlRVuKwGxtrvz6UwnY1987Mbil2zEzt9qadeCbRl4rs9hiUxCLZW3aUNDmSpAIkGJAjhNZln/EGED3F71AAcjo10hW6c+J4cOFe3GEAt92zXFWPMF2rJ7S/wAMdnY673jg5iIJAy5vWCK0jNP/ALI7+jyy4zswsf8AsmYAga4giOkFgePCvS4H4TBobVm1eQPqbbMDHCAdetJp/hK3ZabGKxYMjQspgDlINa64NwgW5cvyNMwVf2FTl1fUWOL/AEF8VbDqWsXQHbUZl06R9KucZZJZrdtx82Y3FEn6egqr4S5OWziWWBGiEfehGziGDLcu3zEy1pcpE8PEdfbkKy1L2Q4buGa2xWZzFT49OvD29qG18ZgWw5C6ZiHBB6RFUXA94oyXLlpp8xytIjjpOvSmfgTkYAqJA0BET6GjUWyOQrctsq2UFy4vjYuZP361j9p4lC3/AE+1et4fGuJAy5svKIBit3D4C4mdhiFXP5iiASYirfBWrQzg3XunzFQBNXG16S2vo8XhcPj7KBptPdAVcrhmJiQdMsqdZjX6VPdNeNxbd6xbMiVa6QVJGwBEKYB3nj616e7atJf718JdZ2EE94RoNtqNZtYA3DdOBIumPFl134njWu/2TZlYNb9oC5ZW1dYKEKs8EagyCRsZn6Uw/wAXlz28Ph8SdZRLsOsTsJ9JM86fsdmYRXL2bd5WgLDM0Rrty0O9FTB2kug2ot241tpp+1ZtdlbmWt/Em6xtpYhm8Ld6p0yg7jXmNfrVUu490ZLiPZPidbiFSJBPrw1p/E4AFbjqi3bjAj8Q5Z6SAaVs9lG3aZLbFUZ8yobgOU8hpt0pUPZCtzE9oOQDh17qYLZh+J0XUa+tGs3g7FbzYRi3gNssCwHERpyM77U2MCVcsMylipcG5APA1e3h1F0P3dtSPmnPEdYp+eCtB7ZtXMGxwuTODBUXMwHXesV+ze9a62NzS7SLikg6bQCdN/ettQt12GWy7AkaST9fehW7PZywGt2rZUyFVZj+hqkyRc2Gv4c2PiHIywGdQGj2oCYG+jDDDKQbZJcqcpG0TO9aJbC+W0Q9wbC45X70pfCWe8cNiLbXNT3d2Qp6cKiuylJoTwnZN3s67iWTtAW1vEMiC4ykEDXXMZmjYlO1MTbZbWKCONF7u8CSOdS5tYm7buv3xe1IDZxPvpQsSlt1VxisUQrZ8tu4Bm6HbTpV336KitrszEsWZr7q8AEXNMx4kRtQ7vZeNg/91aPWSI+1HNx2EWr91Bm+ZVOXoaocffyt3jOSJIC+GR/frWscjiumRKFsWfsfGug7rGAOPcH7CsXH9kf4gDAWLojLqQ0EnXga0/8Aqvc3WFwO4O5LyB9tKk9vYfwq9u4DuBI0/SrWbIT/ACizPHZPaSWULNLhPGBIE/TU1jYvs7tfEXMz4fEgDyi3dj6616842w9sOb72gx0zE6n1Bqbly1hYW5i+7kSC11obqCd6I8iURvEmbCkDz6H60RRrNp2X3ripIk/WoEjyrJris29DC/cXzlXjmKJ31px+JZUD/KaXDCN49OFQ44yDxo2YtUMd3h7n5bweRodzC3EEgNHSqBQdCZ9aIjXLI8DGOU0X+hTFHUuYYSahbTjyZvatA31cfjWVbmYqDbw5XMish/ytQBnEXCY4dRRbNu25/EYj3im7bssSQy/5qKDacGbSn0NFgAGHUHwKD1zTVWF5dMrR0WjNbtcFK1UpcGqP96Ngopbe6p1dgKYS64E94ZqguX1GuoH8Qq/emfFbEdBRsKi/fOEZmuEEddKH39wjxMT61JuIwgAjpVGVGM5j70mx0jjiZMETHSoGK5KBUdyDswNU7gT5qVsKQcYkE6x9KsLyMPEBHUUsbJjT/wC1R3fMPT2YtUOo1ltcompf/IF91pRYgBs46xRg1oKAWb3FGwakpcJaGtCOYFNK9kjLAmgi5ZnrU94nQjqKewUCexbuOShYNynSgnMpy5jvFNd6hnYHoaE+XNM/XjU2NIVOfNBeem1WhvlIojgZgSREVz2xHOdadhQObjHxt7zXEPuHFXQMg0cgelEW63NCOtOxUTbZSsF1+tDbCicyET0q/eGTNvXpUMwkRbB9tqNkFHLbdSGVgpG88f79DQ8RhLd5sxADHcod/aiJfUfKI5RVxeRuQ6RRsh0zOfswrcZhd83BhFEGGvAFSQw9afXLwY/6qIttDuhJ5g0Wg7MoYBpmDbjrpQLvZqtnzJnLaySPtOxrbNlIlGYeoofdvuSfY7UWMwrfZroBN12/DCuddd9aix2Y9sA94XWNnAkGI4ffet4qeBnpxqmXcETRsxniO0eyryYt2RS6sQcvP1/vjStvAOhLXlbU5mzA6DkJr37IsSVH0oJs2YAyADppWiyySomkeLxSlsWiLMWwDBO9aFnFCygQOg4ww0jhE1vXMDhbhk21J02qn/S7UD8NvqaTnY6L5bijVX9wTQybhaMpj0rviCZ8QAPSrC/HHcbxWFlUUFxwIYEe1SrvOk/Wid8O7ObUjlpXJcUk+L6/tRYUcHB/3NWzgnXjwmhu6NuRPOh5lMDYUth0MFhPU7a1acw0P3paQCIYRP0rhdYaaECiwoLDKSAw+lcWg6hupGtVFyYmN9dKktb3I+k0WFErfMaOSOtWzwRtJ5aUP8Mk6/UAzUkHg/WIosKCidwz/XSpDXAYJJ9aCty4DoVM8gKuMQzDxSaLFRdrpG6z7VPfL1X0oYxIUAQFqovJxIPqKdhQXvEO76+lSSpOlwg9aGLtvci2T/KKq1y2dwvSixUGB00Ye2lSZGp39aWfKA3dBC0GJ0FEMxCZIG3CiwoILjA7NBogfXU/WlWe5wygdKjv7mxST60WFDU8IqveQY1ilzeYxmRoHACp+IHzITHCNKLChoXNuXCuDlz5SF586VOJt8yPtVxiBtmB9qAoOuQGf2okB/LEUoL6zm0JogvLBAjpTsVB8gjzA+tRlVtwP6VQXVmSwnaak3FaM0QeMUWgJ7lOH2qe6jZmHvvXG6pbUyNJM71Hg5CeOURNFoOywW4DIuGKnK/Fl+lRKga5duVR3oGkCOhotD7JC3YmEPoKtnuAbVQXSVnarLcOskCjoOzizTJX71Oa4RsT71XvR03513fJvA+tHQdnS8Tlb3ru8M6yKqbyABRA9DUd+ASQo96AJJJ1nX0qmhHiOtS+Ikbp7LQzeDAyLfqAKaA5p4XP/cKgZuYP2rnxWgA09NKEcdzX6inYGctu7MTIngasttxuWA6a00IAkyOpWKksoIBA61jbNBco8GWM/wApqQrqPNwpkrKjyj1FT3axOnvRYCZW4ToasEcAjMDOxIGlPZFImPapFsRqPvSsBAC5IncUQZju2400pg2dJA1rrdslR/SiwF4Y7MPrUEPrsdNaaNvLOkg6aafvVWyrw12nhRYAAW0kR7TVxPP3rs8cCBJmVqQ6BvEfeiwKMCTqd64s4MaGiqASNeHKpIPIdI1osBdtdGAqjWt4OU8gacEDcLUEidNJ4NNFgJ93cU6amp8Y+XXbQ00JXzD3n9/+K4MsxGs6CnYhVZIhhrx0q0trqKOQFEag8tSahlG5osAZmRuKuhYDcH0qAk+VmHrXZbg0LCOZFFgWLnj+lRmHEacqhiyLOSei1QXVmMrj1GlFhRcsBJnjyNQW4QRPCTUd6keYdNYq4iNY9YosCkmPM/1NRln5mFE0GsQNdq45Ry150WAMhh85+ld+IOM/WjGBuBHMGoWNxtRYApdRJY+5qQ7ycuvpTAQa6Tx3quUbREUWAPvHAGhA46RVWuP1jaixvDetRBMwxjeM21FjKZyN1PsTXd6Z8rTGutXZSSNdtulVDONyemtOwKC4Z1DexrmukDZ4q7XHBgg9aqLuYScw9qLArmQxJ15xU+CNdo51xuwSC8HlpNUZ3MDODr/CNqdhRYQNFdv/AHVxVtSHnlrVCzgedNuKxVQ76wQeOmlNMKJZWXaZ9aGcx3A32k1LXIbUMQNNIqrOG0ylo/iAp2FGh4jEn1qM++VZqT5TXXPMv98KxGQCFIGpbjNWWGBOUb7mhWvL/rH60S55B/P/AEoAJmXbXTWrBknLBI4kVRfn9f3qX2oAKYywrD67VWWJGUxP3qj7/wCn9qj5x/fAUCL3CRGaOs0EtlaQsGr3fItBtfmP/M1AFwQSwAOu/Gr5QTqQxNKYf/8AH96a+V/f9TQMsLaAjQgn2qcpAnxHjqZoaeY+hq6/tQI5gdi3iHDLVEzE+AgnaANqM/l96F/5j6UWBcCCAAqk7xVWtwDCDqBt+lG+Y+tL/wAXq36UAVIKnx29J3Ov3qc6CPMp5URfKtKp57nof2oAOSpjUjSYiqZwGOZoEbzQcJ5Pc/tTC/lj3/egCBfGoJHrIM1OYNwAnYmh3vy/b9qXXyL60AM3UViCyAnhQzbUMZBA6E1ex5D7fqaMeNFgK5QNA7/War+Iu7g8IKxFXv8AkT+auw3ze9NAVV7mXVU24VQ4hwZZdRvtRX2f+YVF3yj1oGZtjttLvbNzAJLZLck5dJkyJ4afrWkcUA0Rr6GvL/4V/wD2jHf/ANN79Er0z+Rv5jXTyMUYVX4Y4puV2XXEzA40RbyOYJ04/wBazcX8n8370Wz5B/JXPRqPd4uniqC2gOaOppPhc9R+9Ht+VvSlQBfATqSBziqjKRIf9qF8g/mNCu7f+mKqgGhbnQOscqo1sRoy/XelrX5I9v1o7/8Ak9/3p0BJtgb3FE8ztVRhi5HitkTOb+xV7ezetQn5i+/60JADOHAAUGCeI40NsMB/5o9Wp69+U3oKEPzH9aAP/9k=",
-    desc:"The only surviving Wonder of the Ancient World."
-},
-
-{
-    name:"Luxor Temple",
-    lat:25.6872,
-    lng:32.6396,
-    img:"https://lh3.googleusercontent.com/aida-public/AB6AXuDNZvNvaU9Gzqm_YnHRHDfecBUh4wHl-Rd8WyiI-wkmMPZquOShuTouv_0Vgk5koIIhxO2PTHiDl59US2QYftG4BrVlu5s8_ZezEUX0_5f8P6Fcy9QtndqtShBGV3IfMGdv3mr5fCypBPXTwCKcP3b4wCZuvsX5_yK5xg04OsOuqtQ1g67KwmThl17HwaZvp-NBuW7g7lKEOnauFqlVM63fB4XsMFIooWuqdhWYuj3SBY0Bi3OUbXEKvcmbs-Y_1yMCcbACh5ryXnU",
-    desc:"One of the greatest temple complexes of Ancient Egypt."
-},
-
-{
-    name:"Colosseum",
-    lat:41.8902,
-    lng:12.4922,
-    img:"https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80",
-    desc:"Rome's iconic gladiator arena."
-},
-
-{
-    name:"Petra",
-    lat:30.3285,
-    lng:35.4444,
-    img:"https://lh3.googleusercontent.com/aida-public/AB6AXuCTXRNDmhtdYeOOkf7AXDKpsVh-O71D-OHvBS92n0eTGgJCxra9T8F0tISo5F4Lh5md83LAc07FKVbqC7GDNk3Nu3eh0GOKoT-KwVujAF25C1ctcqYzV-FHzFGCiMIUHxhKPuIgZ8kDsVtYkVoSb5ktnqYf23rNUKqlwrp6U7wTz6mrOG-gZZwW_jPRWqOkmtpH6jWIosElcf48YecUUDYAEO5w21c3yIzOxMbpx0DkD8zwvftkEIkm9iu_uwPisZ0AUO8F8AVEPHk",
-    desc:"The rose-red city carved into stone."
-},
-
-{
-    name:"Machu Picchu",
-    lat:-13.1631,
-    lng:-72.5450,
-    img:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgByl_C1oXuw09lNsJg9XWu4UYrpVfGGEzIXzqDpwtrWO25JgvYhcx03ifwhlvMFVa5uW94GjCazbImoSVxIv-Zw0euwN38gSG42o-AcbyclqvcaFzRE2-pKVa3LbBlC3l8e0=w270-h312-n-k-no",
-    desc:"Ancient Inca citadel in Peru."
-},
-
-{
-    name:"Stonehenge",
-    lat:51.1789,
-    lng:-1.8262,
-    img:"https://lh3.googleusercontent.com/aida-public/AB6AXuBDfy2HjLFlPzdJSEjshEbtHPp82RP5rsWR-MId3kDs2rNvyUmcr8oTUHvRP0ElvgJt8Pd8xZqEtG2SETkWikmiAsME-EuEyiVAbJgmlweIr5xodeM-3X9XszZJzPSBsDLiRG2Qq1aLtcSHdOVTYBTgEmh8tGOPTq6Ij-krK94NkO3vv-CeB6TzP7SqJNzwGXI4gTB5NMmpUh4F_Eh_rKSYb44EWijUpsjQqI7UQr5NWd7GS9wyacUjGJ9xod1E0YGG_V3NwWyfq-M",
-    desc:"Prehistoric monument in Wiltshire, England."
-},
-
-{
-    name:"Abu Simbel",
-    lat:22.3372,
-    lng:31.6225,
-    img:"https://lh3.googleusercontent.com/gps-cs-s/APNQkAERWAcvizsb8qrPZ68Vu2uyjRoJTN3nO_TNnHIS0I5V5QGJst5OvpzeHZKYnsySeMfRUfjEjSRy3TDPxzW5bkqpbjkYuEVedO2smxP4jssPaWFC_ZwsPoe3wfsGUjXqyrRPmI9z=w270-h312-n-k-no",
-    desc:"Two massive rock-cut temples in southern Egypt."
+function getPeriodColor(period) {
+  const colors = {
+    'Old Kingdom': '#884e08',
+    'New Kingdom': '#a66622',
+    'Nabataean': '#914634',
+    'Roman Empire': '#4c6078',
+    'Neolithic': '#4a7c59',
+  };
+  return colors[period] || '#857467';
 }
 
-];
-
-map.on('load', () => {
-    map.resize();
-    renderSites();
-});
-
-function renderSites() {
-    const siteList = document.getElementById('siteList');
-    siteList.innerHTML = '';
-
-    sites.forEach(site => {
-    const el = document.createElement('div');
-        el.className = 'marker';
-        el.innerHTML = `<img src="${site.img}" alt="${site.name}" style="pointer-events:none;">`;
-
-        const popup = new maplibregl.Popup({ offset: 25, maxWidth: '280px' }).setHTML(`
-            <div class="font-body overflow-hidden">
-                <img src="${site.img}" class="w-full h-40 object-cover">
-                <div class="p-5 bg-surface">
-                    <h3 class="font-headline text-xl text-primary italic font-bold mb-2">${site.name}</h3>
-                    <p class="text-on-surface-variant text-sm leading-relaxed mb-4">${site.desc}</p>
-                    <div class="flex gap-2">
-                        <button onclick="window.openArchive('${site.name.replace(/'/g,"\\'")}')" class="flex-1 bg-primary text-on-primary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm">Archive</button>
-                        <button onclick="window.getDirections(${site.lat}, ${site.lng})" class="flex-1 bg-secondary text-on-secondary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:opacity-90 transition-all active:scale-[0.98] shadow-sm">Directions</button>
-                    </div>
-                </div>
-            </div>
-        `);
-
-        const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
-            .setLngLat([site.lng, site.lat])
-            .setPopup(popup)
-            .addTo(map);
-
-        const item = document.createElement('div');
-        item.className = 'p-4 rounded-xl cursor-pointer hover:bg-surface-container-highest transition-all text-sm font-medium text-stone-700';
-        item.innerHTML = `<div>${site.name}</div><div class="text-[10px] opacity-60 uppercase mt-1">${site.desc.substring(0, 30)}...</div>`;
-        item.onclick = () => {
-            map.flyTo({ center: [site.lng, site.lat], zoom: 14, pitch: 30, speed: 1.2 });
-            marker.togglePopup();
-        };
-        siteList.appendChild(item);
-    });
+function buildMarkerElement(site) {
+  const el = document.createElement('div');
+  el.className = 'marker';
+  el.dataset.siteId = site.slug;
+  el.innerHTML = `<img src="${site.img}" alt="${site.name}" style="pointer-events:none;" loading="lazy"/>`;
+  return el;
 }
 
-/* =========================================================
-   SEARCH & AI
-========================================================= */
+function buildPopupHTML(site) {
+  const period = site.categories?.period || '';
+  const periodColor = getPeriodColor(period);
+  return `
+    <div class="font-body overflow-hidden" style="width:260px;">
+      <div class="relative">
+        <img src="${site.img}" class="w-full h-36 object-cover" alt="${site.name}" loading="lazy"/>
+        ${period ? `<div class="absolute bottom-2 left-2"><span class="badge-period" style="background:${periodColor};color:white;">${period}</span></div>` : ''}
+      </div>
+      <div class="p-4 bg-surface">
+        <h3 class="font-headline text-lg font-bold text-on-surface mb-1">${site.name}</h3>
+        <p class="text-on-surface-variant text-xs leading-relaxed mb-3">${site.desc}</p>
+        <div class="flex gap-2">
+          <button onclick="window.openSiteArchive('${site.name.replace(/'/g,"\\'")}')" class="flex-1 bg-primary text-on-primary py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-[0.98] text-center">Open Site</button>
+          <button onclick="window.getDirections(${site.lat}, ${site.lng})" class="flex-1 bg-secondary text-on-secondary py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:opacity-90 transition-all active:scale-[0.98] text-center">Directions</button>
+        </div>
+      </div>
+    </div>`;
+}
 
-window.performSearch = async function(query) {
-    if(!query) return;
-    try{
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-        const data = await res.json();
-        if(!data.length) return alert('Location not found');
-        
-        const place = data[0];
-        const lat = parseFloat(place.lat);
-        const lng = parseFloat(place.lon);
+function renderMarkers(sites) {
+  // Clear existing
+  markers.forEach(m => m.remove());
+  markers = [];
+  markerElements = [];
 
-        map.flyTo({ center: [lng, lat], zoom: 12, pitch: 30 });
+  sites.forEach(site => {
+    const el = buildMarkerElement(site);
+    const popup = new maplibregl.Popup({ offset: 25, maxWidth: '280px' }).setHTML(buildPopupHTML(site));
 
-        const el = document.createElement('div');
-        el.className = 'marker';
-        el.innerHTML = `<img src="https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=800&q=80">`;
+    const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+      .setLngLat([site.lng, site.lat])
+      .setPopup(popup)
+      .addTo(map);
 
-        new maplibregl.Marker({ element: el, anchor: 'bottom' })
-            .setLngLat([lng, lat])
-            .setPopup(new maplibregl.Popup({ offset: 25, maxWidth: '240px' }).setHTML(`
-                <div class="p-6 bg-surface font-body">
-                    <h3 class="font-headline text-lg text-primary font-bold italic mb-2">${place.display_name.split(',')[0]}</h3>
-                    <p class="text-on-surface-variant text-xs leading-relaxed">Archival coordinates identified via OpenStreetMap.</p>
-                    <div class="flex gap-2 mt-4">
-                        <button onclick="window.openArchive('${place.display_name.split(',')[0].replace(/'/g,"\\'")}')" class="flex-1 bg-primary text-on-primary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm">Archive</button>
-                        <button onclick="window.getDirections(${lat}, ${lng})" class="flex-1 bg-secondary text-on-secondary py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:opacity-90 transition-all active:scale-[0.98] shadow-sm">Directions</button>
-                    </div>
-                </div>`))
-            .addTo(map).togglePopup();
-    }catch(err){
-        console.error(err);
-    }
+    markers.push(marker);
+    markerElements.push({ el, site });
+  });
+}
+
+// ===================== FILTER =====================
+function applyFilters() {
+  const search = document.getElementById('filter-search').value.toLowerCase().trim();
+  const checkedPeriods = [...document.querySelectorAll('#sidebar input[type="checkbox"]')]
+    .filter(cb => cb.closest('.filter-section-content') && cb.closest('.filter-section-content').previousElementSibling?.textContent?.trim()?.toLowerCase().startsWith('period') ? cb.checked : false)
+    .map(cb => cb.value);
+  // Actually simpler: get periods from first group
+  const periodCheckboxes = [...document.querySelectorAll('#sidebar .filter-section-content')].filter((el, i) => i === 0)[0]?.querySelectorAll('input[type="checkbox"]') || [];
+  const selectedPeriods = [...periodCheckboxes].filter(cb => cb.checked).map(cb => cb.value);
+
+  const typeCheckboxes = [...document.querySelectorAll('#sidebar .filter-section-content')].filter((el, i) => i === 1)[0]?.querySelectorAll('input[type="checkbox"]') || [];
+  const selectedTypes = [...typeCheckboxes].filter(cb => cb.checked).map(cb => cb.value);
+
+  const filtered = allSites.filter(site => {
+    const periodMatch = selectedPeriods.length === 0 || selectedPeriods.includes(site.categories.period);
+    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(site.categories.siteType);
+    const searchMatch = !search || site.name.toLowerCase().includes(search) || site.desc.toLowerCase().includes(search) || site.searchKeywords?.some(k => k.toLowerCase().includes(search));
+    return periodMatch && typeMatch && searchMatch;
+  });
+
+  // Update markers
+  markers.forEach((m, i) => {
+    const site = allSites[i];
+    const visible = filtered.includes(site);
+    m.getElement().style.display = visible ? '' : 'none';
+  });
+
+  // Update site list
+  updateSiteList(filtered);
+
+  // Update stats
+  document.getElementById('stat-sites').textContent = filtered.length;
+  document.getElementById('stat-museums').textContent = filtered.filter(s => s.categories.siteType === 'Museum').length;
+  document.getElementById('stat-excavations').textContent = filtered.filter(s => s.categories.siteType === 'Excavation').length;
+
+  // Fit bounds
+  if (filtered.length > 0) {
+    const bounds = new maplibregl.LngLatBounds();
+    filtered.forEach(site => bounds.extend([site.lng, site.lat]));
+    map.fitBounds(bounds, { padding: 100, maxZoom: 10 });
+  }
+}
+
+function updateSiteList(sites) {
+  const list = document.getElementById('siteList');
+  list.innerHTML = '';
+  sites.forEach(site => {
+    const div = document.createElement('div');
+    div.className = 'site-list-item flex items-center gap-3 p-2.5 rounded-lg';
+    div.innerHTML = `
+      <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-outline-variant/30">
+        <img src="${site.img}" alt="${site.name}" class="w-full h-full object-cover" loading="lazy"/>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-xs font-bold text-on-surface truncate">${site.name}</div>
+        <div class="text-[10px] text-on-surface-variant truncate">${site.categories.period} · ${site.categories.region}</div>
+      </div>
+    `;
+    div.onclick = () => {
+      map.flyTo({ center: [site.lng, site.lat], zoom: 14, pitch: 30, speed: 1.2 });
+      // Find and open popup
+      const idx = allSites.indexOf(site);
+      if (idx >= 0 && markers[idx]) markers[idx].togglePopup();
+    };
+    list.appendChild(div);
+  });
+}
+
+// ===================== SIDEBAR TOGGLE =====================
+window.toggleSidebar = function() {
+  const sidebar = document.getElementById('sidebar');
+  const icon = document.getElementById('sidebar-toggle-icon');
+  sidebar.classList.toggle('collapsed');
+  icon.style.transform = sidebar.classList.contains('collapsed') ? 'rotate(180deg)' : 'rotate(0deg)';
 };
 
-/* =========================================================
-   ARCHIVE
-========================================================= */
-
-window.openArchive = async function(name){
-    const drawer = document.getElementById('archiveDrawer');
-    const body = document.getElementById('archiveBody');
-    drawer.classList.add('open');
-
-    const site = sites.find(s => s.name === name);
-    const archiveImg = document.getElementById('archiveImage');
-    if (site && site.img) {
-        archiveImg.src = site.img;
-        archiveImg.classList.remove('hidden');
-    } else {
-        archiveImg.classList.add('hidden');
-    }
-
-    body.innerHTML = `<div class="animate-pulse space-y-4 pt-10"><div class="h-10 bg-stone-100 rounded w-3/4"></div><div class="h-4 bg-stone-100 rounded"></div><div class="h-4 bg-stone-100 rounded"></div></div>`;
-
-    try {
-        const response = await fetch(GROQ_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
-            body: JSON.stringify({
-                model: GROQ_MODEL,
-                messages: [{ role: 'user', content: `Generate a brief archaeological dossier for "${name}". Include historical significance. Format with <p> and <h3> tags.` }]
-            })
-        });
-        const data = await response.json();
-        const aiText = data.choices[0].message.content;
-
-        body.innerHTML = `
-            <div class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-4">Archaeological Dossier</div>
-            <h1 class="text-4xl font-serif italic mb-6">${name}</h1>
-            <div class="text-stone-700 leading-relaxed space-y-4 font-body text-sm">${aiText}</div>
-            <div class="mt-8 pt-6 border-t border-stone-100">
-                <a href="archive.html?placeName=${encodeURIComponent(name)}" class="inline-flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-widest hover:underline">
-                    see full archive <span class="material-symbols-outlined text-sm">open_in_new</span>
-                </a>
-            </div>
-        `;
-    } catch (e) {
-        body.innerHTML = `<p class="pt-10 text-stone-400 italic">Oracle offline. Wikipedia links available below.</p>`;
-    }
+// ===================== SECTION TOGGLE =====================
+window.toggleSection = function(header) {
+  const content = header.nextElementSibling;
+  const icon = header.querySelector('.material-symbols-outlined');
+  if (content.style.display === 'none') {
+    content.style.display = '';
+    icon.textContent = 'expand_less';
+  } else {
+    content.style.display = 'none';
+    icon.textContent = 'expand_more';
+  }
 };
 
-window.closeArchive = function(){
-    document.getElementById('archiveDrawer').classList.remove('open');
-    document.getElementById('archiveImage').classList.add('hidden');
-    }; 
+// ===================== ARCHIVE =====================
+window.openSiteArchive = function(name) {
+  const archive = getLocalArchive(name);
+  if (archive) {
+    renderArchiveDrawer(archive, name);
+  } else {
+    window.location.href = `archive.html?placeName=${encodeURIComponent(name)}`;
+  }
+};
 
+function renderArchiveDrawer(archive, siteName) {
+  const body = document.getElementById('archiveBody');
+  const img = document.getElementById('archiveImage');
+  const imageUrl = archive.imageGallery?.[0]?.url || '';
+
+  if (imageUrl) { img.src = imageUrl; img.classList.remove('hidden'); }
+  else { img.classList.add('hidden'); }
+
+  const stats = archive.statistics ? Object.entries(archive.statistics).filter(([,v]) => v).map(([k,v]) => `<div class="flex justify-between py-2 border-b border-outline-variant/10 last:border-0"><span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">${k.replace(/([A-Z])/g,' $1').trim()}</span><span class="text-xs font-bold text-on-surface">${v}</span></div>`).join('') : '';
+  const timeline = archive.timeline?.slice(0,5).map(item => `<div class="flex gap-3 py-2 border-l-2 border-primary/30 pl-3"><span class="text-[10px] font-bold text-primary whitespace-nowrap">${item.year}</span><span class="text-xs text-on-surface-variant">${item.event}</span></div>`).join('') || '';
+  const chapters = archive.chapters?.slice(0,2).map(ch => `<div class="mb-4"><h4 class="font-headline text-sm font-bold text-on-surface mb-1">${ch.title}</h4><p class="text-xs text-on-surface-variant leading-relaxed">${ch.chapterIntro || ''}</p></div>`).join('') || '';
+
+  body.innerHTML = `
+    <h2 class="font-headline text-2xl font-bold text-on-surface mb-2">${archive.title || siteName}</h2>
+    ${archive.summary ? `<p class="text-sm text-on-surface-variant leading-relaxed mb-6">${archive.summary.substring(0, 200)}...</p>` : ''}
+    ${stats ? `<div class="mb-6"><h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Key Facts</h3><div class="bg-surface-container-low rounded-lg p-4">${stats}</div></div>` : ''}
+    ${timeline ? `<div class="mb-6"><h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Timeline</h3><div class="space-y-1">${timeline}</div></div>` : ''}
+    ${chapters ? `<div class="mb-6"><h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Chapters</h3>${chapters}</div>` : ''}
+    <button onclick="window.location.href='archive.html?placeName=${encodeURIComponent(siteName)}'" class="w-full bg-primary text-on-primary py-3 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all">Full Archive</button>
+  `;
+  document.getElementById('archiveDrawer').classList.add('open');
+}
+
+window.closeArchive = function() {
+  document.getElementById('archiveDrawer').classList.remove('open');
+};
+
+// ===================== DIRECTIONS =====================
 window.getDirections = async function(destLat, destLng) {
-    if (!navigator.geolocation) return alert("Geolocation is not supported by your browser");
-    
-    navigator.geolocation.getCurrentPosition(async (position) => {
-        const startLng = position.coords.longitude;
-        const startLat = position.coords.latitude;
+  if (!navigator.geolocation) return alert("Geolocation not supported");
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    try {
+      const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${pos.coords.longitude},${pos.coords.latitude};${destLng},${destLat}?steps=true&geometries=geojson&overview=full`);
+      const data = await res.json();
+      if (data.code !== 'Ok') throw new Error('No route');
 
-        try {
-            const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${destLng},${destLat}?steps=true&geometries=geojson&overview=full`);
-            const data = await response.json();
-            if (data.code !== 'Ok') throw new Error("Directions not found");
+      const route = data.routes[0];
+      if (map.getSource('route')) map.getSource('route').setData(route.geometry);
+      else {
+        map.addSource('route', { type: 'geojson', data: { type: 'Feature', geometry: route.geometry, properties: {} } });
+        map.addLayer({ id: 'route-outline', type: 'line', source: 'route', paint: { 'line-color': '#ffffff', 'line-width': 10, 'line-opacity': 0.9 } });
+        map.addLayer({ id: 'route', type: 'line', source: 'route', paint: { 'line-color': '#884e08', 'line-width': 6 } });
+      }
 
-            const route = data.routes[0];
-            const geojson = { 'type': 'Feature', 'properties': {}, 'geometry': route.geometry };
+      const bounds = route.geometry.coordinates.reduce((b, c) => b.extend(c), new maplibregl.LngLatBounds(route.geometry.coordinates[0], route.geometry.coordinates[0]));
+      map.fitBounds(bounds, { padding: 100 });
 
-            if (map.getSource('route')) {
-                map.getSource('route').setData(geojson);
-            } else {
-                map.addSource('route', { 'type': 'geojson', 'data': geojson });
-                map.addLayer({
-                    'id': 'route-outline',
-                    'type': 'line',
-                    'source': 'route',
-                    'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                    'paint': { 'line-color': '#ffffff', 'line-width': 10, 'line-opacity': 0.9 }
-                });
-                map.addLayer({
-                    'id': 'route',
-                    'type': 'line',
-                    'source': 'route',
-                    'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                    'paint': { 'line-color': '#884e08', 'line-width': 6, 'line-opacity': 1 }
-                });
-            }
+      const stepsHtml = route.legs[0].steps.map(s => `<div class="flex gap-3 py-3 border-b border-outline-variant/10"><span class="material-symbols-outlined text-primary text-sm flex-shrink-0">explore</span><div><p class="text-xs text-on-surface leading-relaxed">${s.maneuver.instruction}</p><p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mt-0.5">${(s.distance/1000).toFixed(2)} km</p></div></div>`).join('');
 
-            const coordinates = route.geometry.coordinates;
-            const bounds = coordinates.reduce((acc, coord) => acc.extend(coord), new maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
-            map.fitBounds(bounds, { padding: 100 });
-
-            const drawer = document.getElementById('directionsDrawer');
-            const body = document.getElementById('directionsBody');
-            
-            let stepsHtml = route.legs[0].steps.map(step => `
-                <div class="py-4 border-b border-stone-100 flex gap-4 items-start">
-                    <span class="material-symbols-outlined text-primary text-lg">explore</span>
-                    <div><p class="text-sm font-body text-stone-700 leading-relaxed">${step.maneuver.instruction}</p><p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">${(step.distance / 1000).toFixed(2)} km</p></div>
-                </div>`).join('');
-
-            body.innerHTML = `<div class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-4">In-App Navigation</div><h1 class="text-4xl font-serif italic mb-6">Route Details</h1><div class="bg-surface-container-low p-6 rounded-2xl mb-8 border border-outline-variant/10"><div class="grid grid-cols-2 gap-4"><div><p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Distance</p><p class="text-xl font-headline italic text-primary">${(route.distance / 1000).toFixed(1)} km</p></div><div><p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Time</p><p class="text-xl font-headline italic text-primary">${Math.round(route.duration / 60)} min</p></div></div></div><div class="space-y-2">${stepsHtml}</div>`;
-            drawer.classList.add('open');
-        } catch (e) {
-        }
-    }, () => alert("Please enable location services to get directions."));
+      document.getElementById('directionsBody').innerHTML = `
+        <div class="text-[10px] font-bold text-primary uppercase tracking-widest mb-3">In-App Navigation</div>
+        <h2 class="font-headline text-2xl font-bold text-on-surface mb-4">Route Details</h2>
+        <div class="bg-surface-container-low p-5 rounded-lg mb-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div><p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Distance</p><p class="text-lg font-headline font-bold text-primary">${(route.distance/1000).toFixed(1)} km</p></div>
+            <div><p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Time</p><p class="text-lg font-headline font-bold text-primary">${Math.round(route.duration/60)} min</p></div>
+          </div>
+        </div>
+        <div class="space-y-1">${stepsHtml}</div>
+      `;
+      document.getElementById('directionsDrawer').classList.add('open');
+    } catch(e) { alert('Could not find directions'); }
+  }, () => alert('Please enable location services'));
 };
 
 window.closeDirections = function() {
-    document.getElementById('directionsDrawer').classList.remove('open');
-    if (map.getLayer('route')) map.removeLayer('route');
-    if (map.getLayer('route-outline')) map.removeLayer('route-outline');
-    if (map.getSource('route')) map.removeSource('route');
+  document.getElementById('directionsDrawer').classList.remove('open');
+  if (map.getLayer('route')) map.removeLayer('route');
+  if (map.getLayer('route-outline')) map.removeLayer('route-outline');
+  if (map.getSource('route')) map.removeSource('route');
 };
 
-window.toggleSideIndex = function() {
-    if (window.innerWidth >= 768) return;
-    
-    const aside = document.getElementById('side-index');
-    const icon = document.getElementById('index-toggle-icon');
-    const fabs = document.getElementById('map-fabs');
-    
-    const isCollapsed = aside.classList.contains('translate-y-[calc(100%-60px)]');
-    
-    if (isCollapsed) {
-        aside.classList.remove('translate-y-[calc(100%-60px)]');
-        aside.classList.add('translate-y-0');
-        icon.style.transform = 'rotate(180deg)';
-        fabs.style.transform = 'translateY(-38vh)';
-    } else {
-        aside.classList.add('translate-y-[calc(100%-60px)]');
-        aside.classList.remove('translate-y-0');
-        icon.style.transform = 'rotate(0deg)';
-        fabs.style.transform = 'translateY(0)';
-    }
-};
-
-window.toggleChat = function() {
-    const chat = document.getElementById('ai-chat-container');
-    chat.classList.toggle('hidden');
-};
-
-window.sendChatMessage = async function() {
-    const input = document.getElementById('chat-input');
-    const container = document.getElementById('chat-messages');
-    if(!input.value.trim()) return;
-    
-    const userText = input.value;
-    input.value = '';
-    container.innerHTML += `<p class="text-right text-stone-900 not-italic font-bold mb-4">${userText}</p>`;
-
-    try {
-        const res = await fetch(GROQ_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
-            body: JSON.stringify({
-                model: GROQ_MODEL,
-                messages: [{ role: 'system', content: "You are the Sawah Oracle, a digital historian. Answer queries about history or archaeology concisely." }, { role: 'user', content: userText }]
-            })
-        });
-        const data = await res.json();
-        container.innerHTML += `<p class="text-stone-600 mb-6">${data.choices[0].message.content}</p>`;
-        container.scrollTop = container.scrollHeight;
-    } catch (e) {
-        container.innerHTML += `<p class="text-stone-400">The Oracle is momentarily silent.</p>`;
-    }
-};
-
+// ===================== MOBILE MENU =====================
 window.toggleMobileMenu = function() {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('-translate-x-full');
+  document.getElementById('mobile-menu').classList.toggle('-translate-x-full');
 };
+
+// ===================== SEARCH =====================
+window.performSearch = async function(query) {
+  if (!query) return;
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    if (!data.length) return;
+    const place = data[0];
+    map.flyTo({ center: [parseFloat(place.lon), parseFloat(place.lat)], zoom: 12 });
+  } catch(e) {}
+};
+
+// ===================== INIT =====================
+map.on('load', () => {
+  map.resize();
+  renderMarkers(allSites);
+  updateSiteList(allSites);
+  applyFilters();
+});
 
 window.addEventListener('resize', () => map.resize());
 
+// Expose for inline onclick
+window.openSiteArchive = window.openSiteArchive;
+window.getDirections = window.getDirections;
+window.closeArchive = window.closeArchive;
 </script>
 
 </body>

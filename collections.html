@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah — Collections</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: "#884e08", "on-primary": "#ffffff", "primary-container": "#a66622",
+        "on-primary-container": "#fffbff", secondary: "#4c6078", "on-secondary": "#ffffff",
+        "secondary-container": "#cde1fe", "on-secondary-container": "#51647d",
+        tertiary: "#914634", "on-tertiary": "#ffffff", "tertiary-container": "#af5e4a",
+        "on-tertiary-container": "#fffbff", error: "#ba1a1a", "on-error": "#ffffff",
+        "error-container": "#ffdad6", "on-error-container": "#93000a",
+        background: "#fcf9ee", "on-background": "#1c1c15",
+        surface: "#fcf9ee", "on-surface": "#1c1c15",
+        "surface-variant": "#e5e2d8", "on-surface-variant": "#524438",
+        outline: "#857467", "outline-variant": "#d7c3b3",
+        "surface-tint": "#8b500b", "inverse-surface": "#31312a",
+        "inverse-on-surface": "#f4f1e6", "inverse-primary": "#ffb876",
+        "primary-fixed": "#ffdcc0", "on-primary-fixed": "#2d1600",
+        "primary-fixed-dim": "#ffb876", "on-primary-fixed-variant": "#6b3b00",
+        "secondary-fixed": "#d1e4ff", "on-secondary-fixed": "#061d32",
+        "secondary-fixed-dim": "#b4c8e4", "on-secondary-fixed-variant": "#35485f",
+        "tertiary-fixed": "#ffdad2", "on-tertiary-fixed": "#3c0700",
+        "tertiary-fixed-dim": "#ffb4a3", "on-tertiary-fixed-variant": "#763221",
+        "surface-dim": "#dddacf", "surface-bright": "#fcf9ee",
+        "surface-container-lowest": "#ffffff", "surface-container-low": "#f7f4e9",
+        "surface-container": "#f1eee3", "surface-container-high": "#ebe8dd",
+        "surface-container-highest": "#e5e2d8"
+      },
+      borderRadius: { DEFAULT: "0.125rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      fontFamily: { headline: ["Noto Serif", "serif"], body: ["Manrope", "sans-serif"] }
+    }
+  }
+};
+</script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #fcf9ee;
+    color: #1c1c15;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+
+  .card-hover { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.06); border-color: rgba(136,78,8,0.15); }
+  .navbar-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .parchment-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02; pointer-events: none;
+  }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Collection card cover */
+  .collection-cover {
+    background: linear-gradient(135deg, #884e08 0%, #a66622 100%);
+  }
+
+  /* Horizontal scroll */
+  .scroll-x { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .scroll-x::-webkit-scrollbar { display: none; }
+  .scroll-x > * { scroll-snap-align: start; }
+</style>
+</head>
+<body>
+
+<div class="fixed inset-0 parchment-grain z-0 pointer-events-none"></div>
+
+<!-- ==================== NAVBAR ==================== -->
+<header class="sticky top-0 z-50 navbar-blur bg-surface/80 border-b border-outline-variant/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="flex items-center gap-2.5 group">
+          <div class="w-7 h-7 rounded-lg border border-primary/30 flex items-center justify-center bg-primary/5 group-hover:border-primary/60 transition-all">
+            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">temple_buddhist</span>
+          </div>
+          <span class="text-lg font-headline italic text-secondary">Sawah</span>
+        </a>
+      <nav class="hidden md:flex items-center gap-5 text-sm">
+        <a href="index.html" class="text-on-surface-variant hover:text-primary transition-colors">Home</a>
+        <a href="dashboard.html" class="text-on-surface-variant hover:text-primary transition-colors">Dashboard</a>
+        <a href="map.html" class="text-on-surface-variant hover:text-primary transition-colors">Map</a>
+        <a href="#" class="text-primary border-b-2 border-primary pb-0.5 font-bold">Collections</a>
+        <a href="library.html" class="text-on-surface-variant hover:text-primary transition-colors">Library</a>
+      </nav>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">person</button>
+        <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 shadow-lg md:hidden">
+  <div class="p-6 flex flex-col h-full">
+    <div class="flex justify-between items-center mb-8">
+      <span class="text-xl font-headline italic text-secondary">Sawah</span>
+      <button class="material-symbols-outlined text-secondary" onclick="toggleMobileMenu()">close</button>
+    </div>
+    <nav class="flex flex-col gap-4 text-base flex-grow">
+      <a class="text-on-surface-variant hover:text-primary" href="index.html" onclick="toggleMobileMenu()">Home</a>
+      <a class="text-on-surface-variant hover:text-primary" href="dashboard.html" onclick="toggleMobileMenu()">Dashboard</a>
+      <a class="text-on-surface-variant hover:text-primary" href="map.html" onclick="toggleMobileMenu()">Map</a>
+      <a class="text-primary font-bold" href="#" onclick="toggleMobileMenu()">Collections</a>
+      <a class="text-on-surface-variant hover:text-primary" href="library.html" onclick="toggleMobileMenu()">Library</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ==================== MAIN ==================== -->
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="font-headline text-3xl md:text-4xl font-bold text-on-surface mb-2">Collections</h1>
+      <p class="text-sm text-on-surface-variant">Organize your research. Group sites, papers, artifacts, and notes.</p>
+    </div>
+    <button class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-on-primary rounded-lg text-xs font-bold hover:bg-primary-container transition-all">
+      <span class="material-symbols-outlined text-sm">add</span>
+      New Collection
+    </button>
+  </div>
+
+  <!-- Collections Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+
+    <!-- Collection 1: Ancient Egypt -->
+    <div class="reveal">
+      <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden card-hover h-full">
+        <div class="collection-cover h-32 relative p-6 flex items-end">
+          <div class="absolute top-4 right-4">
+            <button class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+              <span class="material-symbols-outlined text-sm">more_vert</span>
+            </button>
+          </div>
+          <div class="relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-white text-2xl">pyramid</span>
+            </div>
+            <h3 class="font-headline text-xl font-bold text-white">Ancient Egypt</h3>
+          </div>
+        </div>
+        <div class="p-5">
+          <p class="text-xs text-on-surface-variant mb-4">Comprehensive study of Egyptian civilization from the Old Kingdom through the Ptolemaic period.</p>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-primary">12</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Sites</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-primary">8</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Papers</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-primary">5</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Artifacts</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <a href="archive.html?placeName=Karnak" class="flex-1 text-center px-3 py-2 bg-primary/10 text-primary rounded-lg text-[10px] font-bold hover:bg-primary/20 transition-colors">View</a>
+            <button class="px-3 py-2 border border-outline-variant/30 rounded-lg text-[10px] font-bold text-on-surface-variant hover:border-primary transition-colors">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collection 2: Roman Architecture -->
+    <div class="reveal">
+      <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden card-hover h-full">
+        <div class="h-32 relative p-6 flex items-end" style="background: linear-gradient(135deg, #4c6078 0%, #51647d 100%);">
+          <div class="absolute top-4 right-4">
+            <button class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+              <span class="material-symbols-outlined text-sm">more_vert</span>
+            </button>
+          </div>
+          <div class="relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-white text-2xl">account_balance</span>
+            </div>
+            <h3 class="font-headline text-xl font-bold text-white">Roman Architecture</h3>
+          </div>
+        </div>
+        <div class="p-5">
+          <p class="text-xs text-on-surface-variant mb-4">Engineering marvels of the Roman Empire: aqueducts, amphitheaters, temples, and urban planning.</p>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-secondary">6</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Sites</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-secondary">4</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Papers</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-secondary">3</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Artifacts</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <a href="archive.html?placeName=Colosseum" class="flex-1 text-center px-3 py-2 bg-secondary/10 text-secondary rounded-lg text-[10px] font-bold hover:bg-secondary/20 transition-colors">View</a>
+            <button class="px-3 py-2 border border-outline-variant/30 rounded-lg text-[10px] font-bold text-on-surface-variant hover:border-primary transition-colors">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collection 3: Thesis Sources -->
+    <div class="reveal">
+      <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden card-hover h-full">
+        <div class="h-32 relative p-6 flex items-end" style="background: linear-gradient(135deg, #914634 0%, #af5e4a 100%);">
+          <div class="absolute top-4 right-4">
+            <button class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+              <span class="material-symbols-outlined text-sm">more_vert</span>
+            </button>
+          </div>
+          <div class="relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-white text-2xl">auto_stories</span>
+            </div>
+            <h3 class="font-headline text-xl font-bold text-white">Thesis Sources</h3>
+          </div>
+        </div>
+        <div class="p-5">
+          <p class="text-xs text-on-surface-variant mb-4">Research materials for my master's thesis on New Kingdom temple architecture.</p>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-tertiary">0</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Sites</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-tertiary">23</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Papers</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-tertiary">12</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Notes</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex-1 text-center px-3 py-2 bg-tertiary/10 text-tertiary rounded-lg text-[10px] font-bold hover:bg-tertiary/20 transition-colors">View</button>
+            <button class="px-3 py-2 border border-outline-variant/30 rounded-lg text-[10px] font-bold text-on-surface-variant hover:border-primary transition-colors">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collection 4: Nabataean Studies -->
+    <div class="reveal">
+      <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden card-hover h-full">
+        <div class="h-32 relative p-6 flex items-end bg-gradient-to-br from-amber-600 to-orange-700">
+          <div class="absolute top-4 right-4">
+            <button class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+              <span class="material-symbols-outlined text-sm">more_vert</span>
+            </button>
+          </div>
+          <div class="relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-white text-2xl">landscape</span>
+            </div>
+            <h3 class="font-headline text-xl font-bold text-white">Nabataean Studies</h3>
+          </div>
+        </div>
+        <div class="p-5">
+          <p class="text-xs text-on-surface-variant mb-4">Trade routes, rock-cut architecture, and water management of the Nabataean kingdom.</p>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-amber-700">3</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Sites</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-amber-700">2</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Papers</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-amber-700">1</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Artifact</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <a href="archive.html?placeName=Petra" class="flex-1 text-center px-3 py-2 bg-amber-700/10 text-amber-700 rounded-lg text-[10px] font-bold hover:bg-amber-700/20 transition-colors">View</a>
+            <button class="px-3 py-2 border border-outline-variant/30 rounded-lg text-[10px] font-bold text-on-surface-variant hover:border-primary transition-colors">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collection 5: Maya Civilization -->
+    <div class="reveal">
+      <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden card-hover h-full">
+        <div class="h-32 relative p-6 flex items-end bg-gradient-to-br from-emerald-600 to-teal-700">
+          <div class="absolute top-4 right-4">
+            <button class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+              <span class="material-symbols-outlined text-sm">more_vert</span>
+            </button>
+          </div>
+          <div class="relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-white text-2xl">public</span>
+            </div>
+            <h3 class="font-headline text-xl font-bold text-white">Maya Civilization</h3>
+          </div>
+        </div>
+        <div class="p-5">
+          <p class="text-xs text-on-surface-variant mb-4">Maya hieroglyphic writing, calendar systems, and urban centers of Mesoamerica.</p>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-emerald-700">4</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Sites</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-emerald-700">6</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Papers</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-emerald-700">2</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Notes</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex-1 text-center px-3 py-2 bg-emerald-700/10 text-emerald-700 rounded-lg text-[10px] font-bold hover:bg-emerald-700/20 transition-colors">View</button>
+            <button class="px-3 py-2 border border-outline-variant/30 rounded-lg text-[10px] font-bold text-on-surface-variant hover:border-primary transition-colors">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collection 6: Conservation Projects -->
+    <div class="reveal">
+      <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden card-hover h-full">
+        <div class="h-32 relative p-6 flex items-end bg-gradient-to-br from-stone-600 to-stone-700">
+          <div class="absolute top-4 right-4">
+            <button class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+              <span class="material-symbols-outlined text-sm">more_vert</span>
+            </button>
+          </div>
+          <div class="relative z-10">
+            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2">
+              <span class="material-symbols-outlined text-white text-2xl">handyman</span>
+            </div>
+            <h3 class="font-headline text-xl font-bold text-white">Conservation Projects</h3>
+          </div>
+        </div>
+        <div class="p-5">
+          <p class="text-xs text-on-surface-variant mb-4">Active preservation efforts, restoration techniques, and digital documentation projects.</p>
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-stone-600">5</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Sites</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-stone-600">3</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Papers</div>
+            </div>
+            <div class="text-center p-2 bg-surface rounded-lg">
+              <div class="text-lg font-headline font-bold text-stone-600">8</div>
+              <div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Notes</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex-1 text-center px-3 py-2 bg-stone-600/10 text-stone-600 rounded-lg text-[10px] font-bold hover:bg-stone-600/20 transition-colors">View</button>
+            <button class="px-3 py-2 border border-outline-variant/30 rounded-lg text-[10px] font-bold text-on-surface-variant hover:border-primary transition-colors">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="reveal">
+    <h2 class="font-headline text-2xl font-bold text-on-surface mb-6">Recent Activity</h2>
+    <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden">
+      <div class="divide-y divide-outline-variant/10">
+        <div class="p-4 flex items-center gap-4 hover:bg-surface-container-high/50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary">bookmark_add</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs text-on-surface">Added <span class="font-bold">Karnak Temple</span> to <span class="font-bold text-primary">Ancient Egypt</span></p>
+            <p class="text-[10px] text-on-surface-variant mt-0.5">2 hours ago</p>
+          </div>
+        </div>
+        <div class="p-4 flex items-center gap-4 hover:bg-surface-container-high/50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-secondary">note_add</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs text-on-surface">Added note to <span class="font-bold">Temple Architecture in the New Kingdom</span></p>
+            <p class="text-[10px] text-on-surface-variant mt-0.5">5 hours ago</p>
+          </div>
+        </div>
+        <div class="p-4 flex items-center gap-4 hover:bg-surface-container-high/50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-tertiary">save</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs text-on-surface">Saved paper <span class="font-bold">Roman Concrete Durability</span></p>
+            <p class="text-[10px] text-on-surface-variant mt-0.5">Yesterday</p>
+          </div>
+        </div>
+        <div class="p-4 flex items-center gap-4 hover:bg-surface-container-high/50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary">create_new_folder</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs text-on-surface">Created collection <span class="font-bold text-primary">Nabataean Studies</span></p>
+            <p class="text-[10px] text-on-surface-variant mt-0.5">3 days ago</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="relative z-10 bg-surface-container-low border-t border-outline-variant/10 mt-12 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <p class="text-xs text-on-surface-variant">© 2024 Sawah. The digital operating system for archaeology.</p>
+    <div class="flex gap-6 text-xs text-on-surface-variant">
+      <a href="#" class="hover:text-primary transition-colors">About</a>
+      <a href="#" class="hover:text-primary transition-colors">Privacy</a>
+      <a href="#" class="hover:text-primary transition-colors">Terms</a>
+      <a href="#" class="hover:text-primary transition-colors">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('-translate-x-full');
+}
+
+document.querySelectorAll('.reveal').forEach(el => {
+  new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 }).observe(el);
+});
+</script>
+</body>
+</html>

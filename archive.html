@@ -1,263 +1,449 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth scroll-pt-24">
-<head>
+<html class="light scroll-smooth scroll-pt-24" lang="en"><head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Sawah | Archives</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;700&display=swap" rel="stylesheet"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sawah - Documentary Archive</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+    /* --- Base Styles --- */
+    body { font-family: 'Manrope', sans-serif; }
+    h1, h2, h3, .font-serif { font-family: 'Noto Serif', serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+    .parchment-grain {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        opacity: 0.03;
+        background-color: var(--tw-bg-opacity);
+        background-color: rgba(252, 249, 238, var(--tw-bg-opacity));
+    }
+    html { height: 100%; }
+    body { --page-header-height: 30px; }
+    main { flex: 1; display: flex; flex-direction: column; }
+    aside { overflow-y: auto; min-height: 0; }
+    #chat-messages { min-height: 0; }
+    #wikipedia-data-container { min-height: 0; }
+    .source-list .source-host { font-size: 0.75rem; color: #a0907e; }
+
+    /* ============= DOCUMENT CONTAINER ============= */
+    #document-container {
+        background: #fcf9ee;
+        border-radius: 2px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.03);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    #document-container .page-content { background: transparent; }
+    #document-container .page-scroll p { font-size: 1.1rem; }
+    #document-container .page-scroll img { border-radius: 4px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+
+    /* ============= COVER PAGE ============= */
+    .archive-cover {
+        min-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    .archive-cover::before {
+        content: '';
+        position: absolute;
+        inset: 12px;
+        border: 1px solid rgba(240, 234, 217, 0.2);
+        pointer-events: none;
+    }
+    .archive-cover::after {
+        content: '';
+        position: absolute;
+        inset: 16px;
+        border: 1px solid rgba(240, 234, 217, 0.1);
+        pointer-events: none;
+    }
+    .archive-cover .cover-decoration-top {
+        position: absolute;
+        top: 6%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(136,78,8,0.15), transparent);
+    }
+    .archive-cover .cover-decoration-bottom {
+        position: absolute;
+        bottom: 8%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(136,78,8,0.1), transparent);
+    }
+    .archive-cover .seal {
+        width: 100px;
+        height: 100px;
+        border: 2px solid rgba(180,140,70,0.5);
+        border-radius: 50%;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: rgba(255,255,255,0.3);
+        box-shadow: 0 0 20px rgba(180,140,70,0.1), inset 0 0 20px rgba(180,140,70,0.05);
+    }
+    .archive-cover .seal::before { content: "◆"; font-size: 36px; color: #884e08; opacity: 0.6; }
+    .archive-cover .seal-ring {
+        position: absolute;
+        inset: -6px;
+        border: 1px solid rgba(180,140,70,0.2);
+        border-radius: 50%;
+    }
+    .archive-cover h1 { font-size: clamp(3.5rem,7vw,6rem); letter-spacing: .06em; color: #3c2a1a; margin-bottom: 12px; font-weight: 700; }
+    .archive-cover p { color: #857467; font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; }
+    .archive-cover .cover-subtitle { margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(215,195,179,0.3); display: inline-block; }
+    .archive-cover .cover-symbols { display: flex; gap: 20px; margin-top: 32px; opacity: 0.2; font-size: 24px; color: #884e08; }
+
+    /* ============= CHAPTER PAGE ============= */
+    .chapter-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 1rem 0.5rem;
+        position: relative;
+        overflow: hidden;
+        background: transparent;
+    }
+    .chapter-page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(215,195,179,0.4), transparent);
+    }
+    .chapter-page::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(215,195,179,0.4), transparent);
+    }
+    .chapter-number {
+        font-size: 10rem;
+        opacity: .04;
+        color: #3c2a1a;
+        font-weight: 700;
+        line-height: 1;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        user-select: none;
+        letter-spacing: 0.1em;
+    }
+    .chapter-page h1 { font-size: 3.5rem; letter-spacing: .02em; margin: 8px 0 8px; color: #3c2a1a; }
+    .chapter-meta { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: #a0907e; margin-bottom: 8px; }
+    .chapter-intro { font-size: 1.3rem; line-height: 1.8; font-style: italic; color: #6b5e4e; max-width: 55ch; margin: 16px auto 0; }
+    .chapter-ornament-line { width: 60px; height: 2px; background: #d7c3b3; margin: 24px auto 0; border-radius: 1px; }
+
+    /* ============= CONTENT PAGES ============= */
+    .page-content {
+        font-family: 'Noto Serif', Georgia, 'Times New Roman', serif;
+        color: #2c2c24;
+        font-size: 15px;
+        line-height: 1.8;
+        text-align: justify;
+        letter-spacing: 0.01em;
+        hyphens: auto;
+        word-spacing: 0.02em;
+        overflow: visible;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        width: 100% !important;
+        max-width: none !important;
+        display: block;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .page-scroll {
+        padding: 0 !important;
+        position: relative;
+        height: auto;
+        overflow: visible;
+        box-sizing: border-box;
+        max-width: none;
+        margin: 0;
+        display: block;
+    }
+    .page-scroll img { max-width: 100%; height: auto; max-height: 250px; object-fit: contain; display: block; margin: 12px auto; }
+    .page-scroll h1, .page-scroll h2, .page-scroll h3, .page-scroll h4, .page-scroll h5, .page-scroll h6 {
+        font-family: "Noto Serif", Georgia, serif;
+        font-weight: 700;
+        color: #1c1c15;
+        line-height: 1.2;
+        text-align: left;
+        width: 100%;
+        max-width: none;
+        break-after: avoid;
+        page-break-after: avoid;
+    }
+    .page-scroll h1 { font-size: clamp(2.5rem,4vw,4rem); line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.01em; margin-top: 0; }
+    .page-content:first-of-type .page-scroll h2:first-child,
+    .page-content:first-of-type .page-scroll h3:first-child,
+    .page-content:first-of-type .page-scroll h4:first-child { margin-top: 0; }
+    .page-scroll h2:first-child, .page-scroll h3:first-child, .page-scroll h4:first-child { margin-top: 0; }
+    .page-scroll h2 { font-size: 2rem; margin-top: 0; margin-bottom: 0.2em; letter-spacing: -0.005em; }
+    .page-scroll h3 { font-size: 1.5rem; margin-top: 0; margin-bottom: 0.2em; font-style: italic; }
+    .page-scroll p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 0.5rem;
+        text-indent: 2em;
+        orphans: 3;
+        widows: 3;
+        color: #3a352c;
+    }
+    .page-scroll h1 + p, .page-scroll h2 + p, .page-scroll h3 + p, .page-scroll h4 + p, .page-scroll p:first-of-type { text-indent: 0; }
+    .page-scroll p:first-of-type:first-letter { font-size: 4.5rem; font-weight: 700; float: left; line-height: .8; margin-right: .15em; color: #6b3b00; font-family: serif; }
+    .page-scroll a { color: #884e08; text-decoration: none; border-bottom: 1px solid rgba(136, 78, 8, 0.25); transition: border-color 0.2s; }
+    .page-scroll a:hover { border-bottom-color: #884e08; }
+    .page-scroll blockquote { margin: 0; padding: 0; border-left: none; background: none; border-radius: 0; font-size: 1.1rem; font-style: italic; }
+    .page-scroll blockquote p { text-indent: 0; margin-bottom: 0; font-size: inherit; }
+    .page-scroll ul, .page-scroll ol { margin: 0; padding-left: 1.5em; text-align: left; }
+    .page-scroll li { margin-bottom: 0; text-indent: 0; }
+    .article-image { filter: sepia(0.25) contrast(1.05) brightness(0.98); border: 1px solid #d7c3b3; box-shadow: 0 4px 20px rgba(0,0,0,0.12); max-width: 100%; height: auto; border-radius: 2px; cursor: zoom-in; transition: filter 0.3s, box-shadow 0.3s; }
+    .article-image:hover { filter: sepia(0) contrast(1.1) brightness(1); box-shadow: 0 6px 30px rgba(0,0,0,0.18); }
+
+    /* ============= TOC PAGE ============= */
+    .toc-page { padding: 2rem 1rem; background: transparent; }
+    .toc-page h1 { font-size: 2.8rem; color: #3c2a1a; margin-bottom: 3rem; position: relative; display: inline-block; text-align: center; font-family: 'Noto Serif', serif; }
+    .toc-page h1::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 60px; height: 2px; background: #884e08; opacity: 0.3; }
+    .toc-list { list-style: none; padding: 0; max-width: 520px; margin: 0 auto; width: 100%; }
+    .toc-entry { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #ede8dd; color: #5a4f42; text-decoration: none; transition: padding 0.2s, color 0.2s; font-size: 1.05rem; cursor: pointer; }
+    .toc-entry:hover { padding-left: 8px; color: #884e08; }
+    .toc-dots { flex-grow: 1; border-bottom: 1px dotted #d7c3b3; margin: 0 0.5rem; transform: translateY(-4px); }
+    .toc-title { font-family: 'Noto Serif', serif; font-weight: 500; }
+    .toc-page-number { font-family: 'Manrope', sans-serif; font-size: 0.8rem; color: #a0907e; font-weight: 500; }
+
+    /* ============= DATA SECTIONS ============= */
+    .data-section { max-width: 45rem; margin: 2rem auto; padding-top: 0; border-top: none; }
+    .data-section-title { font-family: 'Noto Serif', Georgia, serif; font-size: 1.8rem; font-weight: 700; color: #3c2a1a; text-align: center; margin-bottom: 2.5rem; position: relative; display: inline-block; }
+    .data-section-title::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 40px; height: 2px; background: #884e08; opacity: 0.25; }
+
+    /* Timeline */
+    .timeline-list { list-style: none; padding: 0; margin: 0; position: relative; }
+    .timeline-list::before { content: ''; position: absolute; top: 0; bottom: 0; left: 6rem; width: 1px; background: linear-gradient(to bottom, transparent, #d7c3b3, transparent); }
+    .timeline-list li { display: flex; align-items: center; position: relative; padding: 8px 0 8px 8px; margin-left: -8px; border-radius: 4px; transition: background 0.2s; }
+    .timeline-list li:hover { background: rgba(215,195,179,0.15); }
+    .timeline-list li::before { content: ''; position: absolute; left: 5.45rem; width: 8px; height: 8px; border-radius: 50%; background: #884e08; border: 2px solid #fcf9ee; box-shadow: 0 0 0 1px #d7c3b3; z-index: 1; }
+    .timeline-list .year { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 0.95rem; color: #6b3b00; width: 7rem; text-align: right; padding-right: 2rem; flex-shrink: 0; }
+    .timeline-list .event { font-family: 'Noto Serif', serif; font-size: 0.95rem; line-height: 1.6; color: #5a4f42; padding-left: 16px; }
+
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+    .stat-card { background: #f8f5ec; border: 1px solid #ede8dd; padding: 1.75rem 1.5rem; border-radius: 6px; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .stat-card span { font-family: 'Manrope', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #a0907e; }
+    .stat-card h3 { font-family: 'Noto Serif', serif; font-size: 1.8rem; font-weight: 700; color: #884e08; margin-top: 6px; }
+
+    /* Gallery */
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .gallery-item { margin: 0; background: #fdfbf3; border-radius: 6px; overflow: hidden; border: 1px solid #ede8dd; transition: transform 0.2s, box-shadow 0.2s; }
+    .gallery-item:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .gallery-item img { width: 100%; height: 220px; object-fit: cover; margin: 0; border-radius: 0; border: none; box-shadow: none; filter: sepia(0.15) contrast(1); }
+    .gallery-item figcaption { padding: 1rem; font-family: 'Manrope', sans-serif; font-size: 0.8rem; color: #5a4f42; text-align: center; }
+
+    /* Landmark & Person Cards */
+    .landmark-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .landmark-card { background: #fcf9ee; border-radius: 8px; overflow: hidden; border: 1px solid #ede8dd; transition: transform 0.2s, box-shadow 0.3s; }
+    .landmark-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
+    .landmark-card img { width: 100%; height: 200px; object-fit: cover; }
+    .person-card img { filter: grayscale(100%) contrast(1.1); }
+    .landmark-body { padding: 1.25rem 1.5rem 1.5rem; }
+    .landmark-body h3 { font-family: 'Noto Serif', serif; font-size: 1.15rem; font-weight: 700; color: #3c2a1a; margin: 0 0 0.5rem 0; }
+    .landmark-body p { font-size: 0.9rem; line-height: 1.7; }
+
+    /* Source Cards */
+    .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+    .source-card { background: #f8f5ec; border: 1px solid #ede8dd; border-radius: 6px; padding: 1.25rem 1.5rem; transition: transform 0.2s, box-shadow 0.2s; }
+    .source-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .source-card h3 { font-family: 'Noto Serif', serif; font-size: 1.1rem; font-weight: 700; color: #3c2a1a; margin: 0 0 0.5rem 0; }
+    .source-card p { font-family: 'Manrope', sans-serif; font-size: 0.85rem; color: #5a4f42; line-height: 1.7; margin: 0 0 1rem 0; }
+    .source-card a { font-size: 0.8rem; font-weight: 700; color: #884e08; text-decoration: underline; }
+
+    /* Error Card */
+    .archive-error-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; background-color: #fff9f2; border: 1px solid #ffdad6; border-radius: 8px; min-height: 400px; }
+
+    /* AI Response Formatting */
+    .ai-response p { margin-bottom: 0.75em; }
+    .ai-response p:last-child { margin-bottom: 0; }
+    .ai-response ul, .ai-response ol { margin: 0.75em 0 0.75em 1.25em; list-style-position: outside; list-style-type: disc; }
+    .ai-response li { margin-bottom: 0.25em; }
+
+    /* Sidebar TOC */
+    #toc-list a.text-primary { font-weight: 700; }
+    #toc-list a.active { color: #884e08; font-weight: 700; background-color: rgba(136, 78, 8, 0.1); }
+    #toc-list details { margin-bottom: 0.5rem; }
+    #toc-list summary { list-style: none; padding: 0.25rem 0.5rem; }
+    #toc-list summary::-webkit-details-marker { display: none; }
+    #toc-list summary::before { content: '▸'; display: inline-block; margin-right: 0.5rem; transition: transform 0.2s; font-size: 0.8rem; }
+    #toc-list details[open] > summary::before { transform: rotate(90deg); }
+
+    /* Section Break */
+    .section-break { border: none; height: 1px; background: linear-gradient(to right, transparent, #d7c3b3, transparent); margin: 0; opacity: 0.4; }
+
+    /* ============= READING PROGRESS BAR ============= */
+    #reading-progress { position: fixed; top: 64px; left: 0; height: 3px; background: linear-gradient(90deg, #884e08, #a66622); z-index: 60; transition: width 0.1s linear; width: 0%; box-shadow: 0 0 8px rgba(136,78,8,0.3); }
+
+    /* ============= SECTION REVEAL ANIMATIONS ============= */
+    .section-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+    .section-reveal.revealed { opacity: 1; transform: translateY(0); }
+
+    /* ============= NAV DOTS ============= */
+    #section-nav-dots { position: fixed; right: 12px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 8px; }
+    #section-nav-dots button { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #d7c3b3; background: transparent; cursor: pointer; transition: all 0.3s; padding: 0; }
+    #section-nav-dots button:hover { border-color: #884e08; background: #884e08; }
+    #section-nav-dots button.active { background: #884e08; border-color: #884e08; box-shadow: 0 0 6px rgba(136,78,8,0.4); transform: scale(1.3); }
+    #section-nav-dots .nav-dot-tooltip { display: none; position: absolute; right: 18px; background: #1c1c15; color: #fcf9ee; font-size: 10px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; font-family: 'Manrope', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; pointer-events: none; }
+    #section-nav-dots button:hover .nav-dot-tooltip { display: block; }
+
+    /* ============= KEYBOARD HINT ============= */
+    #keyboard-hint { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 50; background: rgba(28,28,21,0.85); backdrop-filter: blur(8px); color: #f4f1e6; font-size: 11px; padding: 8px 16px; border-radius: 8px; font-family: 'Manrope', sans-serif; letter-spacing: 0.03em; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+    #keyboard-hint.show { opacity: 1; }
+    #keyboard-hint kbd { display: inline-block; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 3px; font-size: 10px; margin: 0 2px; font-family: 'Manrope', sans-serif; }
+
+    /* ============= LOADING STATES ============= */
+    .loading-stage { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #857467; transition: color 0.3s; }
+    .loading-stage.active { color: #884e08; font-weight: 600; }
+    .loading-stage.done { color: #4c6078; }
+    .loading-stage .stage-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 1.5px solid currentColor; transition: all 0.3s; }
+    .loading-stage.active .stage-icon { background: #884e08; border-color: #884e08; color: white; }
+    .loading-stage.done .stage-icon { background: #4c6078; border-color: #4c6078; color: white; }
+
+    /* ============= MOBILE CHAT FAB ============= */
+    #mobile-chat-fab { display: none; position: fixed; bottom: 24px; right: 24px; z-index: 55; width: 56px; height: 56px; border-radius: 50%; background: #4c6078; color: white; box-shadow: 0 4px 20px rgba(76,96,120,0.4); align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: none; }
+    #mobile-chat-fab:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(76,96,120,0.5); }
+    #mobile-chat-fab:active { transform: scale(0.95); }
+
+    /* ============= MOBILE CHAT DRAWER ============= */
+    #mobile-chat-drawer { position: fixed; inset: 0; z-index: 100; background: #fcf9ee; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); display: none; flex-direction: column; }
+    #mobile-chat-drawer.open { transform: translateY(0); }
+    #mobile-chat-drawer .drawer-header { padding: 14px 20px; background: #884e08; color: white; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+    #mobile-chat-drawer .drawer-body { flex: 1; overflow-y: auto; padding: 12px 20px; }
+    #mobile-chat-drawer .drawer-footer { padding: 10px 20px 16px; border-top: 1px solid #e5e2d8; flex-shrink: 0; }
+    #mobile-chat-drawer .drawer-footer .input-wrap { display: flex; gap: 8px; background: #f7f4e9; padding: 8px 12px; border-radius: 8px; border: 1px solid #e5e2d8; }
+    #mobile-chat-drawer .drawer-footer input { flex: 1; background: transparent; border: none; outline: none; font-size: 14px; font-family: 'Manrope', sans-serif; color: #1c1c15; }
+    #mobile-chat-drawer .drawer-footer input::placeholder { color: #857467; font-style: italic; }
+
+    /* Mobile overlay */
+    #mobile-overlay { position: fixed; inset: 0; z-index: 99; background: rgba(28,28,21,0.4); backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.35s; }
+    #mobile-overlay.show { opacity: 1; pointer-events: all; }
+
+    /* ============= BACK TO TOP ============= */
+    #back-to-top { position: fixed; bottom: 24px; left: 24px; z-index: 50; width: 44px; height: 44px; border-radius: 50%; background: #884e08; color: white; box-shadow: 0 2px 12px rgba(136,78,8,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transform: translateY(12px); transition: opacity 0.3s, transform 0.3s; border: none; pointer-events: none; }
+    #back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+    #back-to-top:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(136,78,8,0.4); }
+
+    /* ============= RESPONSIVE ============= */
+    @media (max-width: 768px) {
+        .page-content { font-size: 0.8125rem; line-height: 1.7; }
+        .page-scroll { padding: 10px; }
+        .page-scroll h1 { font-size: 1.2rem; }
+        .archive-cover h1 { font-size: 1.5rem; }
+        .chapter-page h1 { font-size: 1.3rem; }
+        .lg\:col-span-8 { width: 100%; }
+        #section-nav-dots { display: none; }
+        #mobile-chat-fab { display: flex; }
+        #mobile-chat-drawer { display: flex; }
+        #keyboard-hint { display: none; }
+        #back-to-top { bottom: 88px; left: 24px; }
+        .lg\:col-span-3 { width: 100%; }
+    }
+    @media (max-width: 1024px) { #reading-progress { top: 0; } }
+</style>
 <script id="tailwind-config">
     tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                "colors": {
-                    "on-error": "#ffffff",
-                    "on-background": "#1c1c15",
-                    "surface-container-highest": "#e5e2d8",
-                    "secondary": "#4c6078",
-                    "on-secondary-container": "#51647d",
-                    "on-tertiary": "#ffffff",
-                    "surface-dim": "#dddacf",
-                    "on-primary-fixed": "#2d1600",
-                    "on-surface": "#1c1c15",
-                    "secondary-container": "#cde1fe",
-                    "on-tertiary-fixed-variant": "#763221",
-                    "on-secondary-fixed": "#061d32",
-                    "surface-tint": "#8b500b",
-                    "on-secondary": "#ffffff",
-                    "tertiary": "#914634",
-                    "background": "#fcf9ee",
-                    "outline": "#857467",
-                    "on-error-container": "#93000a",
-                    "tertiary-fixed-dim": "#ffb4a3",
-                    "on-primary-fixed-variant": "#6b3b00",
-                    "surface": "#fcf9ee",
-                    "on-primary": "#ffffff",
-                    "primary": "#884e08",
-                    "surface-container-low": "#f7f4e9",
-                    "tertiary-fixed": "#ffdad2",
-                    "primary-fixed": "#ffdcc0",
-                    "inverse-surface": "#31312a",
-                    "inverse-primary": "#ffb876",
-                    "error": "#ba1a1a",
-                    "secondary-fixed-dim": "#b4c8e4",
-                    "surface-variant": "#e5e2d8",
-                    "on-tertiary-container": "#fffbff",
-                    "secondary-fixed": "#d1e4ff",
-                    "surface-bright": "#fcf9ee",
-                    "primary-container": "#a66622",
-                    "on-tertiary-fixed": "#3c0700",
-                    "on-surface-variant": "#524438",
-                    "primary-fixed-dim": "#ffb876",
-                    "surface-container-lowest": "#ffffff",
-                    "tertiary-container": "#af5e4a",
-                    "on-primary-container": "#fffbff",
-                    "outline-variant": "#d7c3b3",
-                    "inverse-on-surface": "#f4f1e6",
-                    "error-container": "#ffdad6",
-                    "on-secondary-fixed-variant": "#35485f",
-                    "surface-container-high": "#ebe8dd",
-                    "surface-container": "#f1eee3"
-                }
-            }
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: { "primary": "#884e08", "on-primary": "#ffffff", "primary-container": "#a66622", "on-primary-container": "#fffbff", "secondary": "#4c6078", "on-secondary": "#ffffff", "secondary-container": "#cde1fe", "on-secondary-container": "#51647d", "tertiary": "#914634", "on-tertiary": "#ffffff", "tertiary-container": "#af5e4a", "on-tertiary-container": "#fffbff", "error": "#ba1a1a", "on-error": "#ffffff", "error-container": "#ffdad6", "on-error-container": "#93000a", "background": "#fcf9ee", "on-background": "#1c1c15", "surface": "#fcf9ee", "on-surface": "#1c1c15", "surface-variant": "#e5e2d8", "on-surface-variant": "#524438", "outline": "#857467", "outline-variant": "#d7c3b3", "surface-tint": "#8b500b", "inverse-surface": "#31312a", "inverse-on-surface": "#f4f1e6", "inverse-primary": "#ffb876", "primary-fixed": "#ffdcc0", "on-primary-fixed": "#2d1600", "primary-fixed-dim": "#ffb876", "on-primary-fixed-variant": "#6b3b00", "secondary-fixed": "#d1e4ff", "on-secondary-fixed": "#061d32", "secondary-fixed-dim": "#b4c8e4", "on-secondary-fixed-variant": "#35485f", "tertiary-fixed": "#ffdad2", "on-tertiary-fixed": "#3c0700", "tertiary-fixed-dim": "#ffb4a3", "on-tertiary-fixed-variant": "#763221", "surface-dim": "#dddacf", "surface-bright": "#fcf9ee", "surface-container-lowest": "#ffffff", "surface-container-low": "#f7f4e9", "surface-container": "#f1eee3", "surface-container-high": "#ebe8dd", "surface-container-highest": "#e5e2d8" },
+          borderRadius: { DEFAULT: "0.125rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          fontFamily: { headline: ["Noto Serif", "serif"], body: ["Manrope", "sans-serif"], label: ["Manrope", "sans-serif"] }
         }
-    }
+      }
+    };
 </script>
 
-<style>
-body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
-.parchment-grain {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.03;
-}
-.custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #d7c3b3;
-    border-radius: 10px;
-}
-.font-serif { font-family: 'Noto Serif', serif; }
-
-/* High-End Styling for Wikipedia Raw Content */
-.wiki-content { font-size: 1.1rem; line-height: 1.8; color: #374151; }
-.wiki-content h2 { font-family: 'Noto Serif', serif; font-size: 1.875rem; font-weight: 700; font-style: italic; color: #1c1c15; margin: 3rem 0 1.5rem; border-bottom: 1px solid #e5e2d8; padding-bottom: 0.5rem; }
-.wiki-content h3 { font-family: 'Noto Serif', serif; font-size: 1.5rem; font-weight: 600; color: #884e08; margin: 2rem 0 1rem; }
-.wiki-content p { margin-bottom: 1.5rem; }
-.wiki-content table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.85rem; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-.wiki-content td, .wiki-content th { border: 1px solid #f1eee3; padding: 1rem; text-align: left; vertical-align: top; }
-.wiki-content th { background: #fdfbf3; color: #884e08; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; }
-
-.wiki-content .infobox { float: right; width: 340px; margin: 0 0 2.5rem 2.5rem; background: #fff; border: 1px solid #e5e2d8; padding: 1.5rem; font-size: 0.8rem; border-radius: 12px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05); }
-.wiki-content .infobox caption { font-family: 'Noto Serif', serif; font-weight: 700; font-size: 1.2rem; color: #1c1c15; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f1eee3; }
-.wiki-content .infobox img { border-radius: 8px; margin-bottom: 1rem; }
-
-@media (max-width: 768px) {
-    .wiki-content .infobox {
-        float: none;
-        width: 100%;
-        margin: 0 0 2rem 0;
-    }
-}
-
-.wiki-content .reflist { font-size: 0.8rem; color: #524438; column-count: 1; column-gap: 3rem; margin-top: 3rem; border-top: 1px solid #d7c3b3; padding: 2.5rem 0; }
-@media (min-width: 768px) { .wiki-content .reflist { column-count: 2; } }
-.wiki-content .reflist ol, .wiki-content ol.references { list-style-type: decimal !important; margin-left: 0; padding-left: 2rem; }
-.wiki-content .reflist li, .wiki-content ol.references li { margin-bottom: 0.8rem; word-wrap: break-word; display: list-item !important; list-style-position: outside; }
-.wiki-content .mw-cite-backlink { font-family: 'Manrope', sans-serif; font-weight: 700; color: #884e08; margin-right: 0.5rem; text-decoration: none; }
-.wiki-content .reflist a { color: #4c6078; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; }
-.wiki-content .reflist a:hover { color: #884e08; border-bottom-color: #884e08; }
-
-.wiki-content .thumb { margin: 2.5rem 0; padding: 1rem; background: #fff; border: 1px solid #f1eee3; border-radius: 12px; width: fit-content; max-width: 100%; transition: all 0.3s ease; display: flex; flex-direction: column; }
-.wiki-content .thumb:hover { border-color: #d7c3b3; box-shadow: 0 12px 40px -10px rgba(0,0,0,0.05); }
-.wiki-content .thumb img { border-radius: 8px; filter: sepia(0.15) contrast(1.05); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-.wiki-content .thumb:hover img { filter: sepia(0) contrast(1); }
-.wiki-content .thumbcaption, .wiki-content .gallerytext { font-family: 'Manrope', sans-serif; font-size: 0.75rem !important; color: #857467 !important; margin-top: 0.75rem !important; font-style: italic !important; line-height: 1.5 !important; border: none !important; padding: 0 !important; display: block !important; }
-.wiki-content .reference { vertical-align: super; font-size: 0.65rem; font-weight: 800; color: #884e08; margin-left: 2px; text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
-.wiki-content .reference:hover { opacity: 1; }
-
-/* Styling for native Wikipedia Galleries found inside sections (like Abu Simbel #section-5) */
-.wiki-content .gallery { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important; gap: 1.5rem !important; padding: 0 !important; list-style: none !important; margin: 2rem 0 !important; }
-.wiki-content .gallerybox { width: 100% !important; margin: 0 !important; height: auto !important; }
-.wiki-content .gallerybox .thumb { width: 100% !important; margin: 0 !important; padding: 0.75rem !important; display: flex !important; flex-direction: column !important; height: auto !important; }
-.wiki-content .gallerybox .thumb img { width: 100% !important; height: 180px !important; object-fit: cover !important; }
-
-/* Hide Wikipedia administrative metadata, maintenance tags, hatnotes, and navigation boxes */
-.wiki-content .mw-editsection, .wiki-content .hatnote, .wiki-content .ambox, .wiki-content .metadata, .wiki-content .navbox, .wiki-content .banner-shell { display: none !important; }
-
-/* Navigation Index Styles */
-#toc-list li { margin-bottom: 0.5rem; }
-#toc-list a { transition: all 0.2s; }
-#toc-list a:hover { color: #884e08; padding-left: 4px; }
-
-/* Lightbox Animation */
-#lightbox-modal { transition: opacity 0.3s ease; }
-#lightbox-modal.hidden { opacity: 0; pointer-events: none; }
-#lightbox-modal { opacity: 1; display: flex !important; }
-/* Ensure images that can be lightboxed show a cursor */
-.wiki-content img, .header-img, .cursor-zoom-in {
-    cursor: zoom-in;
-}
-
-.gallery-image { filter: sepia(0.15) contrast(1.05); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-.gallery-image:hover { filter: sepia(0) contrast(1); transform: scale(1.05); }
-#lightbox-img { cursor: grab; user-select: none; transition: transform 0.1s ease-out; }
-#lightbox-img:active { cursor: grabbing; }
-</style>
 </head>
+<body class="bg-background text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<div class="fixed inset-0 pointer-events-none parchment-grain z-0"></div>
 
-<body class="bg-background text-on-surface">
-    
-<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 sticky top-0 z-50 h-16 flex items-center">
-    <div class="flex justify-between items-center w-full px-8 max-w-screen-2xl mx-auto"> 
-        <div class="flex items-center gap-8">
-            <a href="index.html" class="text-2xl font-serif italic text-secondary hover:opacity-80 transition-opacity">Sawah</a>
-            <nav class="hidden md:flex items-center gap-6">
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="index.html">Discover</a>
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="map.html">Map</a>
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="timeline.html">Timeline</a>
-                <a class="text-primary border-b-2 border-primary pb-1 font-bold transition-colors duration-300" href="archive.html">Archives</a>
-            </nav>
-        </div>
-        <div class="flex items-center gap-2 md:gap-4">
-            <div class="relative group hidden sm:block">
-                <input id="article-search" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic" placeholder="Explore the Past..." type="text"/>
-                <span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
-            </div>
-            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button> 
-            <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
-        </div>
-    </div>
-</header>
+<!-- Reading Progress Bar -->
+<div id="reading-progress"></div>
 
-<!-- Mobile Menu Drawer -->
-<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[70] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
-    <div class="p-6 flex flex-col h-full">
-        <div class="flex justify-between items-center mb-8">
-            <a href="index.html" class="text-2xl font-serif italic text-secondary">Sawah</a>
-            <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">close</button>
-        </div>
-        <nav class="flex flex-col gap-4 text-lg font-body flex-grow">
-            <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html" onclick="toggleMobileMenu()">Discover</a>
-            <a class="text-on-surface-variant hover:text-primary transition-colors" href="map.html" onclick="toggleMobileMenu()">Map</a>
-            <a class="text-on-surface-variant hover:text-primary transition-colors" href="timeline.html" onclick="toggleMobileMenu()">Timeline</a>
-            <a class="text-primary font-bold hover:text-primary-container transition-colors" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
-        </nav>
-            <input id="mobile-search" onkeypress="if(event.key==='Enter') { window.location.href = `archive.html?placeName=${encodeURIComponent(this.value)}`; toggleMobileMenu(); }" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic mb-4" placeholder="Explore the Past..." type="text"/>
-            <button class="w-full text-left text-on-surface-variant hover:text-primary transition-colors py-2">Account</button>
-        </div>
-    </div>
+<!-- Section Navigation Dots -->
+<nav id="section-nav-dots"></nav>
+
+<!-- Keyboard Hint -->
+<div id="keyboard-hint">Use <kbd>↑</kbd> <kbd>↓</kbd> to navigate sections · <kbd>Esc</kbd> to close</div>
+
+<!-- Back to Top -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <span class="material-symbols-outlined text-xl">arrow_upward</span>
+</button>
+
+<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 sticky top-0 z-50 h-16 flex items-center flex-shrink-0">
+<nav class="flex justify-between items-center w-full px-8 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<a href="index.html" class="text-2xl font-serif italic text-secondary hover:opacity-80 transition-opacity">Sawah</a>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="index.html">Home</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="dashboard.html">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="map.html">Map</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="timeline.html">Timeline</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold transition-colors duration-300" href="archive.html">Archives</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="library.html">Library</a>
+</div></div>
+<div class="flex items-center gap-4">
+<div class="relative group hidden sm:block">
+<input id="home-search" onkeypress="if(event.key==='Enter') window.location.href = `archive.html?placeName=${encodeURIComponent(this.value)}`" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-48 md:w-64 transition-all italic uppercase tracking-widest" placeholder="EXPLORE THE PAST..." type="text"/>
+<span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span>
 </div>
+<button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button>
+<button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">menu</button>
+</div></nav></header>
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 ease-in-out shadow-lg md:hidden">
+<div class="p-6 flex flex-col h-full">
+<div class="flex justify-between items-center mb-8"><a href="index.html" class="text-2xl font-serif italic text-secondary">Sawah</a><button class="material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="window.toggleMobileMenu()">close</button></div>
+<nav class="flex flex-col gap-4 text-lg font-body flex-grow">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">Home</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="map.html">Map</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="timeline.html">Timeline</a>
+<a class="text-primary font-bold hover:text-primary-container transition-colors" href="archive.html">Archives</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="library.html">Library</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/20"><div class="relative group mb-4"><input id="mobile-search" class="bg-surface-container-low border-none border-b border-outline focus:ring-0 focus:border-primary text-sm px-4 py-1.5 w-full transition-all italic uppercase tracking-widest" placeholder="EXPLORE THE PAST..." type="text"/><span class="material-symbols-outlined absolute right-2 top-1.5 text-secondary opacity-60">search</span></div><button class="w-full text-left text-on-surface-variant hover:text-primary transition-colors py-2">Account</button></div></div></div>
 
-<main class="max-w-screen-2xl mx-auto px-6 lg:px-8 py-10 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 relative">
-    <div class="lg:col-span-9 min-w-0">
-        <article id="content" class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-stone-200/50">
-            <div class="animate-pulse space-y-8">
-                <div class="h-[400px] bg-stone-100 rounded-xl"></div>
-                <div class="h-10 bg-stone-100 rounded w-3/4"></div>
-                <div class="space-y-4">
-                    <div class="h-4 bg-stone-100 rounded w-full"></div>
-                    <div class="h-4 bg-stone-100 rounded w-full"></div>
-                    <div class="h-4 bg-stone-100 rounded w-2/3"></div>
-                </div>
-            </div>
-        </article>
-    </div>
+<!-- Mobile Overlay -->
+<div id="mobile-overlay" onclick="closeMobileChat()"></div>
 
-    <aside class="lg:col-span-3 space-y-8">
-        <!-- Chronicle Index --> 
-        <div id="toc-container" class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm hidden sticky top-28">
-            <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-6 border-b border-stone-100 pb-2 flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-primary">list_alt</span>
-                Chronicle Index
-            </h3>
-            <ul id="toc-list" class="text-[11px] text-stone-500 font-bold uppercase tracking-wider space-y-3"></ul>
-        </div>
-
-        <!-- Archival Metadata --> 
-        <div class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm">
-            <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-primary">dataset</span>
-                Archival Registry
-            </h3>
-            <ul id="meta-list" class="text-[10px] space-y-3 text-stone-600 font-medium">
-                <li class="flex justify-between"><span>Status</span> <span class="text-primary font-bold">Verified</span></li>
-                <li class="flex justify-between"><span>Repository</span> <span>Wikimedia Global</span></li>
-                <li id="meta-rev" class="flex justify-between"><span>Revision</span> <span class="italic">Syncing...</span></li>
-            </ul>
-        </div>
-    </aside>
-</main>
- 
-<!-- Technical Fact Sheet Component (Inserted into sidebar via JS) -->
-<template id="fact-sheet-template">
-    <div id="fact-sheet-container" class="bg-white p-6 rounded-xl border border-stone-200/50 shadow-sm mt-8">
-        <h3 class="text-[10px] font-bold text-stone-900 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm text-primary">fact_check</span>
-            Technical Fact Sheet
-        </h3>
-        <ul id="fact-sheet-list" class="text-[10px] space-y-3 text-stone-600 font-medium"></ul>
-    </div>
-</template>
-
-<!-- Lightbox Modal -->
-<div id="lightbox-modal" class="fixed inset-0 z-[1000] bg-stone-900/95 hidden items-center justify-center p-8">
-    <button onclick="closeLightbox()" class="absolute top-8 right-8 text-white hover:text-primary transition-colors group">
-        <span class="material-symbols-outlined text-4xl">close</span>
-        <span class="block text-[10px] font-bold tracking-widest uppercase mt-1 opacity-0 group-hover:opacity-100 transition-opacity text-center">Close</span>
-    </button>
-    <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded shadow-2xl">
-    <div id="lightbox-caption" class="absolute bottom-12 left-1/2 -translate-x-1/2 max-w-2xl text-center text-white/80 font-body text-sm italic"></div>
-</div>
-
-<div id="ai-chat-container" class="fixed bottom-28 right-8 w-80 md:w-96 h-[500px] max-h-[80vh] bg-surface-container rounded-3xl shadow-2xl border border-outline-variant/20 z-[1000] flex flex-col hidden overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0">
-    <div class="p-4 bg-primary text-on-primary flex justify-between items-center shadow-md">
+<!-- Mobile Chat Drawer -->
+<div id="mobile-chat-drawer">
+    <div class="drawer-header">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                 <span class="material-symbols-outlined text-sm">smart_toy</span>
@@ -267,370 +453,435 @@ body { font-family: 'Manrope', sans-serif; background:#fcf9ee; }
                 <p class="text-xs opacity-70">Digital Historian AI</p>
             </div>
         </div>
-        <button onclick="toggleChat()" class="material-symbols-outlined hover:bg-white/10 rounded-full p-1 transition-colors text-sm">close</button>
+        <button onclick="closeMobileChat()" class="material-symbols-outlined hover:bg-white/10 rounded-full p-1 transition-colors">close</button>
     </div>
-    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-surface-container-lowest"> 
+    <div class="drawer-body custom-scrollbar" id="mobile-chat-messages">
         <div class="flex gap-2">
             <div class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-[14px] text-primary">smart_toy</span>
             </div>
             <div class="bg-surface-container p-3 rounded-lg rounded-tl-none max-w-[85%]">
-                <p class="text-sm text-on-surface leading-relaxed italic">Greetings, seeker of antiquity. I am the Sawah Oracle. How may I assist your journey through the archives today?</p>
+                <p class="text-sm text-on-surface leading-relaxed italic">Greetings. I am synchronized with the current document. How may I provide context?</p>
             </div>
         </div>
-
-        <!-- Quick Assist Chips -->
-        <div id="chat-suggestions" class="flex flex-wrap gap-2 pt-2">
-            <button onclick="useQuickPrompt('Tell me about the Pyramids')" class="text-xs bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/30 hover:border-primary hover:text-primary transition-all font-bold uppercase tracking-wider">The Pyramids</button>
-            <button onclick="useQuickPrompt('Where is Machu Picchu?')" class="text-xs bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/30 hover:border-primary hover:text-primary transition-all font-bold uppercase tracking-wider">Machu Picchu</button>
-            <button onclick="useQuickPrompt('Archaeological Methodology')" class="text-xs bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/30 hover:border-primary hover:text-primary transition-all font-bold uppercase tracking-wider">Methodology</button>
-        </div>
     </div>
-    <div class="p-4 bg-surface-container border-t border-outline-variant/10">
-        <div class="flex gap-2 bg-surface-container-low p-2 rounded-lg border border-outline-variant/20">
-            <input id="chat-input" type="text" placeholder="Ask about ancient wonders..." class="flex-1 bg-transparent border-none focus:ring-0 text-sm italic" onkeypress="if(event.key==='Enter') sendMessage()">
-            <button onclick="sendMessage()" class="material-symbols-outlined text-primary hover:scale-110 transition-transform text-lg">send</button>
+    <div class="drawer-footer">
+        <div class="input-wrap">
+            <input id="mobile-chat-input" type="text" placeholder="Query the archive..." onkeypress="if(event.key==='Enter') handleMobileChat()"/>
+            <button onclick="handleMobileChat()" class="material-symbols-outlined text-primary hover:scale-110 transition-transform">send</button>
         </div>
     </div>
 </div>
 
-<!-- Floating Action Buttons -->
-<div class="fixed bottom-8 right-8 flex flex-col gap-4 z-[900]">
-    <button onclick="toggleChat()" id="chat-fab" class="w-14 h-14 bg-secondary text-on-secondary rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
-        <span class="material-symbols-outlined">chat_bubble</span>
-    </button>
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
-        <span class="material-symbols-outlined">vertical_align_top</span>
-    </button>
-</div>
+<!-- Mobile Chat FAB -->
+<button id="mobile-chat-fab" onclick="openMobileChat()" aria-label="Open Oracle Chat">
+    <span class="material-symbols-outlined text-2xl">smart_toy</span>
+</button>
 
-<!-- Archive Detail Drawer -->
-<div id="archive-drawer" class="fixed top-0 right-0 h-full w-0 bg-surface shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[1000] overflow-y-auto border-l border-outline-variant/20">
-    <div class="p-6 md:p-10 w-full md:w-[750px]">
-        <button onclick="closeArchive()" class="mb-10 flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest transition-colors group">
-            <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">close</span>
-            Close Archive
-        </button>
-        <div id="archive-content"></div>
+<main class="w-full max-w-screen-2xl mx-auto px-4 lg:px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 py-4" style="--gap: 0;">
+<aside class="lg:col-span-2 flex flex-col gap-3 sticky top-20 self-start max-h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar">
+<div id="toc-container" class="bg-surface-container-low border border-outline-variant/50 p-3 rounded-lg">
+<h3 class="font-serif text-secondary uppercase tracking-widest border-b border-outline-variant pb-2 mb-2 flex items-center gap-2 text-sm"><span class="material-symbols-outlined text-[16px]">format_list_bulleted</span> Chronicle Index</h3>
+<ul class="space-y-1 text-xs text-on-surface-variant" id="toc-list"></ul>
+</div>
+<div class="bg-surface-container-low border border-outline-variant/50 p-3 rounded-lg relative" id="wikipedia-data-container">
+<div class="absolute top-2 right-2 text-secondary opacity-40"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1;">inventory_2</span></div>
+<h4 class="text-[10px] font-bold text-on-surface-variant uppercase mb-2 tracking-widest pt-2">Archival Registry</h4>
+<dl class="space-y-2 text-xs"><div class="flex flex-col"><dt class="text-[10px] text-secondary uppercase font-bold">Primary Entity</dt><dd class="font-serif text-primary text-sm" id="wiki-title">Fetching entity...</dd></div><div class="flex flex-col pt-2 border-t border-outline-variant/30"><dt class="text-[10px] text-secondary uppercase font-bold">Abstract</dt><dd class="text-on-surface-variant line-clamp-3 mt-1 text-xs leading-relaxed" id="wiki-extract">Awaiting chronological synchronization...</dd></div></dl>
+</div></aside>
+<div class="lg:col-span-8 relative flex flex-col" id="main-content-column" style="padding-left: 0; padding-right: 0;">
+<div id="content-preloader" class="flex-1 flex items-center justify-center bg-surface-container-low z-20 rounded-lg border border-outline-variant/50 py-16 px-8">
+    <div class="flex flex-col items-center gap-6 max-w-sm w-full">
+        <span class="material-symbols-outlined text-primary text-[48px] animate-spin">autorenew</span>
+        <h2 id="loader-status" class="text-sm uppercase tracking-widest text-on-surface-variant text-center">Connecting To Archive...</h2>
+        <div class="w-full h-1.5 bg-outline-variant/20 rounded-full overflow-hidden">
+            <div class="h-full bg-primary animate-pulse w-1/3 rounded-full" id="loader-bar"></div>
+        </div>
+        <div class="flex flex-col gap-2 w-full mt-2" id="loader-stages">
+            <div class="loading-stage" data-stage="sources"><span class="stage-icon">1</span><span>Gathering historical sources</span></div>
+            <div class="loading-stage" data-stage="synthesize"><span class="stage-icon">2</span><span>Synthesizing archival record</span></div>
+            <div class="loading-stage" data-stage="manuscript"><span class="stage-icon">3</span><span>Building manuscript</span></div>
+        </div>
+        <p class="text-[10px] text-on-surface-variant/50 uppercase tracking-wider" id="loader-subtitle">Retrieving data from scholarly databases</p>
     </div>
 </div>
-
-<!-- AI Dossier Drawer (for chatbot responses) -->
-<div id="ai-dossier-drawer" class="fixed top-0 right-0 h-full w-0 bg-surface shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transition-all duration-500 z-[1000] overflow-y-auto border-l border-outline-variant/20">
-    <div class="p-6 md:p-10 w-full md:w-[750px]">
-        <button onclick="closeAIDossier()" class="mb-10 flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest transition-colors group">
-            <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">close</span>
-            Close AI Dossier
-        </button>
-        <div id="ai-dossier-content"></div>
-    </div>
+<div id="document-container" class="hidden"></div>
 </div>
+<div id="content-holder" class="hidden"></div>
+<aside class="lg:col-span-2 flex flex-col gap-3 sticky top-20 self-start overflow-y-auto custom-scrollbar">
+<div class="bg-surface-container-low border border-outline-variant/50 rounded-lg flex flex-col shadow-sm overflow-hidden">
+<header class="p-3 bg-primary text-on-primary flex justify-between items-center flex-shrink-0"><div class="flex items-center gap-2"><div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center"><span class="material-symbols-outlined text-xs">smart_toy</span></div><div><h4 class="text-[11px] font-bold uppercase tracking-widest">Oracle</h4><p class="text-[9px] opacity-70 leading-tight">AI Historian</p></div></div></header>
+<div class="flex-1 p-3 overflow-y-auto space-y-3 custom-scrollbar bg-surface-container-lowest max-h-[320px]" id="chat-messages"><div class="flex gap-2"><div class="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[12px] text-primary">smart_toy</span></div><div class="bg-surface-container p-2 rounded-lg rounded-tl-none max-w-[88%]"><p class="text-xs text-on-surface leading-relaxed italic">Greetings. I am synchronized with the current document. How may I provide context?</p></div></div>
+</div>
+<div class="p-2 bg-surface-container border-t border-outline-variant/10 flex-shrink-0">
+<div class="flex gap-1.5 bg-surface-container-low p-1.5 rounded-lg border border-outline-variant/20">
+<input id="chat-input" type="text" placeholder="Query..." class="flex-1 bg-transparent border-none focus:ring-0 text-xs italic min-w-0"/>
+<button onclick="window.handleChatSubmission()" class="material-symbols-outlined text-primary hover:scale-110 transition-transform text-sm flex-shrink-0 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed">send</button>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<footer class="bg-surface-container-low text-primary w-full py-12 px-8 flex-shrink-0">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8 max-w-screen-2xl mx-auto">
+<div class="flex flex-col items-center md:items-start gap-4">
+<span class="text-xl font-serif text-secondary">Sawah</span>
+<p class="text-xs text-secondary font-medium text-center md:text-left">© 2024 Sawah: The Digital Curator. Preserving the legacy of antiquity.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-sm font-serif text-secondary hover:underline decoration-tertiary hover:text-tertiary transition-all" href="#">Historical Resources</a>
+<a class="text-sm font-serif text-secondary hover:underline decoration-tertiary hover:text-tertiary transition-all" href="#">Scholarly Database</a>
+<a class="text-sm font-serif text-secondary hover:underline decoration-tertiary hover:text-tertiary transition-all" href="#">Conservation Efforts</a>
+<a class="text-sm font-serif text-secondary hover:underline decoration-tertiary hover:text-tertiary transition-all" href="#">Contact Curator</a>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-secondary hover:text-primary cursor-pointer transition-colors">language</span>
+<span class="material-symbols-outlined text-secondary hover:text-primary cursor-pointer transition-colors">share</span>
+</div>
+</div>
+</footer>
+<div class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md items-center justify-center p-8 opacity-0 transition-opacity duration-300 pointer-events-none" id="lightbox" onclick="closeLightbox()">
+<button class="absolute top-8 right-8 text-inverse-on-surface hover:text-white" onclick="closeLightbox()"><span class="material-symbols-outlined text-[36px]">close</span></button>
+<img alt="Enlarged Archival View" class="max-w-full max-h-[80vh] border-4 border-surface shadow-2xl rounded-lg" id="lightbox-img" src=""/>
+</div>
+<script type="module">
+    import { generateArchive } from './js/research-engine.js';
+    import { queryAI } from './js/oracle.js';
+    import { getLocalArchive } from './js/site-data.js';
 
-<script>
-const GROQ_API_KEY = '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';
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+    const $ = id => document.getElementById(id);
+    const $$ = selector => document.querySelectorAll(selector);
 
-/* Wikipedia Archival Loading Logic */
-async function loadWikiContent(title) {
-    const contentArea = document.getElementById('content');
-    const tocList = document.getElementById('toc-list');
-    const tocContainer = document.getElementById('toc-container');
-    
-    const searchTitle = title.trim();
+    const templates = {
+        cover: (title) => `<div class="archive-cover"><div class="seal"></div><h1>${title}</h1><p>Historical Archive</p><div class="mt-8 text-xs uppercase tracking-[0.3em] opacity-60">Sawah Documentary Registry</div></div>`,
+        chapterPage: (title, intro, index, romanNum, anchorId) => `
+            <div class="chapter-page" id="${anchorId}">
+                <div class="chapter-number">${romanNum}</div>
+                <div class="chapter-meta">Historical Record ${romanNum}</div>
+                <h1>${title}</h1>
+                ${intro ? `<div class="chapter-intro">${intro}</div>` : ''}
+            </div>`,
+        content: (content) => `<div class="page-content section-reveal" id="content-${content.anchor}"><div class="page-scroll">${content.content}</div></div>`,
+        tocPage: (chapters) => {
+            const tocItems = chapters.map((ch, index) => `
+                <li>
+                    <a href="#ch-${index}" class="toc-entry" data-anchor="ch-${index}">
+                        <span class="toc-title">${ch.title}</span>
+                        <span class="toc-dots"></span>
+                        <span class="toc-page-number">Chapter ${index + 1}</span>
+                    </a>
+                </li>
+            `).join('');
+            return `<div class="toc-page section-reveal" id="toc"><h1>Contents</h1><ul class="toc-list">${tocItems}</ul></div>`;
+        },
+    errorCard: (message) => `
+        <div class="archive-error-card">
+            <span class="material-symbols-outlined text-5xl text-error">error</span>
+            <h2 class="text-2xl font-serif mt-4">Archive Generation Failed</h2>
+            <p class="text-on-surface-variant mt-2 text-center max-w-md">${message}</p>
+            <button onclick="location.reload()" class="mt-6 bg-primary text-on-primary px-6 py-2 rounded-md font-bold text-sm hover:opacity-90 transition-opacity">Retry</button>
+        </div>`,
+    };
 
-    try {
-        // Using action=parse with origin=* is the most reliable way to bypass CORS on local servers
-        const url = `https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(searchTitle)}&format=json&origin=*&prop=text|sections|displaytitle|revid&redirects=1`;
-        
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Archival server responded with status: ${response.status}`);
-        
-        const data = await response.json();
-        
-        if (data.error) throw new Error(data.error.info || "Archival record not found.");
-        const parse = data.parse;
+    const lightbox = {
+        open: (src) => { $('lightbox-img').src = src; $('lightbox').classList.remove('hidden', 'opacity-0'); $('lightbox').classList.remove('pointer-events-none'); },
+        close: () => { $('lightbox').classList.add('opacity-0', 'pointer-events-none'); setTimeout(() => $('lightbox').classList.add('hidden'), 300); }
+    };
 
-        // Helper to fix Wikipedia relative links and protocol-relative image paths
-        const cleanWikiHtml = (html) => {
-            return html
-                .replace(/href="\.\/([^"]+)"/g, 'href="https://en.wikipedia.org/wiki/$1" target="_blank"')
-                .replace(/href="\/wiki\/([^"]+)"/g, 'href="https://en.wikipedia.org/wiki/$1" target="_blank"')
-                .replace(/src="\/\//g, 'src="https://') 
-                .replace(/srcset="([^"]+)"/g, (match, p1) => `srcset="${p1.replace(/(^|,)\s*\/\//g, '$1 https://')}"`);
-        };
+    const mobileMenu = { toggle: () => $('mobile-menu').classList.toggle('-translate-x-full') };
+    window.toggleMobileMenu = mobileMenu.toggle;
+    window.closeLightbox = () => lightbox.close();
 
-        const displayTitle = parse.displaytitle || parse.title;
-        let fullHtml = `<h1 class="text-5xl font-serif italic font-bold mb-8 text-stone-900 leading-tight">${displayTitle}</h1>`;
-        fullHtml += `<div class="wiki-content">${cleanWikiHtml(parse.text['*'])}</div>`;
-        
-        tocList.innerHTML = '';
+    function useQuickPrompt(prompt) { $('chat-input').value = prompt; handleChatSubmission(); }
+    window.useQuickPrompt = useQuickPrompt;
 
-        // Process sub-sections safely
-        const sections = parse.sections || [];
-        sections.forEach(section => {
-            if (parseInt(section.toclevel) === 1) {
-                const li = document.createElement('li');
-                // Wikipedia anchors are usually the same as the line name or an escaped version
-                li.innerHTML = `<a href="#${encodeURIComponent(section.anchor)}" class="hover:text-primary transition-colors">${section.line}</a>`;
-                tocList.appendChild(li);
+    async function handleChatSubmission(isMobile = false) {
+        const input = isMobile ? $('mobile-chat-input') : $('chat-input');
+        const messagesContainer = isMobile ? $('mobile-chat-messages') : $('chat-messages');
+        const query = input.value.trim();
+        if (!query) return;
+        input.disabled = true;
+
+        const userMessageHtml = `<div class="flex justify-end"><div class="bg-primary text-on-primary p-2 rounded-lg rounded-br-none max-w-[85%] shadow-sm"><p class="text-xs leading-relaxed">${query}</p></div></div>`;
+        messagesContainer.insertAdjacentHTML('beforeend', userMessageHtml);
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        const thinkingHtml = `<div class="flex gap-2" id="thinking-indicator"><div class="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[12px] text-primary animate-spin">autorenew</span></div><div class="bg-surface-container p-2 rounded-lg rounded-tl-none max-w-[85%]"><p class="text-xs text-on-surface leading-relaxed italic">The Oracle is consulting the archives...</p></div></div>`;
+        messagesContainer.insertAdjacentHTML('beforeend', thinkingHtml);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        try {
+            const documentTitle = $('wiki-title').textContent;
+            const documentAbstract = $('wiki-extract').textContent;
+            const documentContent = $('document-container').innerText.substring(0, 4000);
+            const systemPrompt = "You are Sawah Oracle, a helpful AI historian. Answer the user's question based on the provided document context. Be concise and insightful. Format your response with simple HTML like <p> and <ul> tags. Do not wrap your response in a parent element.";
+            const userPrompt = `Based on the following document:\n- Title: ${documentTitle}\n- Abstract: ${documentAbstract}\n- Content Sample: ${documentContent}\n\nAnswer this question: "${query}"`;
+            const aiResponse = await queryAI(systemPrompt, userPrompt);
+            const aiMessageHtml = `<div class="flex gap-2"><div class="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[12px] text-primary">smart_toy</span></div><div class="bg-surface-container p-2 rounded-lg rounded-tl-none max-w-[88%]"><div class="text-xs text-on-surface leading-relaxed ai-response">${aiResponse}</div></div></div>`;
+            $('thinking-indicator')?.remove();
+            messagesContainer.insertAdjacentHTML('beforeend', aiMessageHtml);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        } catch (error) {
+            console.error("Chat submission failed:", error);
+            $('thinking-indicator')?.remove();
+        } finally { input.disabled = false; input.focus(); }
+    }
+    window.handleChatSubmission = handleChatSubmission;
+    function handleMobileChat() { handleChatSubmission(true); }
+    window.handleMobileChat = handleMobileChat;
+
+    function openMobileChat() {
+        $('mobile-chat-drawer').classList.add('open');
+        $('mobile-overlay').classList.add('show');
+        document.body.style.overflow = 'hidden';
+        $('mobile-chat-messages').innerHTML = $('chat-messages').innerHTML;
+        $('mobile-chat-messages').scrollTop = $('mobile-chat-messages').scrollHeight;
+    }
+    window.openMobileChat = openMobileChat;
+    function closeMobileChat() {
+        $('mobile-chat-drawer').classList.remove('open');
+        $('mobile-overlay').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+    window.closeMobileChat = closeMobileChat;
+
+    function updateReadingProgress() {
+        const p = document.documentElement.scrollHeight - window.innerHeight;
+        $('reading-progress').style.width = (p > 0 ? Math.min((window.scrollY / p) * 100, 100) : 0) + '%';
+    }
+
+    let sectionObserver = null;
+    function buildSectionNav(sections) {
+        const container = $('section-nav-dots');
+        container.innerHTML = '';
+        sections.forEach((id) => {
+            const btn = document.createElement('button');
+            btn.dataset.target = id;
+            const label = id.replace(/^ch-/, 'Ch. ');
+            btn.innerHTML = `<span class="nav-dot-tooltip">${label}</span>`;
+            btn.setAttribute('aria-label', `Navigate to ${label}`);
+            btn.addEventListener('click', () => { const t = $(id); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+            container.appendChild(btn);
+        });
+    }
+
+    function setupSectionObserver(sectionIds) {
+        if (sectionObserver) sectionObserver.disconnect();
+        const dots = $('section-nav-dots').querySelectorAll('button');
+        sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const idx = sectionIds.indexOf(entry.target.id);
+                    if (idx >= 0) {
+                        dots.forEach(b => b.classList.remove('active'));
+                        if (dots[idx]) dots[idx].classList.add('active');
+                        $$('#toc-list a').forEach(a => a.classList.remove('text-primary', 'font-bold', 'bg-primary/10'));
+                        const tl = $(`toc-link-${entry.target.id}`);
+                        if (tl) tl.classList.add('text-primary', 'font-bold', 'bg-primary/10');
+                    }
+                }
+            });
+        }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+        sectionIds.forEach(id => { const el = $(id); if (el) sectionObserver.observe(el); });
+    }
+
+    let revealObserver = null;
+    function setupRevealAnimations() {
+        if (revealObserver) revealObserver.disconnect();
+        revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('revealed'); revealObserver.unobserve(entry.target); } });
+        }, { rootMargin: '0px 0px -80px 0px', threshold: 0.1 });
+        $$('.section-reveal').forEach(el => revealObserver.observe(el));
+    }
+
+    let keyboardHintTimer = null;
+    function setupKeyboardNav(sectionIds) {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                let idx = -1;
+                const dots = $('section-nav-dots').querySelectorAll('button');
+                dots.forEach((b, i) => { if (b.classList.contains('active')) idx = i; });
+                if (e.key === 'ArrowDown' && idx < sectionIds.length - 1) { e.preventDefault(); const t = $(sectionIds[idx + 1]); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); showHint(); }
+                else if (e.key === 'ArrowUp' && idx > 0) { e.preventDefault(); const t = $(sectionIds[idx - 1]); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); showHint(); }
             }
         });
+    }
+    function showHint() { const h = $('keyboard-hint'); h.classList.add('show'); clearTimeout(keyboardHintTimer); keyboardHintTimer = setTimeout(() => h.classList.remove('show'), 2500); }
 
-        contentArea.innerHTML = fullHtml;
-        tocContainer.classList.remove('hidden');
-        document.getElementById('meta-rev').innerText = parse.revid;
+    function setupBackToTop() { window.addEventListener('scroll', () => { $('back-to-top').classList.toggle('visible', window.scrollY > 400); }); }
 
-        // Setup Lightbox for Wikipedia Images
-        contentArea.querySelectorAll('img').forEach(img => {
-            const link = img.closest('a');
-            if (link && (link.classList.contains('image') || link.href.includes('File:'))) {
-                link.href = "javascript:void(0)";
-                link.removeAttribute('target');
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const fullSrc = img.src.includes('/thumb/') 
-                        ? img.src.replace('/thumb/', '/').split('/').slice(0, -1).join('/') 
-                        : img.src;
-                    const captionText = img.closest('.thumb, .gallerybox')?.querySelector('.thumbcaption, .gallerytext')?.innerText || img.alt || "";
-                    openLightbox(fullSrc, captionText);
-                });
+    function updateLoaderStage(stage) {
+        const stages = $$('#loader-stages .loading-stage');
+        stages.forEach(s => { s.classList.remove('active', 'done'); if (s.dataset.stage === stage) s.classList.add('active'); });
+        let found = false;
+        stages.forEach(s => { if (s.dataset.stage === stage) found = true; if (!found) s.classList.add('done'); });
+    }
+
+    class ArchiveApp {
+        constructor() { this.bindGlobalEvents(); }
+        setLoader(text) { const el = $("loader-status"); if (el) el.textContent = text; }
+
+        buildFromArchive(archiveData) {
+            const loader = $('content-preloader');
+            if (loader) loader.style.display = 'none';
+            const { title, chapters, sources, summary, statistics, timeline, landmarks, people, imageGallery } = archiveData;
+            const titleText = title || 'Historical Archive';
+            const docContainer = $('document-container');
+            docContainer.innerHTML = '';
+            let contentHtml = '';
+            const tocEntries = [];
+            const sectionIds = [];
+
+            contentHtml += templates.cover(titleText) + '<div class="section-break"></div>';
+
+            const isPlaceholderSummary = summary && (summary.toLowerCase().includes('placeholder') || summary.toLowerCase().includes('unavailable') || summary.includes('compiled from available sources') || summary.includes('A historical archive documenting'));
+            if (summary && !isPlaceholderSummary) {
+                contentHtml += `<div class="page-content section-reveal" id="summary"><div class="page-scroll"><div class="max-w-3xl mx-auto text-center mb-16"><div class="inline-block px-4 py-1 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest rounded-full mb-6">Overview</div><p class="text-lg text-stone-700 leading-relaxed italic font-serif">${summary}</p></div></div></div><div class="section-break"></div>`;
+                sectionIds.push('summary');
             }
-        });
-        
-    } catch (error) {
-        console.error("Wikipedia Archival Error:", error);
-        let errorMessage = error.message;
-        if (errorMessage === "Failed to fetch") {
-            const isFileProtocol = window.location.protocol === 'file:';
-            if (isFileProtocol) {
-                errorMessage = "Network request blocked. Browsers prevent API calls when opening HTML files directly. Please use your Live Server address (http://localhost:5500).";
-            } else {
-                errorMessage = "The Archival Registry is currently unreachable. This may be due to a lost internet connection or Wikipedia's API being temporarily down.";
+
+            if (statistics && Object.keys(statistics).length > 0) {
+                const validStats = Object.entries(statistics).filter(([k, v]) => { const s = v?.toString() || ''; return s && !['n/a', 'placeholder', 'simulated', 'unavailable', 'c. 3100 bce', 'unesco site'].some(p => s.toLowerCase().includes(p)); });
+                if (validStats.length >= 2) {
+                    contentHtml += `<div class="page-content section-reveal" id="statistics"><div class="page-scroll"><div class="data-section"><h2 class="data-section-title">Key Statistics</h2><dl class="stats-grid">${validStats.map(([k, v]) => `<div class="stat-card"><span>${this.formatStatLabel(k)}</span><h3>${v}</h3></div>`).join('')}</dl></div></div></div><div class="section-break"></div>`;
+                    sectionIds.push('statistics');
+                }
             }
+
+            const hasRealTimelineEvents = timeline?.some(item => item.event && !item.event.toLowerCase().includes('placeholder'));
+            if (timeline && timeline.length > 0 && hasRealTimelineEvents) {
+                contentHtml += `<div class="page-content section-reveal" id="timeline"><div class="page-scroll"><div class="data-section"><h2 class="data-section-title">Historical Timeline</h2><ul class="timeline-list">${timeline.map(item => `<li><span class="year">${item.year}</span><span class="event">${item.event}</span></li>`).join('')}</ul></div></div></div><div class="section-break"></div>`;
+                sectionIds.push('timeline');
+            }
+
+            const hasPlaceholderImages = imageGallery?.some(img => img.description?.toLowerCase().includes('placeholder') || img.description?.toLowerCase().includes('illustration'));
+            if (imageGallery && imageGallery.length > 0 && !hasPlaceholderImages) {
+                contentHtml += `<div class="page-content section-reveal" id="gallery"><div class="page-scroll"><div class="data-section"><h2 class="data-section-title">Visual Archive</h2><div class="gallery-grid">${imageGallery.map(img => `<figure class="gallery-item"><img src="${img.url}" alt="${img.description}" class="article-image" loading="lazy"/><figcaption><strong class="text-stone-700">${img.description}</strong></figcaption></figure>`).join('')}</div></div></div></div><div class="section-break"></div>`;
+                sectionIds.push('gallery');
+            }
+
+            tocEntries.push({ title: 'Table of Contents', anchor: 'toc', index: -1 });
+            contentHtml += templates.tocPage(chapters) + '<div class="section-break"></div>';
+            sectionIds.push('toc');
+
+            chapters.forEach((chapter, index) => {
+                if (!chapter.content?.trim()) return;
+                const romanNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+                const romanNum = romanNumerals[index] || String(index + 1);
+                const anchorId = `ch-${index}`;
+                contentHtml += templates.chapterPage(chapter.title, chapter.chapterIntro, index, romanNum, anchorId);
+                contentHtml += templates.content({ content: chapter.content, anchor: anchorId });
+                tocEntries.push({ title: chapter.title, anchor: anchorId, index });
+                sectionIds.push(anchorId);
+            });
+
+            const hasPlaceholderLandmarks = landmarks?.some(l => l.name?.toLowerCase().includes('placeholder') || l.description?.toLowerCase().includes('placeholder'));
+            if (landmarks && landmarks.length > 0 && !hasPlaceholderLandmarks) {
+                contentHtml += '<div class="section-break"></div>';
+                contentHtml += `<div class="page-content section-reveal" id="landmarks"><div class="page-scroll"><div class="data-section"><h2 class="data-section-title">Notable Landmarks</h2><div class="landmark-grid">${landmarks.map(l => `<div class="landmark-card group hover:shadow-lg transition-shadow">${l.image ? `<img src="${l.image}" alt="${l.name}" loading="lazy" class="group-hover:scale-105 transition-transform duration-500"/>` : '<div class="w-full h-48 bg-surface-container-high flex items-center justify-center"><span class="material-symbols-outlined text-6xl text-outline-variant">landmark</span></div>'}<div class="landmark-body"><h3>${l.name}</h3><p>${l.description}</p></div></div>`).join('')}</div></div></div></div>`;
+                tocEntries.push({ title: 'Landmarks', anchor: 'landmarks', index: -1 });
+                sectionIds.push('landmarks');
+            }
+
+            const hasPlaceholderPeople = people?.some(p => p.name?.toLowerCase().includes('placeholder') || p.significance?.toLowerCase().includes('placeholder'));
+            if (people && people.length > 0 && !hasPlaceholderPeople) {
+                contentHtml += '<div class="section-break"></div>';
+                contentHtml += `<div class="page-content section-reveal" id="people"><div class="page-scroll"><div class="data-section"><h2 class="data-section-title">Key Historical Figures</h2><div class="landmark-grid">${people.map(p => `<div class="landmark-card person-card group hover:shadow-lg transition-shadow">${p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy" class="group-hover:scale-105 transition-transform duration-500"/>` : '<div class="w-full h-48 bg-surface-container-high flex items-center justify-center"><span class="material-symbols-outlined text-6xl text-outline-variant">person</span></div>'}<div class="landmark-body"><h3>${p.name}</h3><p>${p.significance}</p></div></div>`).join('')}</div></div></div></div>`;
+                tocEntries.push({ title: 'Key Figures', anchor: 'people', index: -1 });
+                sectionIds.push('people');
+            }
+
+            const hasSystemFallback = sources?.some(s => s.name?.toLowerCase().includes('system fallback'));
+            if (sources && sources.length > 0 && !hasSystemFallback) {
+                contentHtml += '<div class="section-break"></div>';
+                contentHtml += `<div class="page-content section-reveal" id="sources"><div class="page-scroll"><div class="data-section"><h2 class="data-section-title">Sources & References</h2><div class="source-grid">${sources.map(s => `<div class="source-card group hover:border-primary/30 transition-all"><div class="flex items-start justify-between gap-2 mb-2"><h3 class="flex-1">${s.name}</h3><span class="material-symbols-outlined text-primary text-sm flex-shrink-0">link</span></div><p>${s.title || 'Archival reference'}</p><a href="${s.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-3 text-xs font-bold uppercase tracking-wider hover:gap-2 transition-all">View Source <span class="material-symbols-outlined text-sm">arrow_forward</span></a></div>`).join('')}</div></div></div></div>`;
+                tocEntries.push({ title: 'Sources', anchor: 'sources', index: -1 });
+                sectionIds.push('sources');
+            }
+
+            docContainer.innerHTML = contentHtml;
+            docContainer.classList.remove('hidden');
+            this.updateTOC(tocEntries);
+            buildSectionNav(sectionIds);
+            setupSectionObserver(sectionIds);
+            setupRevealAnimations();
+            setupKeyboardNav(sectionIds);
+
+            $('wiki-title').textContent = titleText;
+            $('wiki-extract').textContent = (summary || chapters[0]?.content?.replace(/<[^>]*>/g, '').substring(0, 200) || 'No abstract available.') + '...';
+
+            docContainer.querySelectorAll('.toc-entry').forEach(link => {
+                link.addEventListener('click', e => { e.preventDefault(); const t = $(link.dataset.anchor); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+            });
         }
 
-        contentArea.innerHTML = `
-            <div class="py-20 text-center">
-                <span class="material-symbols-outlined text-stone-200 text-6xl mb-4">history_edu</span>
-                <p class="text-stone-400 italic px-4 max-w-md mx-auto leading-relaxed">${errorMessage}</p>
-                <button onclick="window.history.back()" class="mt-6 text-[10px] font-bold text-primary flex items-center gap-2 mx-auto uppercase tracking-widest hover:underline">
-                    <span class="material-symbols-outlined text-sm">arrow_back</span> Return to Previous Record
-                </button>
-            </div>`;
+        formatStatLabel(key) { return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim(); }
+
+        updateTOC(tocEntries) {
+            const list = $('toc-list');
+            list.innerHTML = '';
+            tocEntries.forEach(entry => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${entry.anchor}`;
+                a.className = 'block hover:bg-surface-container-high rounded px-2 py-1.5 transition-colors cursor-pointer';
+                a.textContent = entry.title;
+                a.dataset.anchorId = entry.anchor;
+                a.id = `toc-link-${entry.anchor}`;
+                li.appendChild(a);
+                list.appendChild(li);
+            });
+            list.querySelectorAll('a').forEach(a => {
+                a.onclick = (e) => { e.preventDefault(); const t = $(a.getAttribute('href').substring(1)); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+            });
+            $('toc-container').style.display = tocEntries.length > 0 ? 'block' : 'none';
+        }
+
+        bindGlobalEvents() {
+            document.addEventListener('click', e => { if (e.target.matches('.article-image')) lightbox.open(e.target.src); if (e.target.id === 'lightbox') lightbox.close(); });
+            $$('[onclick*="toggleMobileMenu"]').forEach(el => el.onclick = (e) => { e.preventDefault(); mobileMenu.toggle(); });
+            document.addEventListener('keydown', e => { if (e.key === "Escape") lightbox.close(); });
+            $('mobile-search').addEventListener('keypress', e => { if (e.key === 'Enter' && e.target.value.trim()) window.location.href = `archive.html?placeName=${encodeURIComponent(e.target.value.trim())}`; });
+            $('chat-input').addEventListener('keypress', e => { if (e.key === 'Enter') handleChatSubmission(); });
+            window.addEventListener('scroll', updateReadingProgress, { passive: true });
+            setupBackToTop();
+        }
     }
-}
 
-/* Search Integration */
-document.getElementById('article-search').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        window.location.href = `archive.html?placeName=${encodeURIComponent(e.target.value)}`;
-    }
-});
+    document.addEventListener('DOMContentLoaded', async () => {
+        const app = new ArchiveApp();
+        window.SawahApp = app;
+        const name = new URLSearchParams(window.location.search).get("placeName") || "History";
+        try {
+            app.setLoader("Matching local archive...");
+            updateLoaderStage('sources');
+            const localArchive = getLocalArchive(name);
+            if (localArchive) {
+                app.setLoader("Loading site archive...");
+                updateLoaderStage('manuscript');
+                await new Promise(r => setTimeout(r, 250));
+                app.buildFromArchive(localArchive);
+                return;
+            }
 
-function toggleMobileMenu() {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('-translate-x-full');
-}
-
-/* Chat UI State Management */
-function toggleChat() {
-    const chat = document.getElementById('ai-chat-container');
-    const isHidden = chat.classList.contains('hidden');
-    
-    if (isHidden) {
-        chat.classList.remove('hidden');
-        setTimeout(() => chat.classList.remove('opacity-0', 'translate-y-4'), 10);
-    } else {
-        chat.classList.add('opacity-0', 'translate-y-4');
-        setTimeout(() => chat.classList.add('hidden'), 300);
-    }
-}
-
-window.useQuickPrompt = function(text) {
-    document.getElementById('chat-input').value = text;
-    sendMessage();
-    document.getElementById('chat-suggestions').classList.add('hidden');
-}
-
-async function sendMessage() {
-    const input = document.getElementById("chat-input");
-    const container = document.getElementById('chat-messages');
-    const text = input.value.trim();
-    if (!text) return;
-
-    input.value = "";
-
-    // User Message
-    const userMsg = document.createElement('div');
-    userMsg.className = 'flex justify-end';
-    userMsg.innerHTML = `<div class="bg-primary text-on-primary p-3 rounded-lg rounded-tr-none max-w-[85%] shadow-sm"><p class="text-sm leading-relaxed">${escapeHTML(text)}</p></div>`;
-    container.appendChild(userMsg);
-    container.scrollTop = container.scrollHeight;
-
-    // Bot Typing State
-    const botId = 'bot-' + Date.now();
-    const typingBubble = document.createElement('div');
-    typingBubble.id = botId;
-    typingBubble.className = 'flex gap-2';
-    typingBubble.innerHTML = `
-        <div class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <span class="material-symbols-outlined text-[14px] text-primary">smart_toy</span>
-        </div>
-        <div class="bg-surface-container p-3 rounded-lg rounded-tl-none max-w-[85%]">
-            <div class="flex gap-1">
-                <span class="w-1 h-1 bg-secondary/40 rounded-full animate-bounce"></span>
-                <span class="w-1 h-1 bg-secondary/40 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                <span class="w-1 h-1 bg-secondary/40 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-            </div>
-        </div>`;
-    container.appendChild(typingBubble);
-    container.scrollTop = container.scrollHeight;
-
-    try {
-        const response = await fetch(GROQ_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${GROQ_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: GROQ_MODEL,
-                messages: [
-                    { role: "system", content: "You are the Sawah Oracle, a digital historian. Answer queries about history or archaeology concisely." },
-                    { role: "user", content: text }
-                ]
-            })
-        });
-
-        const data = await response.json();
-        const aiText = data?.choices?.[0]?.message?.content || "The Oracle is silent. Please try again.";
-
-        setTimeout(() => {
-            renderBotResponse(botId, aiText, text);
-        }, 800 + Math.random() * 500);
-
-    } catch (err) {
-        setTimeout(() => {
-            renderBotResponse(botId, "Connection error: " + err.message);
-        }, 1000);
-    }
-}
-
-function renderBotResponse(id, text, originalQuery) {
-    const botBubble = document.getElementById(id);
-    if (!botBubble) return;
-
-    const contentArea = botBubble.querySelector('.bg-surface-container');
-    contentArea.innerHTML = `
-        <div class="space-y-4">
-            <div class="text-sm text-on-surface leading-relaxed">${text}</div>
-            ${originalQuery ? `
-            <div class="flex items-center justify-between pt-3 border-t border-outline-variant/10">
-                <button onclick="openAIDossier('${escapeHTML(originalQuery)}')" class="text-[10px] font-bold text-primary flex items-center gap-1 hover:underline">
-                    <span class="material-symbols-outlined text-sm">auto_stories</span> Detailed Dossier
-                </button>
-            </div>` : ''}
-        </div>`;
-    
-    document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
-}
-
-
-/* =========================
-   AI DOSSIER (FIXED DRAWER)
-========================= */
-
-async function openAIDossier(name) {
-    const drawer = document.getElementById('ai-dossier-drawer');
-    const content = document.getElementById('ai-dossier-content');
-
-    if (!drawer || !content) return;
-
-    drawer.style.width = window.innerWidth > 768 ? '750px' : '100%';
-    content.innerHTML = `
-        <div class="animate-pulse space-y-8 p-6">
-            <div class="h-10 bg-stone-100 rounded w-3/4"></div>
-            <div class="space-y-4">
-                <div class="h-4 bg-stone-100 rounded w-full"></div>
-                <div class="h-4 bg-stone-100 rounded w-5/6"></div>
-            </div>
-        </div>
-    `;
-
-    try {
-        const response = await fetch(GROQ_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${GROQ_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: GROQ_MODEL,
-                messages: [{ role: "user", content: `Generate a detailed archaeological dossier for "${name}". Include significance and architecture. Format with <p> and <h3> tags.` }]
-            })
-        });
-
-        if (!response.ok) throw new Error(`Oracle connection failed (${response.status})`);
-        const data = await response.json();
-        const aiText = data?.choices?.[0]?.message?.content || "No data.";
-
-        content.innerHTML = `
-            <h2 class="text-3xl font-serif italic font-bold mb-6">${escapeHTML(name)}</h2><div class="prose prose-stone max-w-none text-sm leading-relaxed">${aiText}</div>`;
-    } catch (err) {
-        content.innerHTML = `<div class="p-10 text-center"><p class="text-red-500 italic">Failed to fetch dossier: ${err.message}</p></div>`;
-    }
-}
-
-/* =========================
-   CLOSE DOSSIER
-========================= */
-
-window.openLightbox = function(src, caption) {
-    const modal = document.getElementById('lightbox-modal');
-    const img = document.getElementById('lightbox-img');
-    const cap = document.getElementById('lightbox-caption');
-    img.src = src;
-    cap.innerText = caption;
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-window.closeLightbox = function() {
-    const modal = document.getElementById('lightbox-modal');
-    const img = document.getElementById('lightbox-img');
-    if (img) img.src = "";
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-function closeAIDossier() {
-    const drawer = document.getElementById('ai-dossier-drawer');
-    if (drawer) drawer.style.width = "0";
-}
-
-/* =========================
-   SECURITY & INIT
-========================= */
-
-function escapeHTML(str) {
-    return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
-    const placeName = params.get('placeName');
-    if (placeName) {
-        document.getElementById('content').innerHTML = `<div class="animate-pulse space-y-8"><div class="h-96 bg-stone-100 rounded-xl"></div><div class="h-10 bg-stone-100 rounded w-3/4"></div><div class="space-y-4"><div class="h-4 bg-stone-100 rounded w-full"></div><div class="h-4 bg-stone-100 rounded w-full"></div><div class="h-4 bg-stone-100 rounded w-2/3"></div></div></div>`; // Show loader
-        loadWikiContent(placeName);
-    }
-});
+            app.setLoader("Gathering Sources...");
+            updateLoaderStage('sources');
+            const archive = await generateArchive(name);
+            app.setLoader("Synthesizing Record...");
+            updateLoaderStage('synthesize');
+            await document.fonts.ready;
+            app.setLoader("Building Manuscript...");
+            updateLoaderStage('manuscript');
+            await new Promise(r => setTimeout(r, 400));
+            app.buildFromArchive(archive);
+        } catch (err) {
+            console.error("Archive generation failed:", err);
+            const preloader = $('content-preloader');
+            const mainContent = $('main-content-column');
+            if (preloader) preloader.style.display = 'none';
+            mainContent.innerHTML = templates.errorCard(err.message.includes("credits") ? "The request to the AI historian is too large for the available credits. Please check your account." : "The connection to the Sawah AI Oracle failed. This may be due to a network issue or an invalid API configuration.");
+        }
+    });
 </script>
-
-</body>
-</html>
+</body></html>
