@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah — Research Library</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: "#884e08", "on-primary": "#ffffff", "primary-container": "#a66622",
+        "on-primary-container": "#fffbff", secondary: "#4c6078", "on-secondary": "#ffffff",
+        "secondary-container": "#cde1fe", "on-secondary-container": "#51647d",
+        tertiary: "#914634", "on-tertiary": "#ffffff", "tertiary-container": "#af5e4a",
+        "on-tertiary-container": "#fffbff", error: "#ba1a1a", "on-error": "#ffffff",
+        "error-container": "#ffdad6", "on-error-container": "#93000a",
+        background: "#fcf9ee", "on-background": "#1c1c15",
+        surface: "#fcf9ee", "on-surface": "#1c1c15",
+        "surface-variant": "#e5e2d8", "on-surface-variant": "#524438",
+        outline: "#857467", "outline-variant": "#d7c3b3",
+        "surface-tint": "#8b500b", "inverse-surface": "#31312a",
+        "inverse-on-surface": "#f4f1e6", "inverse-primary": "#ffb876",
+        "primary-fixed": "#ffdcc0", "on-primary-fixed": "#2d1600",
+        "primary-fixed-dim": "#ffb876", "on-primary-fixed-variant": "#6b3b00",
+        "secondary-fixed": "#d1e4ff", "on-secondary-fixed": "#061d32",
+        "secondary-fixed-dim": "#b4c8e4", "on-secondary-fixed-variant": "#35485f",
+        "tertiary-fixed": "#ffdad2", "on-tertiary-fixed": "#3c0700",
+        "tertiary-fixed-dim": "#ffb4a3", "on-tertiary-fixed-variant": "#763221",
+        "surface-dim": "#dddacf", "surface-bright": "#fcf9ee",
+        "surface-container-lowest": "#ffffff", "surface-container-low": "#f7f4e9",
+        "surface-container": "#f1eee3", "surface-container-high": "#ebe8dd",
+        "surface-container-highest": "#e5e2d8"
+      },
+      borderRadius: { DEFAULT: "0.125rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      fontFamily: { headline: ["Noto Serif", "serif"], body: ["Manrope", "sans-serif"] }
+    }
+  }
+};
+</script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #fcf9ee;
+    color: #1c1c15;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+
+  .card-hover { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.06); border-color: rgba(136,78,8,0.15); }
+  .navbar-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .parchment-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02; pointer-events: none;
+  }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Filter tag */
+  .filter-tag {
+    transition: all 0.2s;
+  }
+  .filter-tag:hover {
+    background: rgba(136,78,8,0.1);
+    border-color: #884e08;
+  }
+  .filter-tag.active {
+    background: #884e08;
+    color: white;
+    border-color: #884e08;
+  }
+
+  /* Paper card */
+  .paper-card {
+    transition: all 0.3s;
+  }
+  .paper-card:hover {
+    border-color: rgba(136,78,8,0.2);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  }
+</style>
+</head>
+<body>
+
+<div class="fixed inset-0 parchment-grain z-0 pointer-events-none"></div>
+
+<!-- ==================== NAVBAR ==================== -->
+<header class="sticky top-0 z-50 navbar-blur bg-surface/80 border-b border-outline-variant/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="flex items-center gap-2.5 group">
+          <div class="w-7 h-7 rounded-lg border border-primary/30 flex items-center justify-center bg-primary/5 group-hover:border-primary/60 transition-all">
+            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">temple_buddhist</span>
+          </div>
+          <span class="text-lg font-headline italic text-secondary">Sawah</span>
+        </a>
+      <nav class="hidden md:flex items-center gap-5 text-sm">
+        <a href="index.html" class="text-on-surface-variant hover:text-primary transition-colors">Home</a>
+        <a href="dashboard.html" class="text-on-surface-variant hover:text-primary transition-colors">Dashboard</a>
+        <a href="map.html" class="text-on-surface-variant hover:text-primary transition-colors">Map</a>
+        <a href="#" class="text-primary border-b-2 border-primary pb-0.5 font-bold">Library</a>
+        <a href="archive.html" class="text-on-surface-variant hover:text-primary transition-colors">Archives</a>
+      </nav>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">person</button>
+        <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 shadow-lg md:hidden">
+  <div class="p-6 flex flex-col h-full">
+    <div class="flex justify-between items-center mb-8">
+      <span class="text-xl font-headline italic text-secondary">Sawah</span>
+      <button class="material-symbols-outlined text-secondary" onclick="toggleMobileMenu()">close</button>
+    </div>
+    <nav class="flex flex-col gap-4 text-base flex-grow">
+      <a class="text-on-surface-variant hover:text-primary" href="index.html" onclick="toggleMobileMenu()">Home</a>
+      <a class="text-on-surface-variant hover:text-primary" href="dashboard.html" onclick="toggleMobileMenu()">Dashboard</a>
+      <a class="text-on-surface-variant hover:text-primary" href="map.html" onclick="toggleMobileMenu()">Map</a>
+      <a class="text-primary font-bold" href="#" onclick="toggleMobileMenu()">Library</a>
+      <a class="text-on-surface-variant hover:text-primary" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ==================== MAIN ==================== -->
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="font-headline text-3xl md:text-4xl font-bold text-on-surface mb-2">Research Library</h1>
+    <p class="text-sm text-on-surface-variant">Access thousands of academic papers, excavation reports, and scholarly publications.</p>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/20 mb-8">
+    <div class="flex flex-col md:flex-row gap-4 mb-4">
+      <div class="relative flex-1">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+        <input type="text" placeholder="Search papers, authors, keywords..." class="w-full pl-9 pr-4 py-2.5 bg-surface border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary transition-all"/>
+      </div>
+      <button class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-on-primary rounded-lg text-xs font-bold hover:bg-primary-container transition-all">
+        <span class="material-symbols-outlined text-sm">tune</span>
+        Advanced Filters
+      </button>
+    </div>
+
+    <!-- Filter Tags -->
+    <div class="flex flex-wrap gap-2">
+      <button class="filter-tag active px-3 py-1.5 rounded-full border border-outline-variant/30 text-xs font-bold">All</button>
+      <button class="filter-tag px-3 py-1.5 rounded-full border border-outline-variant/30 text-xs font-bold text-on-surface-variant">Egyptology</button>
+      <button class="filter-tag px-3 py-1.5 rounded-full border border-outline-variant/30 text-xs font-bold text-on-surface-variant">Roman Empire</button>
+      <button class="filter-tag px-3 py-1.5 rounded-full border border-outline-variant/30 text-xs font-bold text-on-surface-variant">Maya</button>
+      <button class="filter-tag px-3 py-1.5 rounded-full border border-outline-variant/30 text-xs font-bold text-on-surface-variant">Byzantine</button>
+      <button class="filter-tag px-3 py-1.5 rounded-full border border-outline-variant/30 text-xs font-bold text-on-surface-variant">Conservation</button>
+      <button class="filter-tag px-3 py-1.5 rounded-full border border-outline-variant/30 text-xs font-bold text-on-surface-variant">Methodology</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- LEFT: Filters Sidebar -->
+    <aside class="lg:col-span-3 space-y-6">
+      <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20">
+        <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Filters</h3>
+
+        <div class="mb-4">
+          <div class="text-xs font-bold text-on-surface mb-2">Year</div>
+          <select class="w-full bg-surface border border-outline-variant/30 rounded-lg px-3 py-2 text-xs text-on-surface focus:outline-none focus:border-primary">
+            <option>All Years</option>
+            <option>2024</option>
+            <option>2023</option>
+            <option>2022</option>
+            <option>2021</option>
+            <option>2020</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <div class="text-xs font-bold text-on-surface mb-2">Region</div>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">Egypt</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">Italy</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">Jordan</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">Peru</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">England</span></label>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="text-xs font-bold text-on-surface mb-2">Type</div>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">Journal Article</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">Excavation Report</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">Thesis</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="filter-checkbox"/><span class="text-xs text-on-surface-variant">Book</span></label>
+          </div>
+        </div>
+
+        <button class="w-full py-2 bg-primary text-on-primary rounded-lg text-xs font-bold hover:bg-primary-container transition-all">Apply Filters</button>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant/20">
+        <h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Library Stats</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between"><span class="text-xs text-on-surface-variant">Total Papers</span><span class="text-sm font-bold text-primary">14,203</span></div>
+          <div class="w-full h-px bg-outline-variant/30"></div>
+          <div class="flex justify-between"><span class="text-xs text-on-surface-variant">This Month</span><span class="text-sm font-bold text-primary">+127</span></div>
+          <div class="w-full h-px bg-outline-variant/30"></div>
+          <div class="flex justify-between"><span class="text-xs text-on-surface-variant">Your Saved</span><span class="text-sm font-bold text-primary">8</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Papers List -->
+    <div class="lg:col-span-9">
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-xs text-on-surface-variant">Showing <span class="font-bold text-on-surface">1-10</span> of <span class="font-bold text-on-surface">14,203</span> papers</p>
+        <select class="bg-surface-container-low border border-outline-variant/30 rounded-lg px-3 py-1.5 text-xs text-on-surface focus:outline-none focus:border-primary">
+          <option>Most Recent</option>
+          <option>Most Cited</option>
+          <option>Relevance</option>
+        </select>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Paper 1 -->
+        <div class="paper-card bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-primary text-2xl">menu_book</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-[10px] font-bold text-primary uppercase tracking-widest">Journal Article</span>
+                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                <span class="text-[10px] text-on-surface-variant">2024</span>
+              </div>
+              <h3 class="font-headline text-base font-bold text-on-surface mb-2 hover:text-primary transition-colors cursor-pointer">Temple Architecture in the New Kingdom: A Comprehensive Analysis</h3>
+              <p class="text-xs text-on-surface-variant leading-relaxed mb-3">This paper examines the architectural evolution of New Kingdom temples, focusing on the transition from the traditional axial planning to more complex hierarchical layouts.</p>
+              <div class="flex items-center gap-4 text-[10px] text-on-surface-variant">
+                <span class="font-bold text-on-surface">Dr. Sarah Johnson</span>
+                <span>·</span>
+                <span>University of Cairo</span>
+                <span>·</span>
+                <span>Journal of Egyptian Archaeology</span>
+              </div>
+              <div class="flex gap-3 mt-4">
+                <button class="text-[10px] font-bold text-primary uppercase tracking-widest hover:text-primary-container transition-colors">Read Paper</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Save</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Cite</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paper 2 -->
+        <div class="paper-card bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-secondary text-2xl">description</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-[10px] font-bold text-secondary uppercase tracking-widest">Excavation Report</span>
+                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                <span class="text-[10px] text-on-surface-variant">2024</span>
+              </div>
+              <h3 class="font-headline text-base font-bold text-on-surface mb-2 hover:text-primary transition-colors cursor-pointer">Valley of the Kings: KV62 Geophysical Survey Results</h3>
+              <p class="text-xs text-on-surface-variant leading-relaxed mb-3">Ground-penetrating radar survey reveals potential hidden chambers adjacent to Tutankhamun's tomb. Preliminary analysis suggests three anomalous structures.</p>
+              <div class="flex items-center gap-4 text-[10px] text-on-surface-variant">
+                <span class="font-bold text-on-surface">Dr. Ahmed Hassan</span>
+                <span>·</span>
+                <span>Egyptian Ministry of Antiquities</span>
+                <span>·</span>
+                <span>Annual Excavation Report</span>
+              </div>
+              <div class="flex gap-3 mt-4">
+                <button class="text-[10px] font-bold text-primary uppercase tracking-widest hover:text-primary-container transition-colors">Read Report</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Save</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Cite</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paper 3 -->
+        <div class="paper-card bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-lg bg-tertiary/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-tertiary text-2xl">school</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-[10px] font-bold text-tertiary uppercase tracking-widest">Thesis</span>
+                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                <span class="text-[10px] text-on-surface-variant">2023</span>
+              </div>
+              <h3 class="font-headline text-base font-bold text-on-surface mb-2 hover:text-primary transition-colors cursor-pointer">Maya Hieroglyphic Corpus: New Interpretations of the Epi-Olmec Script</h3>
+              <p class="text-xs text-on-surface-variant leading-relaxed mb-3">A comprehensive analysis of recently discovered stelae from the Isthmus region, proposing new readings for previously undeciphered glyph blocks.</p>
+              <div class="flex items-center gap-4 text-[10px] text-on-surface-variant">
+                <span class="font-bold text-on-surface">Dr. Carlos Mendez</span>
+                <span>·</span>
+                <span>University of Mexico</span>
+                <span>·</span>
+                <span>PhD Thesis</span>
+              </div>
+              <div class="flex gap-3 mt-4">
+                <button class="text-[10px] font-bold text-primary uppercase tracking-widest hover:text-primary-container transition-colors">Read Thesis</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Save</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Cite</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paper 4 -->
+        <div class="paper-card bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-primary text-2xl">menu_book</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-[10px] font-bold text-primary uppercase tracking-widest">Journal Article</span>
+                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                <span class="text-[10px] text-on-surface-variant">2024</span>
+              </div>
+              <h3 class="font-headline text-base font-bold text-on-surface mb-2 hover:text-primary transition-colors cursor-pointer">Roman Concrete: Self-Healing Properties of Ancient Building Materials</h3>
+              <p class="text-xs text-on-surface-variant leading-relaxed mb-3">MIT study reveals the crystalline growth mechanisms that allow Roman concrete to heal cracks over time, with implications for modern construction.</p>
+              <div class="flex items-center gap-4 text-[10px] text-on-surface-variant">
+                <span class="font-bold text-on-surface">Dr. Maria Rossi</span>
+                <span>·</span>
+                <span>MIT</span>
+                <span>·</span>
+                <span>Nature Materials</span>
+              </div>
+              <div class="flex gap-3 mt-4">
+                <button class="text-[10px] font-bold text-primary uppercase tracking-widest hover:text-primary-container transition-colors">Read Paper</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Save</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Cite</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paper 5 -->
+        <div class="paper-card bg-surface-container-low rounded-xl p-6 border border-outline-variant/20">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-secondary text-2xl">description</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-[10px] font-bold text-secondary uppercase tracking-widest">Excavation Report</span>
+                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                <span class="text-[10px] text-on-surface-variant">2023</span>
+              </div>
+              <h3 class="font-headline text-base font-bold text-on-surface mb-2 hover:text-primary transition-colors cursor-pointer">Digital Preservation of Silk Road Caravan Stops Using LiDAR</h3>
+              <p class="text-xs text-on-surface-variant leading-relaxed mb-3">High-altitude archaeological sites along the Silk Road are mapped using drone-mounted LiDAR, revealing previously unknown settlement patterns.</p>
+              <div class="flex items-center gap-4 text-[10px] text-on-surface-variant">
+                <span class="font-bold text-on-surface">Dr. James Wilson</span>
+                <span>·</span>
+                <span>University of Cambridge</span>
+                <span>·</span>
+                <span>Journal of Field Archaeology</span>
+              </div>
+              <div class="flex gap-3 mt-4">
+                <button class="text-[10px] font-bold text-primary uppercase tracking-widest hover:text-primary-container transition-colors">Read Report</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Save</button>
+                <button class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors">Cite</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-2 mt-8">
+        <button class="px-4 py-2 bg-surface-container-low border border-outline-variant/30 rounded-lg text-xs font-bold text-on-surface-variant hover:border-primary transition-all">Previous</button>
+        <button class="px-4 py-2 bg-primary text-on-primary rounded-lg text-xs font-bold">1</button>
+        <button class="px-4 py-2 bg-surface-container-low border border-outline-variant/30 rounded-lg text-xs font-bold text-on-surface-variant hover:border-primary transition-all">2</button>
+        <button class="px-4 py-2 bg-surface-container-low border border-outline-variant/30 rounded-lg text-xs font-bold text-on-surface-variant hover:border-primary transition-all">3</button>
+        <button class="px-4 py-2 bg-surface-container-low border border-outline-variant/30 rounded-lg text-xs font-bold text-on-surface-variant hover:border-primary transition-all">Next</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="relative z-10 bg-surface-container-low border-t border-outline-variant/10 mt-12 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <p class="text-xs text-on-surface-variant">© 2024 Sawah. The digital operating system for archaeology.</p>
+    <div class="flex gap-6 text-xs text-on-surface-variant">
+      <a href="#" class="hover:text-primary transition-colors">About</a>
+      <a href="#" class="hover:text-primary transition-colors">Privacy</a>
+      <a href="#" class="hover:text-primary transition-colors">Terms</a>
+      <a href="#" class="hover:text-primary transition-colors">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('-translate-x-full');
+}
+
+document.querySelectorAll('.reveal').forEach(el => {
+  new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 }).observe(el);
+});
+
+// Filter tag toggle
+document.querySelectorAll('.filter-tag').forEach(tag => {
+  tag.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+    tag.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

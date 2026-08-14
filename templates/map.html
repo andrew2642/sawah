@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah — Archaeological Map</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+<!-- MapLibre -->
+<link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet"/>
+<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#884e08",
+        "on-primary": "#ffffff",
+        "primary-container": "#a66622",
+        "on-primary-container": "#fffbff",
+        "secondary": "#4c6078",
+        "on-secondary": "#ffffff",
+        "secondary-container": "#cde1fe",
+        "on-secondary-container": "#51647d",
+        "tertiary": "#914634",
+        "on-tertiary": "#ffffff",
+        "tertiary-container": "#af5e4a",
+        "on-tertiary-container": "#fffbff",
+        "error": "#ba1a1a",
+        "on-error": "#ffffff",
+        "error-container": "#ffdad6",
+        "on-error-container": "#93000a",
+        "background": "#fcf9ee",
+        "on-background": "#1c1c15",
+        "surface": "#fcf9ee",
+        "on-surface": "#1c1c15",
+        "surface-variant": "#e5e2d8",
+        "on-surface-variant": "#524438",
+        "outline": "#857467",
+        "outline-variant": "#d7c3b3",
+        "surface-tint": "#8b500b",
+        "inverse-surface": "#31312a",
+        "inverse-on-surface": "#f4f1e6",
+        "inverse-primary": "#ffb876",
+        "primary-fixed": "#ffdcc0",
+        "on-primary-fixed": "#2d1600",
+        "primary-fixed-dim": "#ffb876",
+        "on-primary-fixed-variant": "#6b3b00",
+        "secondary-fixed": "#d1e4ff",
+        "on-secondary-fixed": "#061d32",
+        "secondary-fixed-dim": "#b4c8e4",
+        "on-secondary-fixed-variant": "#35485f",
+        "tertiary-fixed": "#ffdad2",
+        "on-tertiary-fixed": "#3c0700",
+        "tertiary-fixed-dim": "#ffb4a3",
+        "on-tertiary-fixed-variant": "#763221",
+        "surface-dim": "#dddacf",
+        "surface-bright": "#fcf9ee",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#f7f4e9",
+        "surface-container": "#f1eee3",
+        "surface-container-high": "#ebe8dd",
+        "surface-container-highest": "#e5e2d8"
+      },
+      borderRadius: { DEFAULT: "0.125rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      fontFamily: { headline: ["Noto Serif", "serif"], body: ["Manrope", "sans-serif"] }
+    }
+  }
+};
+</script>
+
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Manrope', sans-serif;
+  background: #fcf9ee;
+  overflow: hidden;
+  height: 100vh;
+}
+
+#map { width: 100%; height: 100%; }
+
+.map-layout {
+  display: flex;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+/* ---- Sidebar ---- */
+#sidebar {
+  width: 340px;
+  min-width: 340px;
+  background: #fcf9ee;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e2d8;
+  overflow: hidden;
+}
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 4px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+
+/* Filter checkbox */
+.filter-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #d7c3b3;
+  border-radius: 3px;
+  background: white;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  position: relative;
+}
+.filter-checkbox:checked {
+  background: #884e08;
+  border-color: #884e08;
+}
+.filter-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Marker */
+.marker {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid white;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+  background: white;
+}
+.marker:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(136,78,8,0.3);
+}
+.marker img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Popup */
+.maplibregl-popup { z-index: 1000 !important; }
+.maplibregl-popup-content {
+  padding: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: #fdfbf3 !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.18) !important;
+  border: 1px solid rgba(215,195,179,0.3);
+}
+.maplibregl-popup-close-button {
+  font-size: 18px !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: white !important;
+  color: #524438 !important;
+  right: 8px !important;
+  top: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+.maplibregl-popup-tip { border-top-color: #fdfbf3 !important; }
+ 
+/* Site list item */
+.site-list-item {
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.site-list-item:hover { background: #ebe8dd; }
+.site-list-item.active { background: rgba(136,78,8,0.08); border-left: 3px solid #884e08; }
+
+/* Stat counter */
+.stat-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Badge */
+.badge-period {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+/* Directions drawer */
+#directionsDrawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+  width: 450px;
+  max-width: 100%;
+  height: 100%;
+  background: #fdfbf3;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: transform 0.4s ease-in-out;
+  box-shadow: -20px 0 40px rgba(0,0,0,0.12);
+}
+#directionsDrawer.open { transform: translateX(0); }
+
+/* Archive drawer */
+#archiveDrawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background: #fdfbf3;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: width 0.4s ease-in-out;
+  box-shadow: -20px 0 40px rgba(0,0,0,0.12);
+}
+#archiveDrawer.open { width: 550px; }
+.archive-content { padding: 32px; }
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+
+/* Collapse category */
+.filter-section-toggle { cursor: pointer; user-select: none; }
+
+/* Masonry gallery */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+/* Responsive */
+@media (max-width: 1023px) {
+  #sidebar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    max-height: 45vh;
+    border-right: none;
+    border-top: 1px solid #e5e2d8;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.08);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  #sidebar.collapsed {
+    transform: translateY(calc(100% - 56px));
+  }
+  #archiveDrawer.open { width: 100%; }
+  #directionsDrawer { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 h-16 flex items-center flex-shrink-0 relative z-30">
+  <nav class="flex justify-between items-center w-full px-4 sm:px-8 max-w-screen-2xl mx-auto">
+    <div class="flex items-center gap-6">
+      <a href="index.html" class="flex items-center gap-2.5 group">
+        <div class="w-7 h-7 rounded-lg border border-primary/30 flex items-center justify-center bg-primary/5 group-hover:border-primary/60 transition-all">
+          <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">temple_buddhist</span>
+        </div>
+        <span class="text-lg font-headline italic text-secondary">Sawah</span>
+      </a>
+      <div class="hidden md:flex items-center gap-5 text-sm">
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">Home</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
+        <a class="text-primary border-b-2 border-primary pb-0.5 font-bold transition-colors" href="map.html">Map</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="archive.html">Archives</a>
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="library.html">Library</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">account_circle</button>
+      <button class="md:hidden material-symbols-outlined text-secondary hover:text-primary transition-colors" onclick="toggleMobileMenu()">menu</button>
+    </div>
+  </nav>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[1001] transform -translate-x-full transition-transform duration-300 shadow-lg md:hidden">
+  <div class="p-6 flex flex-col h-full">
+    <div class="flex justify-between items-center mb-8">
+      <span class="text-xl font-headline italic text-secondary">Sawah</span>
+      <button class="material-symbols-outlined text-secondary" onclick="toggleMobileMenu()">close</button>
+    </div>
+    <nav class="flex flex-col gap-4 text-base font-body flex-grow">
+      <a class="text-on-surface-variant hover:text-primary" href="index.html" onclick="toggleMobileMenu()">Home</a>
+      <a class="text-on-surface-variant hover:text-primary" href="dashboard.html" onclick="toggleMobileMenu()">Dashboard</a>
+      <a class="text-primary font-bold" href="map.html" onclick="toggleMobileMenu()">Map</a>
+      <a class="text-on-surface-variant hover:text-primary" href="archive.html" onclick="toggleMobileMenu()">Archives</a>
+      <a class="text-on-surface-variant hover:text-primary" href="library.html" onclick="toggleMobileMenu()">Library</a>
+    </nav>
+    <div class="mt-auto pt-6 border-t border-outline-variant/20">
+      <button class="w-full text-left text-on-surface-variant hover:text-primary py-2">Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Layout -->
+<div class="map-layout relative">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="flex flex-col">
+    <!-- Handle for mobile -->
+    <div class="hidden max-md:flex items-center justify-between px-5 py-3 border-b border-outline-variant/20" onclick="toggleSidebar()">
+      <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Filters</span>
+      <span id="sidebar-toggle-icon" class="material-symbols-outlined text-sm text-on-surface-variant">expand_less</span>
+    </div>
+
+    <div class="sidebar-scroll p-5">
+      <!-- Search -->
+      <div class="relative mb-4">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+        <input id="global-search-input" type="text" placeholder="Search Sawah Atlas..." class="w-full pl-9 pr-3 py-2.5 bg-surface-container-low border border-outline-variant/30 rounded-lg text-sm text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary transition-all"/>
+        <div id="searchSuggestions" class="absolute top-full left-0 right-0 mt-1.5 bg-surface-container-lowest border border-outline-variant/20 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto hidden custom-scrollbar">
+          <!-- Suggestions will be rendered here -->
+        </div>
+      </div>
+<!-- World Atlas -->
+      <div class="mb-4">
+        <div class="filter-section-toggle flex items-center justify-between mb-2" onclick="toggleSection(this)">
+          <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">World Atlas</span>
+          <span class="material-symbols-outlined text-sm text-outline">expand_less</span>
+        </div>
+        <div class="space-y-1.5 filter-section-content">
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group">
+            <input id="atlas-toggle" type="checkbox" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/>
+            <span class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">🌍 Live World Atlas</span>
+          </label>
+          <p class="text-[9px] text-outline leading-relaxed pl-6">Streams places from OpenStreetMap &amp; Wikidata per map viewport, no world download.</p>
+          <div class="pl-6 pt-2 pb-1 max-md:hidden">
+            <button onclick="toggleAllAtlasCategories()" class="text-[9px] font-bold text-primary uppercase tracking-widest hover:underline">Select All / None</button>
+          </div>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="museums" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">🏛 Museums</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="archaeology" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">🏺 Archaeological Sites</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="castles" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">🏰 Castles & Fortresses</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="tombs" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">⚰️ Tombs</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="religious" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">⛪ Historic Religious Sites</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="battlefields" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">⚔ Battlefields</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="monuments" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">🗿 Monuments</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="ruins" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">🏚 Ruins</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="capitals" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">👑 Ancient Capitals</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="cities" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">🏙 Historic Cities</span></label>
+          <label class="flex items-center gap-2.5 py-0.5 cursor-pointer group max-md:hidden"><input type="checkbox" data-atlas="unesco" checked onchange="onAtlasFilterChange()" class="filter-checkbox"/><span class="text-xs text-on-surface-variant group-hover:text-on-surface transition-colors">⭐ UNESCO World Heritage</span></label>
+          <div class="flex items-center justify-between px-6 text-[9px] text-outline mt-1">
+            <span>Places loaded</span>
+            <span id="atlasCount" class="font-bold text-on-surface-variant stat-value">0</span>
+            <span id="atlas-status" class="hidden text-primary font-bold">Streaming…</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="bg-surface-container-low rounded-lg p-4 mb-4">
+        <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Visible on Map</div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div><div class="text-lg font-headline font-bold text-primary stat-value" id="stat-sites">0</div><div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Sites</div></div>
+          <div><div class="text-lg font-headline font-bold text-primary stat-value" id="stat-museums">0</div><div class="text-[9px] text-on-surface-variant uppercase tracking-wider">Museums</div></div>
+          <div><div class="text-lg font-headline font-bold text-primary stat-value" id="stat-unesco">0</div><div class="text-[9px] text-on-surface-variant uppercase tracking-wider">UNESCO</div></div>
+        </div>
+      </div>
+
+      <!-- Site List -->
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Places in View</div>
+        <div class="relative w-32">
+          <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-xs">filter_list</span>
+          <input id="local-filter-input" type="text" placeholder="Filter..." oninput="applyFilters()" class="w-full pl-7 pr-2 py-1 bg-surface-container-low border border-outline-variant/30 rounded text-[10px] text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary transition-all"/>
+        </div>
+      </div>
+      <div id="siteList" class="space-y-1"></div>
+      <div id="siteListEmpty" class="hidden text-center py-8 px-2">
+        <div class="text-3xl mb-2">🌍</div>
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">No places in view yet</p>
+        <p class="text-[9px] text-outline leading-relaxed">Zoom in to stream places from the World Atlas (OpenStreetMap + Wikidata).</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAP -->
+  <div class="flex-1 relative">
+    <div id="map" class="h-full w-full"></div>
+
+    <!-- Directions Drawer -->
+    <div id="directionsDrawer" class="custom-scrollbar">
+      <div class="p-6">
+        <button onclick="closeDirections()" class="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          Back to Map
+        </button>
+        <div id="directionsBody"></div>
+      </div>
+    </div>
+
+    <!-- Archive Drawer -->
+    <div id="archiveDrawer" class="custom-scrollbar">
+      <div class="archive-content">
+        <button onclick="closeArchive()" class="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 hover:text-primary transition-colors">
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          Return to Atlas
+        </button>
+        <img id="archiveImage" src="" alt="" class="w-full h-48 object-cover rounded-lg mb-6 hidden"/>
+        <div id="archiveBody"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { getLocalArchive } from './js/site-data.js';
+import { ATLAS_CATEGORIES, fetchOsmHistoricalPlacesAsGeoJSON } from './js/osm-map-service.js';
+import { fetchWikidataCategoryAsGeoJSON } from './js/wikidata-map-service.js';
+import { performSearch } from './js/search-manager.js';
+
+// ===================== MAP =====================
+const map = new maplibregl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+    sources: {
+      satellite: {
+        type: 'raster',
+        tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+        tileSize: 256,
+        maxzoom: 18
+      },
+      labels: {
+        type: 'raster',
+        tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'],
+        tileSize: 256,
+        maxzoom: 18
+      }
+    },
+    layers: [
+      { id: 'satellite', type: 'raster', source: 'satellite' },
+      { id: 'labels', type: 'raster', source: 'labels' }
+    ]
+  },
+  center: [20, 30],
+  zoom: 2.4,
+  pitch: 30,
+});
+
+map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+setTimeout(() => map.resize(), 100);
+
+// ===================== ATLAS UI (places-in-view) =====================
+let atlasFeatures = [];
+
+/**
+ * Generates an ImageData object for an emoji to be used as a map icon.
+ * This avoids external file loads and allows for dynamic coloring.
+ * @param {string} emoji The emoji character.
+ * @param {string} bg The background color for the icon.
+ * @returns {ImageData}
+ */
+function makeEmojiImageData(emoji, bg) {
+  const size = 64;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2);
+  ctx.fillStyle = bg;
+  ctx.fill();
+  ctx.font = '38px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(emoji, size / 2, size / 2 + 2);
+  return ctx.getImageData(0, 0, size, size);
+}
+
+// Shared popup for a streamed atlas place (reused by map clicks & list clicks).
+function openAtlasPopup(feature) {
+  const props = feature.properties;
+  const coords = feature.geometry.coordinates.slice();
+  const links = [
+    props.osmUrl ? `<a href="${props.osmUrl}" target="_blank" rel="noopener" class="flex-1 bg-primary text-on-primary py-1.5 rounded text-[10px] font-bold text-center uppercase tracking-widest">OSM</a>` : '',
+    props.wikidata ? `<a href="${props.wikidata}" target="_blank" rel="noopener" class="flex-1 bg-secondary text-on-secondary py-1.5 rounded text-[10px] font-bold text-center uppercase tracking-widest">Wikidata</a>` : ''
+  ].filter(Boolean).join('') || '<span class="text-[9px] text-outline">No external data yet</span>';
+
+  new maplibregl.Popup({ offset: 15, maxWidth: '280px' })
+    .setLngLat(coords)
+    .setHTML(`
+      <div class="font-body" style="width:240px; padding:14px;">
+        <div class="flex items-center gap-2 mb-1">
+          <span style="font-size:20px;">${props.icon}</span>
+          <span class="text-[9px] font-bold uppercase tracking-widest" style="color:${props.color};">${props.type}</span>
+        </div>
+        <h3 class="font-headline text-base font-bold leading-snug mb-1">${props.name}</h3>
+        ${props.description ? `<p class="text-xs leading-relaxed mb-2" style="color:#524438;">${props.description}</p>` : ''}
+        <div class="flex gap-2 mt-3">${links}</div>
+        <p class="text-[8px] uppercase tracking-widest mt-2" style="color:#857467;">Source: ${props.source}</p>
+      </div>`)
+    .addTo(map);
+}
+
+// Renders the "Places in View" sidebar list from the currently loaded atlas data.
+function renderSiteList(features) {
+  const list = document.getElementById('siteList');
+  const empty = document.getElementById('siteListEmpty');
+  list.innerHTML = '';
+
+  if (!features || features.length === 0) {
+    if (empty) empty.classList.remove('hidden');
+    return;
+  }
+  if (empty) empty.classList.add('hidden');
+
+  // Cap the list so a dense viewport stays responsive.
+  const shown = features.slice(0, 60);
+  shown.forEach(f => {
+    const p = f.properties;
+    const div = document.createElement('div');
+    div.className = 'site-list-item flex items-center gap-2.5 p-2 rounded-lg cursor-pointer';
+    div.innerHTML = `
+      <span style="font-size:18px; flex-shrink:0;">${p.icon}</span>
+      <div class="flex-1 min-w-0">
+        <div class="text-xs font-bold text-on-surface truncate">${p.name}</div>
+        <div class="text-[10px] text-on-surface-variant truncate">${p.type} � ${p.source}</div>
+      </div>`;
+    div.onclick = () => {
+      map.flyTo({ center: f.geometry.coordinates, zoom: Math.max(map.getZoom(), 14), pitch: 30, speed: 1.2 });
+      openAtlasPopup(f);
+    };
+    list.appendChild(div);
+  });
+
+  if (features.length > shown.length) {
+    const more = document.createElement('div');
+    more.className = 'text-[9px] text-outline text-center pt-2';
+    more.textContent = `+ ${features.length - shown.length} more in view`;
+    list.appendChild(more);
+  }
+}
+
+function updateAtlasStats(features) {
+  document.getElementById('stat-sites').textContent = features.length;
+  document.getElementById('stat-museums').textContent = features.filter(f => f.properties.category === 'museums').length;
+  document.getElementById('stat-unesco').textContent = features.filter(f => f.properties.category === 'unesco').length;
+}
+
+// Search + stats over the currently loaded atlas features.
+function applyFilters() {
+  const search = document.getElementById('local-filter-input').value.toLowerCase().trim();
+  if (!atlasFeatures || atlasFeatures.length === 0) {
+    renderSiteList([]);
+    updateAtlasStats([]);
+    return;
+  }
+  const filtered = atlasFeatures.filter(f => {
+    const p = f.properties;
+    return !search || (p.name || '').toLowerCase().includes(search) || (p.type || '').toLowerCase().includes(search) || (p.description || '').toLowerCase().includes(search);
+  });
+  renderSiteList(filtered);
+  updateAtlasStats(filtered);
+}
+
+// ===================== SIDEBAR TOGGLE =====================
+window.toggleSidebar = function() {
+  const sidebar = document.getElementById('sidebar');
+  const icon = document.getElementById('sidebar-toggle-icon');
+  sidebar.classList.toggle('collapsed');
+  icon.style.transform = sidebar.classList.contains('collapsed') ? 'rotate(180deg)' : 'rotate(0deg)';
+};
+
+// ===================== SECTION TOGGLE =====================
+window.toggleSection = function(header) {
+  const content = header.nextElementSibling;
+  const icon = header.querySelector('.material-symbols-outlined');
+  if (content.style.display === 'none') {
+    content.style.display = '';
+    icon.textContent = 'expand_less';
+  } else {
+    content.style.display = 'none';
+    icon.textContent = 'expand_more';
+  }
+};
+
+// ===================== ARCHIVE =====================
+window.openSiteArchive = function(name) {
+  const archive = getLocalArchive(name);
+  if (archive) {
+    renderArchiveDrawer(archive, name);
+  } else {
+    window.location.href = `archive.html?placeName=${encodeURIComponent(name)}`;
+  }
+};
+
+function renderArchiveDrawer(archive, siteName) {
+  const body = document.getElementById('archiveBody');
+  const img = document.getElementById('archiveImage');
+  const imageUrl = archive.imageGallery?.[0]?.url || '';
+
+  if (imageUrl) { img.src = imageUrl; img.classList.remove('hidden'); }
+  else { img.classList.add('hidden'); }
+
+  const stats = archive.statistics ? Object.entries(archive.statistics).filter(([,v]) => v).map(([k,v]) => `<div class="flex justify-between py-2 border-b border-outline-variant/10 last:border-0"><span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">${k.replace(/([A-Z])/g,' $1').trim()}</span><span class="text-xs font-bold text-on-surface">${v}</span></div>`).join('') : '';
+  const timeline = archive.timeline?.slice(0,5).map(item => `<div class="flex gap-3 py-2 border-l-2 border-primary/30 pl-3"><span class="text-[10px] font-bold text-primary whitespace-nowrap">${item.year}</span><span class="text-xs text-on-surface-variant">${item.event}</span></div>`).join('') || '';
+  const chapters = archive.chapters?.slice(0,2).map(ch => `<div class="mb-4"><h4 class="font-headline text-sm font-bold text-on-surface mb-1">${ch.title}</h4><p class="text-xs text-on-surface-variant leading-relaxed">${ch.chapterIntro || ''}</p></div>`).join('') || '';
+
+  body.innerHTML = `
+    <h2 class="font-headline text-2xl font-bold text-on-surface mb-2">${archive.title || siteName}</h2>
+    ${archive.summary ? `<p class="text-sm text-on-surface-variant leading-relaxed mb-6">${archive.summary.substring(0, 200)}...</p>` : ''}
+    ${stats ? `<div class="mb-6"><h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Key Facts</h3><div class="bg-surface-container-low rounded-lg p-4">${stats}</div></div>` : ''}
+    ${timeline ? `<div class="mb-6"><h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Timeline</h3><div class="space-y-1">${timeline}</div></div>` : ''}
+    ${chapters ? `<div class="mb-6"><h3 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Chapters</h3>${chapters}</div>` : ''}
+    <button onclick="window.location.href='archive.html?placeName=${encodeURIComponent(siteName)}'" class="w-full bg-primary text-on-primary py-3 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all">Full Archive</button>
+  `;
+  document.getElementById('archiveDrawer').classList.add('open');
+}
+
+window.closeArchive = function() {
+  document.getElementById('archiveDrawer').classList.remove('open');
+};
+
+// ===================== DIRECTIONS =====================
+window.getDirections = async function(destLat, destLng) {
+  if (!navigator.geolocation) return alert("Geolocation not supported");
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    try {
+      const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${pos.coords.longitude},${pos.coords.latitude};${destLng},${destLat}?steps=true&geometries=geojson&overview=full`);
+      const data = await res.json();
+      if (data.code !== 'Ok') throw new Error('No route');
+
+      const route = data.routes[0];
+      if (map.getSource('route')) map.getSource('route').setData(route.geometry);
+      else {
+        map.addSource('route', { type: 'geojson', data: { type: 'Feature', geometry: route.geometry, properties: {} } });
+        map.addLayer({ id: 'route-outline', type: 'line', source: 'route', paint: { 'line-color': '#ffffff', 'line-width': 10, 'line-opacity': 0.9 } });
+        map.addLayer({ id: 'route', type: 'line', source: 'route', paint: { 'line-color': '#884e08', 'line-width': 6 } });
+      }
+
+      const bounds = route.geometry.coordinates.reduce((b, c) => b.extend(c), new maplibregl.LngLatBounds(route.geometry.coordinates[0], route.geometry.coordinates[0]));
+      map.fitBounds(bounds, { padding: 100 });
+
+      const stepsHtml = route.legs[0].steps.map(s => `<div class="flex gap-3 py-3 border-b border-outline-variant/10"><span class="material-symbols-outlined text-primary text-sm flex-shrink-0">explore</span><div><p class="text-xs text-on-surface leading-relaxed">${s.maneuver.instruction}</p><p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mt-0.5">${(s.distance/1000).toFixed(2)} km</p></div></div>`).join('');
+
+      document.getElementById('directionsBody').innerHTML = `
+        <div class="text-[10px] font-bold text-primary uppercase tracking-widest mb-3">In-App Navigation</div>
+        <h2 class="font-headline text-2xl font-bold text-on-surface mb-4">Route Details</h2>
+        <div class="bg-surface-container-low p-5 rounded-lg mb-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div><p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Distance</p><p class="text-lg font-headline font-bold text-primary">${(route.distance/1000).toFixed(1)} km</p></div>
+            <div><p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Time</p><p class="text-lg font-headline font-bold text-primary">${Math.round(route.duration/60)} min</p></div>
+          </div>
+        </div>
+        <div class="space-y-1">${stepsHtml}</div>
+      `;
+      document.getElementById('directionsDrawer').classList.add('open');
+    } catch(e) { alert('Could not find directions'); }
+  }, () => alert('Please enable location services'));
+};
+
+window.closeDirections = function() {
+  document.getElementById('directionsDrawer').classList.remove('open');
+  if (map.getLayer('route')) map.removeLayer('route');
+  if (map.getLayer('route-outline')) map.removeLayer('route-outline');
+  if (map.getSource('route')) map.removeSource('route');
+};
+
+// ===================== MOBILE MENU =====================
+window.toggleMobileMenu = function() {
+  document.getElementById('mobile-menu').classList.toggle('-translate-x-full');
+};
+
+// ===================== SEARCH =====================
+let searchTimer; // Debounce timer for search input
+let searchController = null; // AbortController for search fetches
+let selectedSuggestionIndex = -1;
+
+function renderSuggestions(results) {
+    const container = document.getElementById('searchSuggestions');
+    container.innerHTML = '';
+
+    if (!results || results.length === 0) {
+        container.classList.add('hidden');
+        return;
+    }
+
+    selectedSuggestionIndex = -1; // Reset selection
+    // Group results by type for better organization
+    const groupedResults = results.reduce((acc, result) => {
+        let typeLabel = '';
+        if (result.type === 'archive') {
+            typeLabel = 'Historical Sites (Sawah Archive)';
+        } else if (result.type === 'atlas') {
+            typeLabel = 'Map Features (OSM/Wikidata)';
+        } else if (result.type === 'Global Result' || result.type === 'nominatim') {
+            typeLabel = 'General Locations (Nominatim)';
+        } else {
+            typeLabel = 'Other';
+        }
+        if (!acc[typeLabel]) {
+            acc[typeLabel] = [];
+        }
+        acc[typeLabel].push(result);
+        return acc;
+    }, {});
+
+    for (const typeLabel in groupedResults) {
+        const groupHeader = document.createElement('div');
+        groupHeader.className = 'px-3 py-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-surface-container-low border-b border-outline-variant/10';
+        groupHeader.textContent = `${typeLabel} (${groupedResults[typeLabel].length})`;
+        container.appendChild(groupHeader);
+
+        groupedResults[typeLabel].forEach(result => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item p-3 hover:bg-surface-container-high cursor-pointer border-b border-outline-variant/10 last:border-0';
+
+        item.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="text-lg">${result.icon}</span>
+                <div>
+                    <div class="font-bold text-sm text-on-surface">${result.name}</div>
+                    <div class="text-xs text-on-surface-variant">${result.subtitle}</div>
+                </div>
+            </div>
+        `;
+        item.onclick = () => selectPlace(result);
+        container.appendChild(item);
+        });
+    }
+
+    container.classList.remove('hidden');
+}
+
+function selectPlace(result) {
+    const searchInput = document.getElementById('global-search-input');
+    document.getElementById('searchSuggestions').classList.add('hidden');
+    if (searchInput) searchInput.value = result.name;
+
+    map.flyTo({
+        center: result.coordinates,
+        zoom: 14,
+        speed: 1.2
+    });
+
+    // If it's a rich feature from our atlas, use the existing detailed popup
+    if (result.type === 'archive') {
+        // For SITE_ARCHIVES, open the archive drawer
+        setTimeout(() => window.openSiteArchive(result.name), 1500);
+    } else if (result.type === 'atlas') {
+        // For atlas features, open the existing atlas popup
+        setTimeout(() => openAtlasPopup(result.raw), 1500); // Wait for flyTo to settle
+    } else { // Otherwise, show a simple Nominatim popup
+        new maplibregl.Popup()
+            .setLngLat(result.coordinates)
+            .setHTML(`<div class="p-3 font-bold text-sm">${result.name}</div>`)
+            .addTo(map);
+    }
+}
+
+// ===================== WORLD ATLAS (OSM + Wikidata) =====================
+let atlasTimer = null;
+let atlasController = null; // AbortController for atlas fetches
+
+// Quantized viewport key so tiny pan/zoom movements don't trigger redundant
+// full re-fetches (which blank the map). Only refresh when the viewport has
+// meaningfully changed.
+let lastAtlasViewportKey = '';
+function atlasViewportKey() {
+  // Center is quantized to ~0.25° and zoom to 0.5 so small nudges are ignored.
+  const z = Math.round(map.getZoom() * 2);
+  const c = map.getCenter();
+  return `${z}|${Math.round(c.lng * 4)}|${Math.round(c.lat * 4)}`;
+}
+function viewportChanged() {
+  // Pure check — does NOT update the stored key. The key is only updated when
+  // a real fetch actually begins (in refreshAtlas), so an in-progress refresh
+  // that gets skipped by the guard won't leave stale viewport state.
+  return atlasViewportKey() !== lastAtlasViewportKey;
+}
+
+
+function getSelectedAtlasCategories() {
+  const cats = [];
+  document.querySelectorAll('#sidebar input[data-atlas]').forEach(cb => {
+    if (cb.checked) cats.push(cb.dataset.atlas);
+  });
+  return cats;
+}
+
+function isAtlasEnabled() {
+  const toggle = document.getElementById('atlas-toggle');
+  return toggle ? toggle.checked : true;
+}
+
+function toggleAtlasLayerVisibility(visible) {
+  ['atlas-clusters', 'atlas-cluster-count', 'atlas-points'].forEach(id => {
+    if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none');
+  });
+}
+
+function setupAtlas() {
+  // Register one emoji sprite per category for use as map icons.
+  // This avoids relying on font glyphs or external files and ensures consistent rendering.
+  Object.values(ATLAS_CATEGORIES).forEach(def => {
+    if (!map.hasImage(def.key)) {
+      map.addImage(def.key, makeEmojiImageData(def.icon, def.color));
+    }
+  });
+  
+  if (!map.getSource('atlas')) {
+    // Reverted to a standard GeoJSON source with native clustering.
+    // This is simpler, more reliable, and highly optimized by MapLibre.
+    map.addSource('atlas', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] },
+      cluster: true,
+      clusterMaxZoom: 14, // Group markers until zoom level 14
+      clusterRadius: 50   // Group markers within a 50px radius
+    });
+
+    // Layer for the cluster circles
+    map.addLayer({
+      id: 'atlas-clusters',
+      type: 'circle',
+      source: 'atlas',
+      filter: ['has', 'point_count'],
+      paint: {
+        'circle-color': ['step', ['get', 'point_count'], '#a66622', 50, '#884e08', 200, '#6b3b00'],
+        'circle-radius': ['step', ['get', 'point_count'], 14, 10, 18, 50, 24],
+        'circle-opacity': 0.9,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
+
+    // Layer for the number inside the cluster circle
+    map.addLayer({
+      id: 'atlas-cluster-count',
+      type: 'symbol',
+      source: 'atlas',
+      filter: ['has', 'point_count'],
+      layout: {
+        'text-field': ['get', 'point_count_abbreviated'],
+        'text-size': 12,
+        'text-allow-overlap': true, // Allow numbers to draw over each other
+        'text-font': ['Noto Sans Bold'] // Use a font available in the style
+      },
+      paint: { 'text-color': '#ffffff' }
+    });
+
+    // Layer for the individual, unclustered points
+    map.addLayer({
+      id: 'atlas-points',
+      type: 'symbol',
+      source: 'atlas',
+      filter: ['!', ['has', 'point_count']],
+      layout: {
+        'icon-image': ['get', 'iconKey'], // Use the category key which matches the loaded icon name
+        'icon-size': 0.55,
+        'icon-allow-overlap': false,
+        'icon-ignore-placement': false
+      },
+      paint: {}
+    });
+
+    // Click interaction for clusters (zoom in)
+    map.on('click', 'atlas-clusters', (e) => {
+      const features = map.queryRenderedFeatures(e.point, { layers: ['atlas-clusters'] });
+      const clusterId = features[0].properties.cluster_id;
+      map.getSource('atlas').getClusterExpansionZoom(clusterId, (err, zoom) => {
+        if (err) return;
+        map.easeTo({ center: features[0].geometry.coordinates, zoom: zoom + 1.5 });
+      });
+    });
+
+    // Click interaction for individual points (show popup)
+    map.on('click', 'atlas-points', (e) => {
+      openAtlasPopup(e.features[0]);
+    });
+
+    ['atlas-points', 'atlas-clusters'].forEach(id => {
+      map.on('mouseenter', id, () => (map.getCanvas().style.cursor = 'pointer'));
+      map.on('mouseleave', id, () => (map.getCanvas().style.cursor = ''));
+    });
+  }
+}
+
+async function refreshAtlas() {
+  const src = map.getSource('atlas');
+  if (!src) return;
+
+  const zoom = map.getZoom();
+  const enabled = isAtlasEnabled();
+  const categories = getSelectedAtlasCategories();
+
+  if (!enabled || categories.length === 0) {
+    src.setData({ type: 'FeatureCollection', features: [] });
+    atlasFeatures = [];
+    toggleAtlasLayerVisibility(false);
+    applyFilters();
+    if (document.getElementById('atlasCount')) document.getElementById('atlasCount').textContent = '0';
+    if (document.getElementById('atlas-status')) document.getElementById('atlas-status').classList.add('hidden');
+    return;
+  }
+
+  // Global zoom gate: at very low zoom the bbox exceeds both OSM and Wikidata limits (~25°),
+  // so every category fetch would be skipped. Short-circuit to avoid useless attempts.
+  const ZOOM_GLOBAL_GATE = 4.5;
+  if (zoom < ZOOM_GLOBAL_GATE) {
+    src.setData({ type: 'FeatureCollection', features: [] });
+    atlasFeatures = [];
+    toggleAtlasLayerVisibility(true); // Keep layer visible (empty) so user sees message
+    applyFilters();
+    if (document.getElementById('atlas-status')) {
+      document.getElementById('atlas-status').textContent = '🔍 Zoom in closer to load places';
+      setTimeout(() => document.getElementById('atlas-status').classList.add('hidden'), 5000);
+    }
+    if (document.getElementById('atlasCount')) document.getElementById('atlasCount').textContent = '0';
+    return;
+  }
+
+  const bounds = map.getBounds();
+
+  // Guard: don't start a new refresh while one is already running.
+  // This prevents the abort-restart loop when the user pans the map.
+  if (atlasController) return;
+  atlasController = new AbortController();
+  // We are committing to a real fetch — record the viewport we're fetching for.
+  lastAtlasViewportKey = atlasViewportKey();
+  const signal = atlasController.signal;
+
+  // Reset atlas data for a fresh view
+  atlasFeatures = [];
+  src.setData({ type: 'FeatureCollection', features: [] });
+  toggleAtlasLayerVisibility(true);
+  applyFilters();
+  document.getElementById('atlas-status')?.classList.remove('hidden');
+  if (document.getElementById('atlasCount')) document.getElementById('atlasCount').textContent = '0';
+
+  // Prioritize categories users care about most, so the map fills with meaningful content faster
+  const priorityOrder = ['archaeology', 'museums', 'unesco', 'ruins', 'castles', 'tombs', 'religious', 'battlefields', 'monuments', 'capitals', 'cities'];
+  const orderedCategories = [
+    ...priorityOrder.filter(c => categories.includes(c)),
+    ...categories.filter(c => !priorityOrder.includes(c))
+  ];
+
+  const seenIds = new Set(); // Deduplicate across all categories
+
+  // Update the GeoJSON source after each category so features appear immediately
+  function pushToAtlas(newFeatures) {
+    if (!newFeatures || newFeatures.length === 0) return;
+    const deduped = newFeatures.filter(f => {
+      const id = f.properties?.id;
+      if (!id || seenIds.has(id)) return false;
+      seenIds.add(id);
+      return true;
+    });
+    if (deduped.length === 0) return;
+    atlasFeatures.push(...deduped);
+    src.setData({ type: 'FeatureCollection', features: atlasFeatures });
+    applyFilters(); // Update sidebar list and stats
+  }
+
+  try {
+    // --- Fire all categories in PARALLEL, update the map incrementally ---
+    // Each category streams in as its own fetch resolves, so a slow OSM
+    // fallback for one category never blocks faster ones from appearing.
+    const pendingTasks = orderedCategories.map(async (category) => {
+      if (signal.aborted) return;
+
+      const def = ATLAS_CATEGORIES[category];
+      if (!def) return;
+
+      // Zoom gate for dense categories
+      if (def.osm_zoom_gate && zoom < def.osm_zoom_gate) {
+        console.debug(`[Atlas] Skipping dense '${category}' at zoom ${zoom.toFixed(1)}.`);
+        return;
+      }
+
+      let fc = { features: [] };
+
+      // Try Wikidata first for categories that have a QID
+      if (def.wikidata) {
+        try {
+          fc = await fetchWikidataCategoryAsGeoJSON(bounds, def.key, def.label, def.icon, def.color, def.wikidata, signal);
+        } catch (e) {
+          if (e.name === 'AbortError' || signal.aborted) return;
+          console.warn(`[Atlas] Wikidata fetch for ${category} failed.`, e.message);
+          fc = { features: [] };
+        }
+      }
+
+      // Fall back to OSM if Wikidata returned nothing (or for OSM-only categories)
+      if (!signal.aborted && fc.features.length === 0) {
+        const bboxW = Math.abs(bounds.getEast() - bounds.getWest());
+        const bboxH = Math.abs(bounds.getNorth() - bounds.getSouth());
+        if (bboxW <= 25 && bboxH <= 25) {
+          try {
+            fc = await fetchOsmHistoricalPlacesAsGeoJSON(bounds, [category], zoom, signal);
+          } catch (e) {
+            if (e.name === 'AbortError' || signal.aborted) return;
+            console.warn(`[Atlas] OSM fetch for ${category} failed.`, e.message);
+            fc = { features: [] };
+          }
+        }
+      }
+
+      if (signal.aborted) return;
+
+      // Push features to the map immediately — user sees them as they arrive
+      pushToAtlas(fc.features || []);
+
+      // Update status
+      const count = fc.features?.length || 0;
+      const statusEl = document.getElementById('atlas-status');
+      if (statusEl && count > 0) {
+        statusEl.textContent = `✅ ${def.label} (${count})`;
+      }
+      if (document.getElementById('atlasCount')) {
+        document.getElementById('atlasCount').textContent = atlasFeatures.length;
+      }
+
+      console.debug(`[Atlas] Streamed ${count} ${def.label} → ${atlasFeatures.length} total`);
+    });
+
+    // Wait for all categories to resolve so we can reset the controller
+    await Promise.allSettled(pendingTasks);
+
+    // Final status when all categories complete without abort
+    if (!signal.aborted) {
+      const statusEl = document.getElementById('atlas-status');
+      if (statusEl) {
+        if (atlasFeatures.length > 0) {
+          statusEl.textContent = `📌 ${atlasFeatures.length} places loaded`;
+        } else {
+          statusEl.textContent = 'No places found in this area';
+        }
+      }
+    }
+  } finally {
+    atlasController = null; // Allow next refresh
+  }
+}
+
+function scheduleAtlasRefresh() {
+  clearTimeout(atlasTimer);
+  atlasTimer = setTimeout(refreshAtlas, 800); // Debounce: wait 800ms after user stops moving
+}
+
+window.onAtlasFilterChange = function onAtlasFilterChange() {
+  // Filter/toggle changes must always trigger a refresh, regardless of viewport.
+  lastAtlasViewportKey = '';
+  toggleAtlasLayerVisibility(isAtlasEnabled() && getSelectedAtlasCategories().length > 0);
+  scheduleAtlasRefresh();
+};
+
+window.toggleAllAtlasCategories = function() {
+  const checkboxes = document.querySelectorAll('#sidebar input[data-atlas]');
+  if (checkboxes.length === 0) return;
+
+  // Determine if we should check or uncheck all based on the first checkbox's state
+  const shouldCheck = !checkboxes[0].checked;
+
+  checkboxes.forEach(cb => {
+    cb.checked = shouldCheck;
+  });
+
+  // Trigger a single refresh after changing all checkboxes
+  onAtlasFilterChange();
+};
+
+// Only refresh on map movement when the viewport has meaningfully changed,
+// so tiny pan/zoom nudges don't blank the map and re-fetch everything.
+map.on('moveend', () => {
+  if (viewportChanged()) scheduleAtlasRefresh();
+});
+
+// ===================== INIT =====================
+map.on('load', () => {
+  map.resize(); // Ensure map is correctly sized
+  setupAtlas();
+  refreshAtlas();
+});
+
+window.addEventListener('resize', () => { map.resize(); lastAtlasViewportKey = ''; scheduleAtlasRefresh(); });
+
+// Expose for inline onclick
+window.openSiteArchive = window.openSiteArchive;
+window.getDirections = window.getDirections;
+window.closeArchive = window.closeArchive;
+window.applyFilters = applyFilters;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('global-search-input');
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    const query = searchInput.value.trim();
+
+    // Abort any previous search request that is still in flight.
+    if (searchController) {
+      console.log('[Search] Aborting previous search request.');
+      searchController.abort();
+    }
+
+    if (query.length < 2) {
+      document.getElementById('searchSuggestions').classList.add('hidden');
+      return;
+    }
+
+    console.log(`[Search] Debouncing search for: "${query}"`);
+    searchController = new AbortController();
+    searchTimer = setTimeout(async () => {
+      // Stream results incrementally: local sources render instantly,
+      // remote sources (Wikidata, Nominatim) render as each completes.
+      await performSearch(query, atlasFeatures, searchController.signal, (partialResults) => {
+        renderSuggestions(partialResults);
+      });
+    }, 300);
+  });
+
+  searchInput.addEventListener('keydown', (e) => {
+    const suggestions = document.querySelectorAll('.suggestion-item');
+    if (suggestions.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, suggestions.length - 1);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, 0);
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (selectedSuggestionIndex >= 0) {
+            suggestions[selectedSuggestionIndex].click();
+        }
+        return;
+    }
+
+    suggestions.forEach((item, index) => {
+        item.style.backgroundColor = index === selectedSuggestionIndex ? '#ebe8dd' : '';
+    });
+    suggestions[selectedSuggestionIndex]?.scrollIntoView({ block: 'nearest' });
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target)) {
+        document.getElementById('searchSuggestions').classList.add('hidden');
+    }
+  });
+});
+
+</script>
+
+</body>
+</html>

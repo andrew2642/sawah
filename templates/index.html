@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sawah — Explore Humanity's Past</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        primary: '#884e08',
+        'primary-dark': '#6b3b00',
+        'primary-light': '#a66622',
+        'primary-fixed': '#ffdcc0',
+        surface: '#fcf9ee',
+        'surface-light': '#f7f4e9',
+        'surface-lighter': '#f1eee3',
+        'surface-card': '#f7f4e9',
+        'surface-container': '#f1eee3',
+        'surface-container-high': '#ebe8dd',
+        'text-primary': '#1c1c15',
+        'text-secondary': '#524438',
+        'text-muted': '#857467',
+        'border-light': '#d7c3b3',
+        'border-dark': '#e5e2d8',
+        'secondary': '#4c6078',
+        'tertiary': '#914634',
+      },
+      fontFamily: {
+        display: ['Noto Serif', 'serif'],
+        body: ['Manrope', 'sans-serif'],
+      },
+    },
+  },
+};
+</script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #fcf9ee;
+    color: #1c1c15;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #fcf9ee; }
+  ::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #c4b09e; }
+  .text-gradient {
+    background: linear-gradient(135deg, #1c1c15 0%, #884e08 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); border-color: rgba(136,78,8,0.2); }
+  .hero-overlay { background: linear-gradient(180deg, rgba(252,249,238,0.1) 0%, rgba(252,249,238,0.4) 40%, rgba(252,249,238,0.85) 70%, rgba(252,249,238,1) 100%); }
+  .grid-pattern { background-image: linear-gradient(rgba(136,78,8,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(136,78,8,0.04) 1px, transparent 1px); background-size: 60px 60px; }
+  .parchment-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+  }
+  .glow-dot { animation: glowPulse 3s ease-in-out infinite; }
+  @keyframes glowPulse { 0%,100% { box-shadow: 0 0 20px rgba(136,78,8,0.15); } 50% { box-shadow: 0 0 40px rgba(136,78,8,0.25); } }
+  .navbar-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .site-card-overlay { background: linear-gradient(180deg, transparent 40%, rgba(28,28,21,0.8) 100%); }
+  .input-focus:focus { border-color: #884e08; box-shadow: 0 0 0 3px rgba(136,78,8,0.1); }
+  .btn-primary { background: #884e08; color: white; transition: all 0.2s; }
+  .btn-primary:hover { background: #a66622; transform: translateY(-1px); box-shadow: 0 8px 25px rgba(136,78,8,0.2); }
+  .btn-outline { border: 1px solid rgba(136,78,8,0.3); color: #884e08; transition: all 0.2s; }
+  .btn-outline:hover { border-color: #884e08; background: rgba(136,78,8,0.05); transform: translateY(-1px); }
+  .section-tag { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: #884e08; font-weight: 600; }
+  .stat-number { font-variant-numeric: tabular-nums; }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .bg-noise { background-color: #fcf9ee; background-blend-mode: overlay; }
+
+</style>
+</head>
+<body>
+
+<!-- ==================== NAVBAR ==================== -->
+<header class="fixed top-0 left-0 right-0 z-50 navbar-blur bg-surface/80 border-b border-border-dark/50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="#" class="flex items-center gap-2.5 group">
+        <div class="w-8 h-8 rounded-lg border border-primary/30 flex items-center justify-center group-hover:border-primary/60 transition-all bg-primary/5">
+          <span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings:'FILL' 1;">temple_buddhist</span>
+        </div>
+        <span class="text-xl font-display font-semibold tracking-tight text-primary">Sawah</span>
+      </a>
+      <nav class="hidden lg:flex items-center gap-1">
+        <a href="index.html" class="px-3 py-2 text-sm font-medium text-text-primary bg-white/5 rounded-lg">Home</a>
+        <a href="dashboard.html" class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-lg transition-all">Dashboard</a>
+        <a href="map.html" class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-lg transition-all">Map</a>
+        <a href="archive.html" class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-lg transition-all">Archives</a>
+        <a href="library.html" class="px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-lg transition-all">Library</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <button class="hidden sm:flex p-2 text-text-secondary hover:text-text-primary transition-colors">
+          <span class="material-symbols-outlined">search</span>
+        </button>
+        <button class="hidden sm:flex p-2 text-text-secondary hover:text-text-primary transition-colors">
+          <span class="material-symbols-outlined">person</span>
+        </button>
+        <button class="lg:hidden p-2 text-text-secondary hover:text-text-primary" onclick="toggleMenu()">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden lg:hidden border-t border-border-dark/50 bg-surface">
+    <div class="px-4 py-3 space-y-1">
+      <a href="index.html" class="block px-3 py-2 text-sm font-medium text-text-primary bg-white/5 rounded-lg">Home</a>
+      <a href="dashboard.html" class="block px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-lg">Dashboard</a>
+      <a href="map.html" class="block px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-lg">Map</a>
+      <a href="archive.html" class="block px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-lg">Archives</a>
+      <a href="library.html" class="block px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 rounded-lg">Library</a>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== HERO ==================== -->
+<section class="relative min-h-screen flex items-center overflow-hidden">
+  <div class="absolute inset-0">
+    <img src="https://images.immediate.co.uk/production/volatile/sites/7/2019/07/33-GettyImages-154260931-216706f.jpg?quality=90&webp=true&resize=1500,1001" alt="Ancient ruins from within an archway" class="w-full h-full object-cover"/>
+    <div class="absolute inset-0 hero-overlay"></div>
+    <div class="absolute inset-0 grid-pattern opacity-20"></div>
+  </div>
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 w-full">
+    <div class="max-w-3xl">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-text-primary text-text-primary text-xs font-semibold tracking-wider uppercase mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-text-primary"></span>
+        Est. 2024 · Digital Archaeology Platform
+      </div>
+      <h1 class="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.08] tracking-tight mb-6">
+        <span class="text-text-primary">Explore</span><br/>
+        <span class="text-gradient">Humanity's Past</span>
+      </h1>
+      <p class="text-lg sm:text-xl text-text-primary max-w-2xl leading-relaxed mb-10">
+        The complete platform for archaeologists, researchers, students, and heritage professionals. Discover, document, and preserve our shared history.
+      </p>
+      <div class="flex flex-wrap gap-4 mb-12">
+        <a href="map.html" class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold btn-primary rounded-lg">
+          Explore Map <span class="material-symbols-outlined text-sm">explore</span>
+        </a>
+        <a href="#" class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold btn-outline rounded-lg">
+          Browse Sites <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+      </div>
+      <div class="relative max-w-xl">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">search</span>
+        <input type="text" placeholder="Search sites, artifacts, papers..." class="w-full pl-12 pr-4 py-3.5 bg-surface-lighter/80 border border-border-dark rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none input-focus transition-all"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== STATISTICS ==================== -->
+<section class="py-20 bg-surface">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+      <div class="text-center p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="text-3xl md:text-4xl font-display font-bold text-primary mb-2 stat-number" data-target="12540">0</div>
+        <div class="text-sm text-text-secondary font-medium">Archaeological Sites</div>
+      </div>
+      <div class="text-center p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="text-3xl md:text-4xl font-display font-bold text-primary mb-2 stat-number" data-target="87321">0</div>
+        <div class="text-sm text-text-secondary font-medium">Cataloged Artifacts</div>
+      </div>
+      <div class="text-center p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="text-3xl md:text-4xl font-display font-bold text-primary mb-2 stat-number" data-target="14203">0</div>
+        <div class="text-sm text-text-secondary font-medium">Academic Papers</div>
+      </div>
+      <div class="text-center p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="text-3xl md:text-4xl font-display font-bold text-primary mb-2 stat-number" data-target="5600">0</div>
+        <div class="text-sm text-text-secondary font-medium">Registered Researchers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FEATURED SITES ==================== -->
+<section class="py-24 bg-surface-light/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between mb-12">
+      <div>
+        <p class="section-tag mb-3">Discover</p>
+        <h2 class="font-display text-3xl sm:text-4xl font-bold text-text-primary">Featured Sites</h2>
+        <p class="text-text-secondary mt-2 max-w-xl">Explore humanity's greatest archaeological treasures, documented and mapped for the digital age.</p>
+      </div>
+      <a href="#" class="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary-light transition-colors">View All <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <a href="archive.html?placeName=Giza" class="group block rounded-xl overflow-hidden bg-surface-card border border-border-dark/50 card-hover">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=600&q=80" alt="Giza" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
+          <div class="absolute inset-0 site-card-overlay"></div>
+          <div class="absolute bottom-4 left-4 right-4"><h3 class="font-display text-lg font-bold text-white">Giza Pyramids</h3><p class="text-sm text-text-secondary">Egypt</p></div>
+        </div>
+        <div class="p-4"><div class="flex items-center gap-2 text-xs text-text-muted"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_month</span> c. 2560 BCE</span><span class="w-1 h-1 rounded-full bg-text-muted"></span><span>UNESCO World Heritage</span></div></div>
+      </a>
+      <a href="archive.html?placeName=Pompeii" class="group block rounded-xl overflow-hidden bg-surface-card border border-border-dark/50 card-hover">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1590075891027-9dd5c1f6899f?w=600&q=80" alt="Pompeii" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
+          <div class="absolute inset-0 site-card-overlay"></div>
+          <div class="absolute bottom-4 left-4 right-4"><h3 class="font-display text-lg font-bold text-white">Pompeii</h3><p class="text-sm text-text-secondary">Italy</p></div>
+        </div>
+        <div class="p-4"><div class="flex items-center gap-2 text-xs text-text-muted"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_month</span> 79 CE</span><span class="w-1 h-1 rounded-full bg-text-muted"></span><span>Roman Excavation</span></div></div>
+      </a>
+      <a href="archive.html?placeName=Petra" class="group block rounded-xl overflow-hidden bg-surface-card border border-border-dark/50 card-hover">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1579606032821-4e63507f5b1e?w=600&q=80" alt="Petra" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
+          <div class="absolute inset-0 site-card-overlay"></div>
+          <div class="absolute bottom-4 left-4 right-4"><h3 class="font-display text-lg font-bold text-white">Petra</h3><p class="text-sm text-text-secondary">Jordan</p></div>
+        </div>
+        <div class="p-4"><div class="flex items-center gap-2 text-xs text-text-muted"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_month</span> c. 300 BCE</span><span class="w-1 h-1 rounded-full bg-text-muted"></span><span>Nabataean Capital</span></div></div>
+      </a>
+      <a href="archive.html?placeName=Machu Picchu" class="group block rounded-xl overflow-hidden bg-surface-card border border-border-dark/50 card-hover">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&q=80" alt="Machu Picchu" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
+          <div class="absolute inset-0 site-card-overlay"></div>
+          <div class="absolute bottom-4 left-4 right-4"><h3 class="font-display text-lg font-bold text-white">Machu Picchu</h3><p class="text-sm text-text-secondary">Peru</p></div>
+        </div>
+        <div class="p-4"><div class="flex items-center gap-2 text-xs text-text-muted"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_month</span> c. 1450 CE</span><span class="w-1 h-1 rounded-full bg-text-muted"></span><span>Incan Citadel</span></div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FEATURES ==================== -->
+<section class="py-24 bg-surface">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <p class="section-tag mb-3">Platform</p>
+      <h2 class="font-display text-3xl sm:text-4xl font-bold text-text-primary">Everything You Need</h2>
+      <p class="text-text-secondary mt-3 max-w-2xl mx-auto">A complete digital ecosystem for archaeology — from field documentation to global discovery.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4"><span class="material-symbols-outlined text-primary text-2xl">map</span></div>
+        <h3 class="font-display text-lg font-bold text-text-primary mb-2">Archaeological Map</h3>
+        <p class="text-sm text-text-secondary leading-relaxed">Interactive global map with layers for ancient civilizations, UNESCO sites, and excavation projects. Filter by period, region, and culture.</p>
+      </div>
+      <div class="p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4"><span class="material-symbols-outlined text-primary text-2xl">menu_book</span></div>
+        <h3 class="font-display text-lg font-bold text-text-primary mb-2">Research Library</h3>
+        <p class="text-sm text-text-secondary leading-relaxed">Access thousands of academic papers, books, theses, and excavation reports. Advanced search with citation export and personal collections.</p>
+      </div>
+      <div class="p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4"><span class="material-symbols-outlined text-primary text-2xl">inventory_2</span></div>
+        <h3 class="font-display text-lg font-bold text-text-primary mb-2">Artifact Database</h3>
+        <p class="text-sm text-text-secondary leading-relaxed">Catalog archaeological finds with detailed metadata, 3D models, photographs, and scholarly references. Fully searchable and cross-referenced.</p>
+      </div>
+      <div class="p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4"><span class="material-symbols-outlined text-primary text-2xl">edit_note</span></div>
+        <h3 class="font-display text-lg font-bold text-text-primary mb-2">Digital Field Notebook</h3>
+        <p class="text-sm text-text-secondary leading-relaxed">Record excavation data in the field — context sheets, stratigraphy, photos, GPS coordinates, and sketches. Works offline and syncs automatically.</p>
+      </div>
+      <div class="p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4"><span class="material-symbols-outlined text-primary text-2xl">smart_toy</span></div>
+        <h3 class="font-display text-lg font-bold text-text-primary mb-2">AI Research Assistant</h3>
+        <p class="text-sm text-text-secondary leading-relaxed">Summarize papers, explain concepts, generate reports, suggest references, and extract data from PDFs using specialized AI.</p>
+      </div>
+      <div class="p-6 rounded-xl bg-surface-light border border-border-dark/50 card-hover">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4"><span class="material-symbols-outlined text-primary text-2xl">groups</span></div>
+        <h3 class="font-display text-lg font-bold text-text-primary mb-2">Professional Community</h3>
+        <p class="text-sm text-text-secondary leading-relaxed">Connect with archaeologists worldwide. Share discoveries, create research groups, and collaborate on projects.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="relative py-24 bg-surface-light/50 overflow-hidden">
+  <div class="absolute inset-0 grid-pattern opacity-30"></div>
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold tracking-wider uppercase mb-6">Get Started</div>
+    <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary mb-6 leading-tight">
+      Join the Global<br/><span class="text-gradient">Archaeology Community</span>
+    </h2>
+    <p class="text-text-secondary text-lg max-w-2xl mx-auto mb-10 leading-relaxed">Whether you're a field archaeologist, a student, or a museum curator — Sawah gives you the tools to research, document, and collaborate.</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="#" class="inline-flex items-center gap-2 px-8 py-3.5 text-sm font-semibold btn-primary rounded-lg">Create Free Account <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+      <a href="#" class="inline-flex items-center gap-2 px-8 py-3.5 text-sm font-semibold btn-outline rounded-lg">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="bg-surface-light border-t border-border-dark/50 py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+      <div class="col-span-2 md:col-span-1">
+        <a href="#" class="flex items-center gap-2.5 mb-4">
+          <div class="w-7 h-7 rounded-lg border border-primary/30 flex items-center justify-center bg-primary/5"><span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">temple_buddhist</span></div>
+          <span class="text-lg font-display font-semibold text-primary">Sawah</span>
+        </a>
+        <p class="text-sm text-text-muted leading-relaxed max-w-xs">The digital operating system for archaeology. Preserving the legacy of antiquity for future generations.</p>
+      </div>
+      <div><h4 class="text-xs font-semibold text-text-primary uppercase tracking-wider mb-4">Platform</h4><ul class="space-y-2.5"><li><a href="map.html" class="text-sm text-text-muted hover:text-primary transition-colors">Map</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Sites</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Library</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Artifacts</a></li></ul></div>
+      <div><h4 class="text-xs font-semibold text-text-primary uppercase tracking-wider mb-4">Community</h4><ul class="space-y-2.5"><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Researchers</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Forum</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Jobs</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Events</a></li></ul></div>
+      <div><h4 class="text-xs font-semibold text-text-primary uppercase tracking-wider mb-4">Company</h4><ul class="space-y-2.5"><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">About</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Contact</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Privacy</a></li><li><a href="#" class="text-sm text-text-muted hover:text-primary transition-colors">Terms</a></li></ul></div>
+    </div>
+    <div class="border-t border-border-dark/50 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p class="text-xs text-text-muted">© 2024 Sawah. All rights reserved.</p>
+      <div class="flex gap-4"><a href="#" class="text-text-muted hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">public</span></a><a href="#" class="text-text-muted hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">code</span></a><a href="#" class="text-text-muted hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">mail</span></a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu() { document.querySelector('#mobile-menu').classList.toggle('hidden'); }
+
+  function animateCounters() {
+    document.querySelectorAll('.stat-number').forEach(c => {
+      const target = parseInt(c.dataset.target);
+      let current = 0;
+      const step = Math.ceil(target / 125);
+      const update = () => { current += step; if (current >= target) { c.textContent = target.toLocaleString(); return; } c.textContent = current.toLocaleString(); requestAnimationFrame(update); };
+      update();
+    });
+  }
+  new IntersectionObserver((e) => { if (e[0].isIntersecting) { animateCounters(); observer.disconnect(); } }, { threshold: 0.5 }).observe(document.querySelector('.stat-number'));
+
+  document.querySelectorAll('.reveal').forEach(el => new IntersectionObserver((e) => { if (e[0].isIntersecting) { e[0].target.classList.add('visible'); } }, { threshold: 0.1 }).observe(el));
+
+  let lastScroll = 0;
+  window.addEventListener('scroll', () => {
+    const h = document.querySelector('header');
+    if (window.scrollY > 50) h.classList.add('shadow-lg', 'shadow-black/10'); else h.classList.remove('shadow-lg', 'shadow-black/10');
+  });
+</script>
+</body>
+</html>

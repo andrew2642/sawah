@@ -1,0 +1,820 @@
+body { font-family: 'Manrope', sans-serif; }
+h1, h2, h3, .font-serif { font-family: 'Noto Serif', serif; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+/* Custom Scrollbar for Chat and Drawers */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #d7c3b3; border-radius: 10px; }
+
+.parchment-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    background-color: var(--tw-bg-opacity);
+    background-color: rgba(252, 249, 238, var(--tw-bg-opacity));
+}
+
+html { height: 100%; }
+
+body {
+    --page-header-height: 30px;
+}
+main { flex: 1; display: flex; flex-direction: column; }
+aside { overflow-y: auto; min-height: 0; }
+
+/* Ensure scrollable chat container works inside the right sidebar flex chain */
+#chat-messages { min-height: 0; }
+#wikipedia-data-container { min-height: 0; }
+
+/* The main content column is now scrollable */
+/* Scrolling is now handled by the body, sidebars are sticky */
+
+/* ============= BOOK PAGE LAYOUT ============= */
+.page-content {
+    font-family: 'Noto Serif', Georgia, 'Times New Roman', serif;
+    color: #2c2c24;
+    font-size: 15px;
+    line-height: 1.8;
+    text-align: justify;
+    letter-spacing: 0.01em;
+    hyphens: auto;
+    word-spacing: 0.02em;
+    overflow: visible;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100% !important;
+    max-width: none !important;
+    display: block;
+}
+.page-content {
+    padding: 0;
+}
+
+
+.page-scroll {
+    padding: 1rem;
+    position: relative; /* For absolute positioning of page-header */
+    height: auto;
+    overflow: visible;
+    box-sizing: border-box;
+    max-width: 70ch;
+    margin: 0 auto; /* Center the content block */
+    display: block;
+}
+
+.page-scroll img {
+    max-width: 100%;
+    height: auto;
+    max-height: 250px;
+    object-fit: contain;
+    display: block;
+    margin: 12px auto;
+}
+
+/* ============= BOOK CONTENT TYPOGRAPHY ============= */
+.page-scroll h1,
+.page-scroll h2,
+.page-scroll h3,
+.page-scroll h4,
+.page-scroll h5,
+.page-scroll h6 {
+    font-family: "Noto Serif", Georgia, serif;
+    font-weight: 700;
+    color: #1c1c15;
+    line-height: 1.2;
+    text-align: left;
+    width: 100%;
+    max-width: none;
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+.page-scroll h1 { font-size: clamp(2.5rem,4vw,4rem); line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.01em; margin-top: 0; }
+.page-scroll h2 { font-size: 2rem; margin-top: 3rem; margin-bottom: 0.75em; letter-spacing: -0.005em; }
+.page-scroll h3 { font-size: 1.5rem; margin-top: 1.5em; margin-bottom: 0.5em; font-style: italic; }
+
+.page-scroll p {
+    font-size: 1.15rem;
+    line-height: 2;
+    margin-bottom: 1.5rem;
+    text-indent: 2em;
+    orphans: 3;
+    widows: 3;
+}
+
+/* First paragraph after a heading or with a drop cap — no indent */
+.page-scroll h1 + p, .page-scroll h2 + p, .page-scroll h3 + p, .page-scroll h4 + p,
+.page-scroll p:first-of-type {
+    text-indent: 0;
+}
+
+/* Drop cap for the first paragraph of a chapter's content */
+.page-scroll p:first-of-type:first-letter {
+    font-size: 5rem;
+    font-weight: 700;
+    float: left;
+    line-height: .8;
+    margin-right: .15em;
+    color: #6b3b00;
+    font-family: serif;
+}
+
+.page-scroll a {
+    color: #884e08;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(136, 78, 8, 0.25);
+    transition: border-color 0.2s;
+}
+.page-scroll a:hover {
+    border-bottom-color: #884e08;
+}
+
+.page-scroll blockquote {
+    margin: 3rem 0;
+    padding-left: 1.5rem;
+    border-left: 4px solid #884e08;
+    font-style: italic;
+    font-size: 1.8rem;
+}
+
+.page-scroll blockquote p {
+    text-indent: 0;
+    margin-bottom: 0.4em;
+}
+
+.page-scroll ul,
+.page-scroll ol {
+    margin: 0.6em 0 0.9em 1.8em;
+    text-align: left;
+}
+
+.page-scroll li {
+    margin-bottom: 0.3em;
+    text-indent: 0;
+    text-indent: 0;
+}
+
+
+.article-image {
+    filter: sepia(0.25) contrast(1.05) brightness(0.98);
+    border: 1px solid #d7c3b3;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    max-width: 100%;
+    height: auto;
+    border-radius: 2px;
+    cursor: zoom-in;
+    transition: filter 0.3s, box-shadow 0.3s;
+}
+.article-image:hover {
+    filter: sepia(0) contrast(1.1) brightness(1);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.18);
+}
+
+.page-scroll hr {
+    border: none;
+    border-top: 1px solid #e5ddd0;
+    margin: 1.5em 3em;
+}
+
+.page-scroll mark {
+    background: #ffdcc0;
+    color: #2d1600;
+    padding: 0.1em 0.2em;
+    border-radius: 1px;
+}
+
+.page-scroll small {
+    font-size: 0.75em;
+    color: #8a7c6a;
+}
+
+.page-scroll pre,
+.page-scroll code {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    background: #f0ead9;
+    color: #3a352c;
+    border-radius: 2px;
+}
+.page-scroll code {
+    padding: 0.1em 0.3em;
+}
+.page-scroll pre {
+    padding: 0.8em 1em;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+/* ============= COVER PAGE ============= */
+.archive-cover {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(circle at center, rgba(255,255,255,.1), transparent 70%);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.archive-cover::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(240, 234, 217, 0.2);
+    pointer-events: none;
+}
+.archive-cover::after {
+    content: '';
+    position: absolute;
+    inset: 16px;
+    border: 1px solid rgba(240, 234, 217, 0.1);
+    pointer-events: none;
+}
+
+.archive-cover .seal {
+    width: 120px;
+    height: 120px;
+    border: 3px solid rgba(180,140,70,.7);
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.archive-cover .seal::before {
+    content: "◆";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.archive-cover h1 {
+    font-size: clamp(4rem,8vw,7rem);
+    letter-spacing: .08em;
+    font-family: 'Noto Serif', serif;
+}
+
+.archive-cover p {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    margin-bottom: 0;
+}
+
+/* ============= HERO SECTION ============= */
+.archive-hero {
+    position: relative;
+    min-height: 60vh;
+    display: flex;
+    align-items: flex-end;
+    padding: 4rem 2rem;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+.hero-bg-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(20%) contrast(1.1) brightness(0.7);
+    transform: scale(1.05);
+}
+.archive-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(28, 28, 21, 0.8) 0%, rgba(28, 28, 21, 0) 60%);
+}
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 45rem;
+}
+.hero-content strong {
+    font-weight: 700;
+    opacity: 0.7;
+}
+
+/* ============= CHAPTER DIVIDER PAGE ============= */
+.chapter-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    background: transparent;
+    position: relative;
+}
+
+.chapter-number {
+    position: absolute;
+    font-size: 12rem;
+    opacity: .05;
+    font-weight: 700;
+    line-height: 1;
+    z-index: -1;
+    color: #3c2a1a;
+    user-select: none;
+}
+
+.chapter-page h1 {
+    font-size: 4rem;
+    margin: 1rem 0;
+    letter-spacing: .04em;
+}
+
+.chapter-intro {
+    font-size: 1.4rem;
+    line-height: 1.7;
+    font-style: italic;
+    opacity: .85;
+    max-width: 60ch;
+    margin: 2rem auto 0;
+}
+
+.chapter-meta {
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    opacity: .6;
+    font-size: .8rem;
+    margin-bottom: 1rem;
+}
+
+.section-divider {
+    width: 120px;
+    height: 1px;
+    margin: 4rem auto;
+    background: rgba(0,0,0,.15);
+}
+.long-form {
+    column-count: 2;
+    column-gap: 4rem;
+}
+
+/* ============= FLIPBOOK NAVIGATION ============= */
+#flipbook-nav {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0 4px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.65rem;
+    color: #8a7c6a;
+    letter-spacing: 0.05em;
+}
+
+#flipbook-nav button {
+    background: none;
+    border: 1px solid #d4c9b8;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    color: #5a4f42;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+#flipbook-nav button:hover:not(:disabled) {
+    background: #f0ead9;
+    border-color: #b0a190;
+}
+#flipbook-nav button:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+#flipbook-nav button .material-symbols-outlined {
+    font-size: 16px;
+}
+
+/* ============= METADATA WRAPPING ============= */
+/* Ensures long strings in metadata fields do not overflow their containers. */
+#wiki-title,
+.archive-footer p {
+    word-break: break-word;
+}
+
+#toc-list a.text-primary {
+    font-weight: 700;
+}
+
+/* Active state for nav links */
+#toc-list a.active {
+    color: #884e08;
+    font-weight: 700;
+    background-color: rgba(136, 78, 8, 0.1);
+}
+
+/* ============= TOC PAGE ============= */
+.toc-page {
+    padding: 2rem;
+}
+.toc-page h1 {
+    font-size: 3rem;
+    font-family: 'Noto Serif', serif;
+    text-align: center;
+    margin-bottom: 4rem;
+    color: #3c2a1a;
+}
+.toc-list {
+    list-style: none;
+    padding: 0;
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+.toc-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: .75rem 0;
+    border-bottom: 1px solid #e5ddd0;
+    color: #5a4f42;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-size: 1.1rem;
+}
+.toc-entry:hover {
+    color: #884e08;
+}
+.toc-dots {
+    flex-grow: 1;
+    border-bottom: 1px dotted #d7c3b3;
+    margin: 0 0.5rem;
+    transform: translateY(-4px);
+}
+.toc-title {
+    font-family: 'Noto Serif', serif;
+}
+.toc-page-number {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+}
+
+/* New Sidebar Styles */
+#toc-list details {
+    margin-bottom: 0.5rem;
+}
+#toc-list summary {
+    list-style: none; /* Remove default marker */
+    padding: 0.25rem 0.5rem;
+}
+#toc-list summary::-webkit-details-marker {
+    display: none; /* Hide marker for Chrome */
+}
+#toc-list summary::before {
+    content: '▸';
+    display: inline-block;
+    margin-right: 0.5rem;
+    transition: transform 0.2s;
+    font-size: 0.8rem;
+}
+#toc-list details[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+
+/* ============= LEGACY WIKI CONTENT (fallback) ============= */
+.wiki-content h1, .wiki-content h2, .wiki-content h3, .wiki-content h4, .wiki-content h5, .wiki-content h6 { font-family: "Noto Serif", serif; font-weight: 600; margin-top: 1.2rem; margin-bottom: 0.5rem; line-height: 1.3; }
+.wiki-content h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+.wiki-content h2 { font-size: 1.2rem; }
+.wiki-content h3 { font-size: 1.1rem; }
+.wiki-content p { margin-bottom: 1rem; line-height: 1.7; font-size: 0.875rem; }
+.wiki-content a { color: #884e08; text-decoration: underline; }
+
+/* Chatbot AI Response Formatting */
+.ai-response p {
+    margin-bottom: 0.75em;
+}
+.ai-response p:last-child {
+    margin-bottom: 0;
+}
+.ai-response ul, .ai-response ol {
+    margin: 0.75em 0 0.75em 1.25em;
+    list-style-position: outside;
+    list-style-type: disc;
+}
+.ai-response li {
+    margin-bottom: 0.25em;
+}
+
+/* ============= DATA SECTIONS (Timeline, Landmarks, etc.) ============= */
+.data-section {
+    max-width: 45rem;
+    margin: 2rem auto;
+    padding-top: 1rem;
+    border-top: 2px solid #d4c9b8;
+}
+
+.data-section-title {
+    font-family: 'Noto Serif', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3c2a1a;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Timeline Styles */
+.timeline-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+.timeline-list::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 4.5rem;
+    width: 2px;
+    background: #e5ddd0;
+}
+.timeline-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+.timeline-list .year {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #884e08;
+    width: 8rem;
+    text-align: right;
+    padding-right: 2rem;
+    flex-shrink: 0;
+}
+.timeline-list .event {
+    font-family: 'Noto Serif', serif;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #5a4f42;
+}
+
+/* Data Grid (Landmarks, People) */
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+.data-card {
+    background: #f8f5ec;
+    border: 1px solid #e5ddd0;
+    padding: 1.5rem;
+    border-radius: 4px;
+}
+.data-card h3 {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #3c2a1a;
+    margin: 0 0 0.5rem 0;
+}
+.data-card p {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.85rem;
+    color: #5a4f42;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* Error Card */
+.archive-error-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background-color: #fff9f2;
+    border: 1px solid #ffdad6;
+    border-radius: 8px;
+    min-height: 400px;
+}
+/* ============= NEW STATISTICS DASHBOARD ============= */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+.stat-card {
+    background: #f8f5ec;
+    border: 1px solid #e5ddd0;
+    padding: 1.5rem;
+    border-radius: 4px;
+    text-align: center;
+}
+.stat-card span {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a0907e;
+}
+.stat-card h3 {
+    font-family: 'Noto Serif', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #884e08;
+    margin-top: 0.25rem;
+}
+
+/* Statistics List */
+.stats-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    text-align: center;
+}
+.stats-list div {
+    background: #f8f5ec;
+    border: 1px solid #e5ddd0;
+    padding: 1.5rem;
+    border-radius: 4px;
+}
+.stats-list dt {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a0907e;
+    margin-bottom: 0.5rem;
+}
+.stats-list dd {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #884e08;
+}
+
+/* ============= NEW GALLERY MASONRY ============= */
+.gallery-grid {
+    columns: 3 250px;
+    column-gap: 1.5rem;
+}
+/* Image Gallery */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+.gallery-item {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+}
+.gallery-item {
+    margin: 0;
+    background: #fdfbf3;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #e5ddd0;
+}
+.gallery-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    filter: sepia(0.15) contrast(1);
+}
+.gallery-item figcaption {
+    padding: 1rem;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.8rem;
+    color: #5a4f42;
+    text-align: center;
+}
+.gallery-item figcaption i {
+    color: #a0907e;
+}
+/* ============= NEW LANDMARK & PERSON CARDS ============= */
+.landmark-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+.landmark-card {
+    background: var(--surface);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e5ddd0;
+    transition: box-shadow 0.3s;
+}
+.landmark-card:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+.landmark-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.person-card img {
+    filter: grayscale(100%) contrast(1.1);
+}
+.landmark-body {
+    padding: 1.5rem;
+}
+.landmark-body h3 {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #3c2a1a;
+    margin: 0 0 0.5rem 0;
+}
+.landmark-body p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+/* Data Card Meta */
+.data-card-meta {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #a0907e;
+    margin-left: 0.5rem;
+}
+/* ============= NEW SOURCE CARDS ============= */
+.source-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+.source-card {
+    background: #f8f5ec;
+    border: 1px solid #e5ddd0;
+    padding: 1.5rem;
+    border-radius: 4px;
+}
+.source-card h3 {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #3c2a1a;
+    margin: 0 0 0.5rem 0;
+}
+.source-card p {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.85rem;
+    color: #5a4f42;
+    line-height: 1.7;
+    margin: 0 0 1rem 0;
+}
+.source-card a {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #884e08;
+    text-decoration: underline;
+}
+
+/* ============= APPENDIX COVER ============= */
+.appendix-cover {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 1rem;
+    border-top: 2px solid #d4c9b8;
+    margin-top: 4rem;
+}
+.appendix-cover span {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #c4a87a;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+.appendix-cover h2 {
+    font-family: 'Noto Serif', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #3c2a1a;
+    margin-top: 1rem;
+}
+
+@media(max-width:768px){
+    .long-form{
+        column-count:1;
+    }
+}
